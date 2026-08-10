@@ -1,7 +1,7 @@
 """
-10958 Search - Stage 6
+10958 Search - Stage 7
 
-Target-directed structural search.
+Target-directed search without a giant global DP table.
 
 Digits:
     123456789
@@ -13,29 +13,36 @@ Allowed:
     *
     /
     ^
-    parentheses
 
-Important:
-This version avoids constructing the full value set
-for the complete 9-digit expression.
+All arithmetic is exact using Fraction.
 
-It recursively asks:
+This version deliberately avoids storing millions
+of interval/value states in memory.
 
-    Can interval [i:j] produce target?
+The search is target-directed:
+    1. Choose the top-level split.
+    2. Generate one side.
+    3. Derive the exact value required from the other side.
+    4. Recursively test only that required value.
 
-Arithmetic is exact using Fraction.
+Exponentiation is handled using exact integer/rational roots.
 """
 
 from fractions import Fraction
-from functools import lru_cache
 import math
 
 
 DIGITS = "123456789"
 TARGET = Fraction(10958)
 
-# Maximum number of exponent candidates to inspect.
+# For the first exponentiation stage.
+# This is NOT the final completeness bound.
 MAX_EXPONENT = 20
+
+# Progress reporting.
+NODE_REPORT_INTERVAL = 10000
+
+nodes = 0
 
 
 # ============================================================
@@ -57,13 +64,13 @@ def is_integer(x):
 def integer_nth_root(n, k):
     """
     Return x if x^k == n.
-    Otherwise None.
+    Otherwise return None.
+
+    n >= 0
+    k >= 1
     """
 
-    if k <= 0:
-        return None
-
-    if n < 0:
+    if k <= 0 or n < 0:
         return None
 
     if n == 0:
@@ -94,8 +101,11 @@ def integer_nth_root(n, k):
 
 def exact_root(value, exponent):
     """
-    Check whether value has a rational
+    Determine whether value has an exact rational
     exponent-th root.
+
+    Returns Fraction if it exists.
+    Otherwise None.
     """
 
     if exponent <= 0:
@@ -104,7 +114,7 @@ def exact_root(value, exponent):
     p = value.numerator
     q = value.denominator
 
-    # Positive
+    # Positive or zero.
     if p >= 0:
 
         rp = integer_nth_root(p, exponent)
@@ -115,7 +125,7 @@ def exact_root(value, exponent):
 
         return Fraction(rp, rq)
 
-    # Negative values require odd exponent.
+    # Negative result requires odd exponent.
     if exponent % 2 == 0:
         return None
 
@@ -129,300 +139,442 @@ def exact_root(value, exponent):
 
 
 # ============================================================
-# Factor candidates
+# Expression generation for a SMALL side
 # ============================================================
 
-def integer_divisors(n):
+def generate_values(i, j):
     """
-    Return positive divisors of |n|.
+    Generate all distinct exact values for DIGITS[i:j].
+
+    This is intentionally used only on the selected
+    smaller side of a split.
+
+    Returns:
+        dict[Fraction, expression]
     """
 
-    n = abs(n)
+    result = {}
 
-    if n == 0:
-        return []
+    # Concatenation.
+    value = concat_value(i, j)
+    result[value] = DIGITS[i:j]
 
-    divisors = set()
+    # Single digit.
+    if j - i == 1:
+        return result
 
-    limit = math.isqrt(n)
+    # Split recursively.
+    for k in range(i + 1, j):
 
-    for d in range(1, limit + 1):
+        left = generate_values(i, k)
+        right = generate_values(k, j)
 
-        if n % d == 0:
+        for a, expr_a in left.items():
 
-            divisors.add(d)
-            divisors.add(n // d)
+            for b, expr_b in right.items():
 
-    return sorted(divisors)
+                # +
+                value = a + b
+
+                if value not in result:
+                    result[value] = (
+                        f"({expr_a}+{expr_b})"
+                    )
+
+                # -
+                value = a - b
+
+                if value not in result:
+                    result[value] = (
+                        f"({expr_a}-{expr_b})"
+                    )
+
+                # *
+                value = a * b
+
+                if value not in result:
+                    result[value] = (
+                        f"({expr_a}*{expr_b})"
+                    )
+
+                # /
+                if b != 0:
+
+                    value = a / b
+
+                    if value not in result:
+                        result[value] = (
+                            f"({expr_a}/{expr_b})"
+                        )
+
+                # Integer exponentiation.
+                if (
+                    is_integer(a)
+                    and is_integer(b)
+                    and b.numerator >= 0
+                ):
+
+                    exponent = b.numerator
+
+                    # Avoid absurd powers during this stage.
+                    if exponent <= MAX_EXPONENT:
+
+                        if not (
+                            a == 0
+                            and exponent == 0
+                        ):
+
+                            value = Fraction(
+                                a.numerator ** exponent,
+                                1
+                            )
+
+                            if value not in result:
+                                result[value] = (
+                                    f"({expr_a}^{expr_b})"
+                                )
+
+    return result
 
 
 # ============================================================
-# Search
+# Target-directed search
 # ============================================================
 
-visited = set()
-nodes = 0
+def search_target(i, j, target, depth=0):
+    """
+    Can DIGITS[i:j] produce target?
 
-
-@lru_cache(maxsize=None)
-def can_make(i, j, target):
+    No giant global memoization is used.
+    """
 
     global nodes
 
     nodes += 1
 
-    # Progress indicator.
-    if nodes % 10000 == 0:
+    if nodes % NODE_REPORT_INTERVAL == 0:
 
         print(
             f"Visited states: {nodes:,}"
         )
-
-    state = (i, j, target)
-
-    if state in visited:
-        return None
-
-    visited.add(state)
 
     # --------------------------------------------------------
     # Direct concatenation
     # --------------------------------------------------------
 
     if concat_value(i, j) == target:
-
         return DIGITS[i:j]
 
-    # A single digit has no further split.
+    # One digit cannot be split.
     if j - i == 1:
-
         return None
 
     # --------------------------------------------------------
-    # Every possible top-level split
+    # Try every top-level split.
     # --------------------------------------------------------
 
     for k in range(i + 1, j):
 
-        print(
-            f"Checking interval "
-            f"{i}:{k} | {k}:{j}"
-            if nodes < 100
-            else "",
-            end=""
-        )
+        left_len = k - i
+        right_len = j - k
 
-        # ====================================================
-        # Addition
+        # ----------------------------------------------------
+        # Generate the smaller side.
         #
-        # A + B = target
-        #
-        # We need one side and derive the other.
-        # ====================================================
+        # We do not build both complete sides.
+        # ----------------------------------------------------
 
-        # The smaller side can be concatenated directly,
-        # which gives useful candidate values without
-        # generating the complete universe.
+        if left_len <= right_len:
 
-        left_direct = concat_value(i, k)
+            generated = generate_values(i, k)
 
-        right_needed = target - left_direct
+            # =================================================
+            # +
+            # A + B = target
+            # B = target - A
+            # =================================================
 
-        expr_right = can_make(
-            k,
-            j,
-            right_needed
-        )
+            for a, expr_a in generated.items():
 
-        if expr_right is not None:
+                b = target - a
 
-            return (
-                f"({DIGITS[i:k]}+"
-                f"{expr_right})"
-            )
-
-        right_direct = concat_value(k, j)
-
-        left_needed = target - right_direct
-
-        expr_left = can_make(
-            i,
-            k,
-            left_needed
-        )
-
-        if expr_left is not None:
-
-            return (
-                f"({expr_left}+"
-                f"{DIGITS[k:j]})"
-            )
-
-        # ====================================================
-        # Subtraction
-        # ====================================================
-
-        right_direct = concat_value(k, j)
-
-        left_needed = target + right_direct
-
-        expr_left = can_make(
-            i,
-            k,
-            left_needed
-        )
-
-        if expr_left is not None:
-
-            return (
-                f"({expr_left}-"
-                f"{DIGITS[k:j]})"
-            )
-
-        left_direct = concat_value(i, k)
-
-        right_needed = left_direct - target
-
-        expr_right = can_make(
-            k,
-            j,
-            right_needed
-        )
-
-        if expr_right is not None:
-
-            return (
-                f"({DIGITS[i:k]}-"
-                f"{expr_right})"
-            )
-
-        # ====================================================
-        # Multiplication
-        # ====================================================
-
-        # Try direct concatenation on the left.
-        if left_direct != 0:
-
-            right_needed = target / left_direct
-
-            expr_right = can_make(
-                k,
-                j,
-                right_needed
-            )
-
-            if expr_right is not None:
-
-                return (
-                    f"({DIGITS[i:k]}*"
-                    f"{expr_right})"
-                )
-
-        # Try direct concatenation on the right.
-        if right_direct != 0:
-
-            left_needed = target / right_direct
-
-            expr_left = can_make(
-                i,
-                k,
-                left_needed
-            )
-
-            if expr_left is not None:
-
-                return (
-                    f"({expr_left}*"
-                    f"{DIGITS[k:j]})"
-                )
-
-        # ====================================================
-        # Division
-        # ====================================================
-
-        # A / B = target
-        #
-        # A = target * B
-
-        left_needed = target * right_direct
-
-        expr_left = can_make(
-            i,
-            k,
-            left_needed
-        )
-
-        if expr_left is not None and right_direct != 0:
-
-            return (
-                f"({expr_left}/"
-                f"{DIGITS[k:j]})"
-            )
-
-        # B = A / target
-        if target != 0:
-
-            right_needed = left_direct / target
-
-            if right_needed != 0:
-
-                expr_right = can_make(
+                expr_b = search_target(
                     k,
                     j,
-                    right_needed
+                    b,
+                    depth + 1
                 )
 
-                if expr_right is not None:
+                if expr_b is not None:
 
                     return (
-                        f"({DIGITS[i:k]}/"
-                        f"{expr_right})"
+                        f"({expr_a}+{expr_b})"
                     )
 
-        # ====================================================
-        # Exponentiation
-        # ====================================================
+            # =================================================
+            # -
+            # A - B = target
+            # B = A - target
+            # =================================================
 
-        # A^B = target
-        #
-        # Instead of generating arbitrary A and B,
-        # try mathematically possible small integer exponents.
-        # ====================================================
+            for a, expr_a in generated.items():
 
-        for exponent in range(
-            1,
-            MAX_EXPONENT + 1
-        ):
+                b = a - target
 
-            base = exact_root(
-                target,
-                exponent
-            )
-
-            if base is None:
-                continue
-
-            expr_left = can_make(
-                i,
-                k,
-                base
-            )
-
-            if expr_left is None:
-                continue
-
-            expr_right = can_make(
-                k,
-                j,
-                Fraction(exponent)
-            )
-
-            if expr_right is not None:
-
-                return (
-                    f"({expr_left}^"
-                    f"{expr_right})"
+                expr_b = search_target(
+                    k,
+                    j,
+                    b,
+                    depth + 1
                 )
+
+                if expr_b is not None:
+
+                    return (
+                        f"({expr_a}-{expr_b})"
+                    )
+
+            # =================================================
+            # *
+            # A * B = target
+            # B = target / A
+            # =================================================
+
+            for a, expr_a in generated.items():
+
+                if a == 0:
+                    continue
+
+                b = target / a
+
+                expr_b = search_target(
+                    k,
+                    j,
+                    b,
+                    depth + 1
+                )
+
+                if expr_b is not None:
+
+                    return (
+                        f"({expr_a}*{expr_b})"
+                    )
+
+            # =================================================
+            # /
+            # A / B = target
+            # B = A / target
+            # =================================================
+
+            if target != 0:
+
+                for a, expr_a in generated.items():
+
+                    b = a / target
+
+                    if b == 0:
+                        continue
+
+                    expr_b = search_target(
+                        k,
+                        j,
+                        b,
+                        depth + 1
+                    )
+
+                    if expr_b is not None:
+
+                        return (
+                            f"({expr_a}/{expr_b})"
+                        )
+
+            # =================================================
+            # ^
+            # A^B = target
+            # =================================================
+
+            for exponent in range(
+                1,
+                MAX_EXPONENT + 1
+            ):
+
+                base = exact_root(
+                    target,
+                    exponent
+                )
+
+                if base is None:
+                    continue
+
+                expr_a = search_target(
+                    i,
+                    k,
+                    base,
+                    depth + 1
+                )
+
+                if expr_a is None:
+                    continue
+
+                expr_b = search_target(
+                    k,
+                    j,
+                    Fraction(exponent),
+                    depth + 1
+                )
+
+                if expr_b is not None:
+
+                    return (
+                        f"({expr_a}^{expr_b})"
+                    )
+
+        # ----------------------------------------------------
+        # Generate RIGHT side instead.
+        # ----------------------------------------------------
+
+        else:
+
+            generated = generate_values(k, j)
+
+            # =================================================
+            # +
+            # A + B = target
+            # A = target - B
+            # =================================================
+
+            for b, expr_b in generated.items():
+
+                a = target - b
+
+                expr_a = search_target(
+                    i,
+                    k,
+                    a,
+                    depth + 1
+                )
+
+                if expr_a is not None:
+
+                    return (
+                        f"({expr_a}+{expr_b})"
+                    )
+
+            # =================================================
+            # -
+            # A - B = target
+            # A = target + B
+            # =================================================
+
+            for b, expr_b in generated.items():
+
+                a = target + b
+
+                expr_a = search_target(
+                    i,
+                    k,
+                    a,
+                    depth + 1
+                )
+
+                if expr_a is not None:
+
+                    return (
+                        f"({expr_a}-{expr_b})"
+                    )
+
+            # =================================================
+            # *
+            # A * B = target
+            # A = target / B
+            # =================================================
+
+            for b, expr_b in generated.items():
+
+                if b == 0:
+                    continue
+
+                a = target / b
+
+                expr_a = search_target(
+                    i,
+                    k,
+                    a,
+                    depth + 1
+                )
+
+                if expr_a is not None:
+
+                    return (
+                        f"({expr_a}*{expr_b})"
+                    )
+
+            # =================================================
+            # /
+            # A / B = target
+            # A = target * B
+            # =================================================
+
+            for b, expr_b in generated.items():
+
+                if b == 0:
+                    continue
+
+                a = target * b
+
+                expr_a = search_target(
+                    i,
+                    k,
+                    a,
+                    depth + 1
+                )
+
+                if expr_a is not None:
+
+                    return (
+                        f"({expr_a}/{expr_b})"
+                    )
+
+            # =================================================
+            # ^
+            # A^B = target
+            # =================================================
+
+            for exponent in range(
+                1,
+                MAX_EXPONENT + 1
+            ):
+
+                base = exact_root(
+                    target,
+                    exponent
+                )
+
+                if base is None:
+                    continue
+
+                expr_a = search_target(
+                    i,
+                    k,
+                    base,
+                    depth + 1
+                )
+
+                if expr_a is None:
+                    continue
+
+                expr_b = search_target(
+                    k,
+                    j,
+                    Fraction(exponent),
+                    depth + 1
+                )
+
+                if expr_b is not None:
+
+                    return (
+                        f"({expr_a}^{expr_b})"
+                    )
 
     return None
 
@@ -433,10 +585,8 @@ def can_make(i, j, target):
 
 def main():
 
-    global nodes
-
     print("========================================")
-    print("10958 STRUCTURAL TARGET SEARCH")
+    print("10958 SEARCH - STAGE 7")
     print("========================================")
 
     print(
@@ -450,12 +600,16 @@ def main():
     print()
 
     print(
-        "Starting structural search..."
+        "Generating smaller sides only..."
+    )
+
+    print(
+        "Starting search..."
     )
 
     print()
 
-    result = can_make(
+    result = search_target(
         0,
         len(DIGITS),
         TARGET
@@ -471,6 +625,7 @@ def main():
 
         print("FOUND!")
         print()
+
         print(
             f"Expression: {result}"
         )
@@ -486,13 +641,19 @@ def main():
         )
 
     print()
+
     print(
         f"Visited states: {nodes:,}"
     )
 
     print()
+
     print(
         "Search class:"
+    )
+
+    print(
+        "  123456789 in fixed order"
     )
 
     print(
@@ -512,6 +673,16 @@ def main():
     )
 
     print()
+
+    print(
+        "NOTE:"
+    )
+
+    print(
+        "Exponent search is currently limited "
+        f"to 1..{MAX_EXPONENT}."
+    )
+
     print(
         "This is not yet an impossibility proof."
     )
