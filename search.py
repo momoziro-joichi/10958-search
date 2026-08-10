@@ -11,6 +11,7 @@ STEP 2:
 - 四則演算
 """
 
+
 from fractions import Fraction
 
 
@@ -30,60 +31,87 @@ def solve():
     #
     # 1 / 3 + 2 / 3
     #
-    # のような計算も誤差なく扱える。
+    # のような計算も誤差なく扱う。
     dp = [[{} for _ in range(n + 1)] for _ in range(n)]
 
-    # ----------------------------------------
+    # ========================================
     # STEP 1: 連結した数字を登録
-    # ----------------------------------------
+    # ========================================
+
     for i in range(n):
         for j in range(i + 1, n + 1):
+
             value = Fraction(int(DIGITS[i:j]))
             expression = DIGITS[i:j]
 
             dp[i][j][value] = expression
 
-    # ----------------------------------------
+    # ========================================
     # STEP 2: 区間DP
-    # ----------------------------------------
+    # ========================================
+
     for length in range(2, n + 1):
 
         for i in range(n - length + 1):
+
             j = i + length
 
-            # [i, j) を左右に分割
+            # [i, j) を
+            #
+            # [i, k) | [k, j)
+            #
+            # に分割する。
+
             for k in range(i + 1, j):
 
                 left = dp[i][k]
                 right = dp[k][j]
 
                 for a, expr_a in left.items():
+
                     for b, expr_b in right.items():
 
+                        # --------------------------------
                         # 加算
+                        # --------------------------------
+
                         value = a + b
+
                         if value not in dp[i][j]:
                             dp[i][j][value] = (
                                 f"({expr_a}+{expr_b})"
                             )
 
+                        # --------------------------------
                         # 減算
+                        # --------------------------------
+
                         value = a - b
+
                         if value not in dp[i][j]:
                             dp[i][j][value] = (
                                 f"({expr_a}-{expr_b})"
                             )
 
+                        # --------------------------------
                         # 乗算
+                        # --------------------------------
+
                         value = a * b
+
                         if value not in dp[i][j]:
                             dp[i][j][value] = (
                                 f"({expr_a}*{expr_b})"
                             )
 
+                        # --------------------------------
                         # 除算
+                        # --------------------------------
+
                         if b != 0:
+
                             value = a / b
+
                             if value not in dp[i][j]:
                                 dp[i][j][value] = (
                                     f"({expr_a}/{expr_b})"
@@ -93,32 +121,70 @@ def solve():
 
 
 def main():
+
     print("=== 10958 Search ===")
     print(f"Digits : {DIGITS}")
     print(f"Target : {TARGET}")
     print()
 
+    # ========================================
+    # 探索
+    # ========================================
+
     dp = solve()
 
     results = dp[0][len(DIGITS)]
 
-    print(f"Number of distinct rational values: {len(results)}")
+    # ========================================
+    # 結果
+    # ========================================
+
+    print(
+        f"Number of distinct rational values: "
+        f"{len(results)}"
+    )
 
     if TARGET in results:
+
         print()
         print("FOUND!")
-        print(f"Expression: {results[TARGET]}")
-        print(f"Value: {TARGET}")
+
+        print(
+            f"Expression: "
+            f"{results[TARGET]}"
+        )
+
+        print(
+            f"Value: {TARGET}"
+        )
+
     else:
+
         print()
         print("10958 was not found.")
-        print("Search class: rational numbers + basic arithmetic")
+
+        print(
+            "Search class: "
+            "rational numbers + basic arithmetic"
+        )
+
+    # ========================================
+    # Fractionの動作確認
+    # ========================================
+
+    print()
+    print("Test values:")
+
+    print(
+        "1/2 exists:",
+        Fraction(1, 2) in results
+    )
+
+    print(
+        "1/3 exists:",
+        Fraction(1, 3) in results
+    )
 
 
 if __name__ == "__main__":
     main()
-
-print()
-print("Test values:")
-print("1/2 exists:", Fraction(1, 2) in results)
-print("1/3 exists:", Fraction(1, 3) in results)
