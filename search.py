@@ -4,13 +4,11 @@
 123456789 を順番通りに使い、
 連結・四則演算・括弧によって 10958 を作れるか探索する。
 
-STEP 2:
+STEP 2.5:
 - 区間DP
 - Fractionによる厳密な有理数計算
-- 連結
-- 四則演算
+- 探索規模の計測
 """
-
 
 from fractions import Fraction
 
@@ -22,45 +20,30 @@ TARGET = Fraction(10958)
 def solve():
     n = len(DIGITS)
 
-    # dp[i][j]:
-    # DIGITS[i:j] から作れる「厳密な値」を保存する。
-    #
-    # value -> expression
-    #
-    # Fractionを使うことで、
-    #
-    # 1 / 3 + 2 / 3
-    #
-    # のような計算も誤差なく扱う。
     dp = [[{} for _ in range(n + 1)] for _ in range(n)]
 
     # ========================================
-    # STEP 1: 連結した数字を登録
+    # 連結
     # ========================================
 
     for i in range(n):
         for j in range(i + 1, n + 1):
-
             value = Fraction(int(DIGITS[i:j]))
             expression = DIGITS[i:j]
 
             dp[i][j][value] = expression
 
     # ========================================
-    # STEP 2: 区間DP
+    # 区間DP
     # ========================================
 
     for length in range(2, n + 1):
 
+        print(f"Processing length {length}...")
+
         for i in range(n - length + 1):
 
             j = i + length
-
-            # [i, j) を
-            #
-            # [i, k) | [k, j)
-            #
-            # に分割する。
 
             for k in range(i + 1, j):
 
@@ -71,9 +54,9 @@ def solve():
 
                     for b, expr_b in right.items():
 
-                        # --------------------------------
-                        # 加算
-                        # --------------------------------
+                        # ----------------------------
+                        # +
+                        # ----------------------------
 
                         value = a + b
 
@@ -82,9 +65,9 @@ def solve():
                                 f"({expr_a}+{expr_b})"
                             )
 
-                        # --------------------------------
-                        # 減算
-                        # --------------------------------
+                        # ----------------------------
+                        # -
+                        # ----------------------------
 
                         value = a - b
 
@@ -93,9 +76,9 @@ def solve():
                                 f"({expr_a}-{expr_b})"
                             )
 
-                        # --------------------------------
-                        # 乗算
-                        # --------------------------------
+                        # ----------------------------
+                        # *
+                        # ----------------------------
 
                         value = a * b
 
@@ -104,9 +87,9 @@ def solve():
                                 f"({expr_a}*{expr_b})"
                             )
 
-                        # --------------------------------
-                        # 除算
-                        # --------------------------------
+                        # ----------------------------
+                        # /
+                        # ----------------------------
 
                         if b != 0:
 
@@ -116,6 +99,34 @@ def solve():
                                 dp[i][j][value] = (
                                     f"({expr_a}/{expr_b})"
                                 )
+
+        # ========================================
+        # この長さでの探索規模
+        # ========================================
+
+        counts = []
+
+        for i in range(n - length + 1):
+
+            j = i + length
+
+            counts.append(len(dp[i][j]))
+
+        print(
+            f"  intervals: {len(counts)}"
+        )
+
+        print(
+            f"  min values: {min(counts)}"
+        )
+
+        print(
+            f"  max values: {max(counts)}"
+        )
+
+        print(
+            f"  total values: {sum(counts)}"
+        )
 
     return dp
 
@@ -127,21 +138,17 @@ def main():
     print(f"Target : {TARGET}")
     print()
 
-    # ========================================
-    # 探索
-    # ========================================
-
     dp = solve()
 
     results = dp[0][len(DIGITS)]
 
-    # ========================================
-    # 結果
-    # ========================================
+    print()
+    print("========================================")
+    print("FINAL RESULT")
+    print("========================================")
 
     print(
-        f"Number of distinct rational values: "
-        f"{len(results)}"
+        f"Distinct rational values: {len(results)}"
     )
 
     if TARGET in results:
@@ -150,8 +157,7 @@ def main():
         print("FOUND!")
 
         print(
-            f"Expression: "
-            f"{results[TARGET]}"
+            f"Expression: {results[TARGET]}"
         )
 
         print(
@@ -163,17 +169,10 @@ def main():
         print()
         print("10958 was not found.")
 
-        print(
-            "Search class: "
-            "rational numbers + basic arithmetic"
-        )
-
-    # ========================================
-    # Fractionの動作確認
-    # ========================================
-
     print()
-    print("Test values:")
+    print("========================================")
+    print("FRACTION TESTS")
+    print("========================================")
 
     print(
         "1/2 exists:",
