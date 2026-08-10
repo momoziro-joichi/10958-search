@@ -68,5 +68,15 @@ the entire value space.
 Stage 4 — Target-directed search
 Result: terminated before completion
 Reason: intermediate value generation remained too large
+
+### Stage 5 — Structural Target Search
+
+- Exact rational arithmetic
+- Target-directed recursion
+- Integer exponentiation
+- Result: terminated before completion
+
+The recursive state space remained too large.
+Further optimization is required before claiming completeness.
 These results do not prove that 10958 is impossible.
 Exponentiation has not yet been implemented.
