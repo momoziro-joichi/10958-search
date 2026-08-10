@@ -78,5 +78,17 @@ Reason: intermediate value generation remained too large
 
 The recursive state space remained too large.
 Further optimization is required before claiming completeness.
+
+Method:
+Target-directed recursive search
+
+Visited states:
+20,450,000+
+
+Result:
+No solution found before stopping
+
+Status:
+Computationally expensive
 These results do not prove that 10958 is impossible.
 Exponentiation has not yet been implemented.
