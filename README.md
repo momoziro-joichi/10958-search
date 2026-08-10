@@ -64,5 +64,9 @@ integer exponentiation is introduced.
 Therefore, the next stage will use
 target-directed / reverse search rather than generating
 the entire value space.
+
+Stage 4 — Target-directed search
+Result: terminated before completion
+Reason: intermediate value generation remained too large
 These results do not prove that 10958 is impossible.
 Exponentiation has not yet been implemented.
