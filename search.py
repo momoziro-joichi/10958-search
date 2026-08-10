@@ -1,268 +1,482 @@
 """
-10958 Search
+10958 Target-Directed Search
 
-123456789 を順番通りに使い、
-連結・四則演算・累乗・括弧によって
-10958 を作れるか探索する。
+Digits:
+    123456789
 
-STEP 3:
-- 区間DP
-- Fractionによる厳密な有理数計算
-- 整数指数の累乗
+Allowed:
+    concatenation
+    +
+    -
+    *
+    /
+    ^
+    parentheses
+
+This version uses target-directed recursive search.
+
+Stage 4:
+    Instead of generating every possible final value,
+    start from 10958 and work backwards.
+
+Arithmetic is exact using Fraction.
+
+Exponentiation:
+    integer base
+    integer exponent
+    exponent >= 0
+    0^0 is excluded
+
+Important:
+    This is an optimization/search stage.
+    It is NOT yet a mathematical impossibility proof.
 """
 
 from fractions import Fraction
+from functools import lru_cache
+import math
 
 
 DIGITS = "123456789"
 TARGET = Fraction(10958)
 
-# 巨大整数の暴走を防ぐための暫定上限。
-# この上限を超えた累乗は今回は登録しない。
-# 後のターゲット逆算で、この制限を取り除く。
+# Prevent enormous integer powers.
 MAX_POWER_DIGITS = 100
 
 
-def safe_integer_power(a, b):
+# ============================================================
+# Utilities
+# ============================================================
+
+def is_integer(x):
+    return x.denominator == 1
+
+
+def integer_root_exact(n, k):
     """
-    整数 a の b 乗を厳密に計算する。
+    Return x such that x^k = n, if an integer x exists.
+    Otherwise return None.
 
-    条件:
-    - b は整数
-    - b >= 0
-    - 0^0 は除外
-    - 結果が MAX_POWER_DIGITS 桁以内
-
-    条件を満たさなければ None を返す。
+    Handles n >= 0 and k >= 1.
     """
 
-    if b < 0:
+    if k <= 0:
         return None
 
-    if a == 0 and b == 0:
+    if n < 0:
         return None
 
-    # 0^positive = 0
-    if a == 0:
+    if n == 0:
         return 0
 
-    # 1^b, (-1)^b
-    if abs(a) == 1:
-        return a ** b
+    if n == 1:
+        return 1
 
-    # 桁数を事前に概算
-    # Pythonで巨大整数を作る前に確認する。
-    import math
+    # Initial approximation
+    lo = 0
+    hi = 1
 
-    estimated_digits = int(
-        abs(b) * math.log10(abs(a))
-    ) + 1
+    while hi ** k < n:
+        hi *= 2
+
+    while lo <= hi:
+
+        mid = (lo + hi) // 2
+        value = mid ** k
+
+        if value == n:
+            return mid
+
+        if value < n:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+
+    return None
+
+
+def exact_rational_root(value, exponent):
+    """
+    Find integer x such that:
+
+        x^exponent = value
+
+    where value is a Fraction and exponent > 0.
+
+    Return x as Fraction if it exists.
+    Otherwise return None.
+    """
+
+    if exponent <= 0:
+        return None
+
+    numerator = value.numerator
+    denominator = value.denominator
+
+    # Positive numerator
+    if numerator >= 0:
+
+        root_num = integer_root_exact(
+            numerator,
+            exponent
+        )
+
+        root_den = integer_root_exact(
+            denominator,
+            exponent
+        )
+
+        if root_num is None or root_den is None:
+            return None
+
+        return Fraction(root_num, root_den)
+
+    # Negative numerator
+    #
+    # An even power cannot produce a negative value.
+    if exponent % 2 == 0:
+        return None
+
+    root_num = integer_root_exact(
+        -numerator,
+        exponent
+    )
+
+    root_den = integer_root_exact(
+        denominator,
+        exponent
+    )
+
+    if root_num is None or root_den is None:
+        return None
+
+    return Fraction(-root_num, root_den)
+
+
+def safe_power(a, b):
+    """
+    Exact integer-base / integer-exponent power.
+
+    Returns Fraction or None.
+    """
+
+    if not is_integer(a):
+        return None
+
+    if not is_integer(b):
+        return None
+
+    base = a.numerator
+    exponent = b.numerator
+
+    if exponent < 0:
+        return None
+
+    if base == 0 and exponent == 0:
+        return None
+
+    if base == 0:
+        return Fraction(0)
+
+    if abs(base) == 1:
+        return Fraction(base ** exponent)
+
+    # Estimate number of decimal digits before computing.
+    estimated_digits = (
+        int(exponent * math.log10(abs(base))) + 1
+    )
 
     if estimated_digits > MAX_POWER_DIGITS:
         return None
 
-    return a ** b
+    return Fraction(base ** exponent)
 
 
-def solve():
-    n = len(DIGITS)
+# ============================================================
+# Directly constructible values
+# ============================================================
 
-    # value -> expression
-    dp = [[{} for _ in range(n + 1)] for _ in range(n)]
+@lru_cache(maxsize=None)
+def concatenated_value(i, j):
+    """
+    DIGITS[i:j] as one integer.
+    """
 
-    # ========================================
-    # 連結
-    # ========================================
+    return Fraction(int(DIGITS[i:j]))
 
-    for i in range(n):
-        for j in range(i + 1, n + 1):
 
-            value = Fraction(int(DIGITS[i:j]))
+# ============================================================
+# Main target-directed search
+# ============================================================
 
-            expression = DIGITS[i:j]
+@lru_cache(maxsize=None)
+def search(i, j, target):
+    """
+    Can DIGITS[i:j] produce target?
 
-            dp[i][j][value] = expression
+    Returns an expression if found.
+    Otherwise None.
+    """
 
-    # ========================================
-    # 区間DP
-    # ========================================
+    # --------------------------------------------------------
+    # Direct concatenation
+    # --------------------------------------------------------
 
-    for length in range(2, n + 1):
+    if target == concatenated_value(i, j):
+        return DIGITS[i:j]
 
-        print(f"Processing length {length}...")
+    # --------------------------------------------------------
+    # Split interval
+    # --------------------------------------------------------
 
-        for i in range(n - length + 1):
+    for k in range(i + 1, j):
 
-            j = i + length
+        # ----------------------------------------------------
+        # LEFT + RIGHT
+        #
+        # A + B = target
+        #
+        # B = target - A
+        # ----------------------------------------------------
 
-            for k in range(i + 1, j):
+        # Enumerate possible left expressions.
+        left_values = generate_values(i, k)
 
-                left = dp[i][k]
-                right = dp[k][j]
+        for a, expr_a in left_values.items():
 
-                for a, expr_a in left.items():
+            b = target - a
 
-                    for b, expr_b in right.items():
+            expr_b = search(k, j, b)
 
-                        # --------------------------------
-                        # +
-                        # --------------------------------
+            if expr_b is not None:
+                return f"({expr_a}+{expr_b})"
 
-                        value = a + b
+        # ----------------------------------------------------
+        # LEFT - RIGHT
+        #
+        # A - B = target
+        #
+        # B = A - target
+        # ----------------------------------------------------
 
-                        if value not in dp[i][j]:
-                            dp[i][j][value] = (
-                                f"({expr_a}+{expr_b})"
-                            )
+        for a, expr_a in left_values.items():
 
-                        # --------------------------------
-                        # -
-                        # --------------------------------
+            b = a - target
 
-                        value = a - b
+            expr_b = search(k, j, b)
 
-                        if value not in dp[i][j]:
-                            dp[i][j][value] = (
-                                f"({expr_a}-{expr_b})"
-                            )
+            if expr_b is not None:
+                return f"({expr_a}-{expr_b})"
 
-                        # --------------------------------
-                        # *
-                        # --------------------------------
+        # ----------------------------------------------------
+        # LEFT * RIGHT
+        #
+        # A * B = target
+        #
+        # B = target / A
+        # ----------------------------------------------------
 
-                        value = a * b
+        for a, expr_a in left_values.items():
 
-                        if value not in dp[i][j]:
-                            dp[i][j][value] = (
-                                f"({expr_a}*{expr_b})"
-                            )
+            if a == 0:
+                continue
 
-                        # --------------------------------
-                        # /
-                        # --------------------------------
+            b = target / a
 
-                        if b != 0:
+            expr_b = search(k, j, b)
 
-                            value = a / b
+            if expr_b is not None:
+                return f"({expr_a}*{expr_b})"
 
-                            if value not in dp[i][j]:
-                                dp[i][j][value] = (
-                                    f"({expr_a}/{expr_b})"
-                                )
+        # ----------------------------------------------------
+        # LEFT / RIGHT
+        #
+        # A / B = target
+        #
+        # B = A / target
+        # ----------------------------------------------------
 
-                        # --------------------------------
-                        # ^
-                        #
-                        # STEP 3:
-                        # 整数 ^ 整数 のみ
-                        # --------------------------------
+        if target != 0:
 
-                        if (
-                            a.denominator == 1
-                            and b.denominator == 1
-                        ):
+            for a, expr_a in left_values.items():
 
-                            base = a.numerator
-                            exponent = b.numerator
+                b = a / target
 
-                            power = safe_integer_power(
-                                base,
-                                exponent
-                            )
+                if b == 0:
+                    continue
 
-                            if power is not None:
+                expr_b = search(k, j, b)
 
-                                value = Fraction(power)
+                if expr_b is not None:
+                    return f"({expr_a}/{expr_b})"
 
-                                if value not in dp[i][j]:
+        # ----------------------------------------------------
+        # POWER
+        #
+        # A^B = target
+        #
+        # We enumerate possible integer exponents B
+        # from the right interval.
+        #
+        # Then derive A exactly using integer roots.
+        # ----------------------------------------------------
 
-                                    dp[i][j][value] = (
-                                        f"({expr_a}^{expr_b})"
-                                    )
+        right_values = generate_values(k, j)
 
-        # ========================================
-        # 探索規模
-        # ========================================
+        for b, expr_b in right_values.items():
 
-        counts = []
+            if not is_integer(b):
+                continue
 
-        for i in range(n - length + 1):
+            exponent = b.numerator
 
-            j = i + length
+            if exponent <= 0:
+                continue
 
-            counts.append(len(dp[i][j]))
+            a = exact_rational_root(
+                target,
+                exponent
+            )
 
-        print(
-            f"  intervals: {len(counts)}"
-        )
+            if a is None:
+                continue
 
-        print(
-            f"  min values: {min(counts)}"
-        )
+            expr_a = search(i, k, a)
 
-        print(
-            f"  max values: {max(counts)}"
-        )
+            if expr_a is not None:
+                return f"({expr_a}^{expr_b})"
 
-        print(
-            f"  total values: {sum(counts)}"
-        )
+    return None
 
-    return dp
 
+# ============================================================
+# Forward generation for a SMALL interval
+# ============================================================
+
+@lru_cache(maxsize=None)
+def generate_values(i, j):
+    """
+    Generate all exact rational values for a subinterval.
+
+    This is intentionally used only for the smaller
+    subproblems encountered by the target-directed search.
+
+    Returns:
+        Fraction -> expression
+    """
+
+    values = {}
+
+    # Concatenation
+    values[concatenated_value(i, j)] = DIGITS[i:j]
+
+    # Split
+    for k in range(i + 1, j):
+
+        left = generate_values(i, k)
+        right = generate_values(k, j)
+
+        for a, expr_a in left.items():
+
+            for b, expr_b in right.items():
+
+                # +
+                value = a + b
+
+                if value not in values:
+                    values[value] = (
+                        f"({expr_a}+{expr_b})"
+                    )
+
+                # -
+                value = a - b
+
+                if value not in values:
+                    values[value] = (
+                        f"({expr_a}-{expr_b})"
+                    )
+
+                # *
+                value = a * b
+
+                if value not in values:
+                    values[value] = (
+                        f"({expr_a}*{expr_b})"
+                    )
+
+                # /
+                if b != 0:
+
+                    value = a / b
+
+                    if value not in values:
+                        values[value] = (
+                            f"({expr_a}/{expr_b})"
+                        )
+
+                # ^
+                power = safe_power(a, b)
+
+                if power is not None:
+
+                    if power not in values:
+                        values[power] = (
+                            f"({expr_a}^{expr_b})"
+                        )
+
+    return values
+
+
+# ============================================================
+# Main
+# ============================================================
 
 def main():
 
-    print("=== 10958 Search ===")
+    print("========================================")
+    print("10958 TARGET-DIRECTED SEARCH")
+    print("========================================")
+
     print(f"Digits : {DIGITS}")
     print(f"Target : {TARGET}")
     print()
 
-    dp = solve()
+    print("Starting reverse search...")
+    print()
 
-    results = dp[0][len(DIGITS)]
+    expression = search(
+        0,
+        len(DIGITS),
+        TARGET
+    )
 
     print()
     print("========================================")
-    print("FINAL RESULT")
+    print("RESULT")
     print("========================================")
 
-    print(
-        f"Distinct rational values: {len(results)}"
-    )
+    if expression is not None:
 
-    if TARGET in results:
-
-        print()
         print("FOUND!")
-
-        print(
-            f"Expression: {results[TARGET]}"
-        )
-
-        print(
-            f"Value: {TARGET}"
-        )
+        print()
+        print(f"Expression: {expression}")
+        print(f"Target    : {TARGET}")
 
     else:
 
-        print()
         print("10958 was not found.")
 
     print()
-    print("========================================")
-    print("FRACTION TESTS")
-    print("========================================")
+    print("Search type:")
+    print("  Target-directed recursive search")
+    print("  Exact Fraction arithmetic")
+    print("  Concatenation")
+    print("  + - * /")
+    print("  Integer exponentiation")
 
-    print(
-        "1/2 exists:",
-        Fraction(1, 2) in results
-    )
-
-    print(
-        "1/3 exists:",
-        Fraction(1, 3) in results
-    )
+    print()
+    print("IMPORTANT:")
+    print("This result is not yet an impossibility proof.")
 
 
 if __name__ == "__main__":
