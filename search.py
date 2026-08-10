@@ -1,7 +1,7 @@
 from fractions import Fraction
 from functools import lru_cache
 
-DIGITS = "123"
+DIGITS = "123456789"
 
 
 # ============================================================
