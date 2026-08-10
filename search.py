@@ -117,3 +117,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+print()
+print("Test values:")
+print("1/2 exists:", Fraction(1, 2) in results)
+print("1/3 exists:", Fraction(1, 3) in results)
