@@ -1,21 +1,146 @@
 from fractions import Fraction
 from functools import lru_cache
 
-DIGITS = "123456789"
+DIGITS = "12345"
 
 
 # ============================================================
-# ① 従来方式：区間から「作れる全ての値」を求める
+# Exact integer nth root
+# ============================================================
+
+def integer_nth_root(n, exponent):
+    """
+    Return x if x^exponent == n.
+    Otherwise return None.
+
+    n must be a non-negative integer.
+    """
+
+    if n < 0:
+        return None
+
+    if exponent <= 0:
+        return None
+
+    if n == 0:
+        return 0
+
+    if n == 1:
+        return 1
+
+    # Binary search
+    low = 0
+    high = n
+
+    while low <= high:
+
+        mid = (low + high) // 2
+        value = mid ** exponent
+
+        if value == n:
+            return mid
+
+        if value < n:
+            low = mid + 1
+
+        else:
+            high = mid - 1
+
+    return None
+
+
+# ============================================================
+# Exact rational nth root
+# ============================================================
+
+def rational_nth_root(value, exponent):
+    """
+    Return the exact rational x satisfying
+
+        x^exponent = value
+
+    if such a rational x exists.
+
+    Otherwise return None.
+
+    Examples:
+
+        rational_nth_root(Fraction(243, 1024), 5)
+        -> Fraction(3, 4)
+
+        rational_nth_root(Fraction(2), 2)
+        -> None
+    """
+
+    if exponent <= 0:
+        return None
+
+    numerator = value.numerator
+    denominator = value.denominator
+
+    # --------------------------------------------------------
+    # Positive / zero
+    # --------------------------------------------------------
+
+    if numerator >= 0:
+
+        root_num = integer_nth_root(
+            numerator,
+            exponent
+        )
+
+        root_den = integer_nth_root(
+            denominator,
+            exponent
+        )
+
+        if root_num is None or root_den is None:
+            return None
+
+        return Fraction(root_num, root_den)
+
+    # --------------------------------------------------------
+    # Negative value
+    #
+    # Even root of a negative number is not rational.
+    # Odd root can be negative.
+    # --------------------------------------------------------
+
+    if exponent % 2 == 0:
+        return None
+
+    root_num = integer_nth_root(
+        -numerator,
+        exponent
+    )
+
+    root_den = integer_nth_root(
+        denominator,
+        exponent
+    )
+
+    if root_num is None or root_den is None:
+        return None
+
+    return Fraction(
+        -root_num,
+        root_den
+    )
+
+
+# ============================================================
+# ① Full DP
 # ============================================================
 
 @lru_cache(maxsize=None)
 def generate_values(i, j):
+
     result = {}
 
-    # 連結
+    # Concatenation
     result[Fraction(int(DIGITS[i:j]))] = DIGITS[i:j]
 
-    # 区間を分割
+    # Split
     for k in range(i + 1, j):
 
         left = generate_values(i, k)
@@ -26,141 +151,198 @@ def generate_values(i, j):
 
                 # +
                 value = a + b
+
                 if value not in result:
-                    result[value] = f"({expr_a}+{expr_b})"
+                    result[value] = (
+                        f"({expr_a}+{expr_b})"
+                    )
 
                 # -
                 value = a - b
+
                 if value not in result:
-                    result[value] = f"({expr_a}-{expr_b})"
+                    result[value] = (
+                        f"({expr_a}-{expr_b})"
+                    )
 
                 # *
                 value = a * b
+
                 if value not in result:
-                    result[value] = f"({expr_a}*{expr_b})"
+                    result[value] = (
+                        f"({expr_a}*{expr_b})"
+                    )
 
                 # /
                 if b != 0:
-                    value = a / b
-                    if value not in result:
-                        result[value] = f"({expr_a}/{expr_b})"
 
-                # ^（今回は整数指数のみ）
+                    value = a / b
+
+                    if value not in result:
+                        result[value] = (
+                            f"({expr_a}/{expr_b})"
+                        )
+
+                # ^
                 if (
                     b.denominator == 1
                     and 0 <= b.numerator <= 10
                     and not (a == 0 and b == 0)
                 ):
-                    value = a ** b.numerator
+
+                    exponent = b.numerator
+
+                    value = a ** exponent
 
                     if value not in result:
-                        result[value] = f"({expr_a}^{expr_b})"
+                        result[value] = (
+                            f"({expr_a}^{expr_b})"
+                        )
 
     return result
 
 
 # ============================================================
-# ② 新方式：target を指定して逆向きに探索
+# ② Reverse search
 # ============================================================
 
 @lru_cache(maxsize=None)
 def can_make(i, j, target):
     """
-    DIGITS[i:j] から target を作れるか？
+    Can DIGITS[i:j] make target?
 
-    作れる → 式
-    作れない → None
+    Returns an expression or None.
     """
 
-    # 連結そのもの
+    # --------------------------------------------------------
+    # Concatenation
+    # --------------------------------------------------------
+
     if Fraction(int(DIGITS[i:j])) == target:
         return DIGITS[i:j]
 
-    # 1桁なら終了
+    # Single digit
     if j - i == 1:
         return None
 
-    # 全ての分割
+    # --------------------------------------------------------
+    # Every possible top-level split
+    # --------------------------------------------------------
+
     for k in range(i + 1, j):
 
-        # ----------------------------------------------------
-        # A + B = target
-        # B = target - A
-        # ----------------------------------------------------
+        # ====================================================
+        # LEFT SIDE VALUES
+        # ====================================================
 
         left_values = generate_values(i, k)
 
         for a, expr_a in left_values.items():
 
+            # ------------------------------------------------
+            # Addition
+            #
+            # A + B = target
+            # B = target - A
+            # ------------------------------------------------
+
             b = target - a
 
-            expr_b = can_make(k, j, b)
+            expr_b = can_make(
+                k,
+                j,
+                b
+            )
 
             if expr_b is not None:
-                return f"({expr_a}+{expr_b})"
 
-        # ----------------------------------------------------
-        # A - B = target
-        # B = A - target
-        # ----------------------------------------------------
+                return (
+                    f"({expr_a}+{expr_b})"
+                )
 
-        for a, expr_a in left_values.items():
+            # ------------------------------------------------
+            # Subtraction
+            #
+            # A - B = target
+            # B = A - target
+            # ------------------------------------------------
 
             b = a - target
 
-            expr_b = can_make(k, j, b)
+            expr_b = can_make(
+                k,
+                j,
+                b
+            )
 
             if expr_b is not None:
-                return f"({expr_a}-{expr_b})"
 
-        # ----------------------------------------------------
-        # A * B = target
-        # B = target / A
-        # ----------------------------------------------------
+                return (
+                    f"({expr_a}-{expr_b})"
+                )
 
-        for a, expr_a in left_values.items():
+            # ------------------------------------------------
+            # Multiplication
+            #
+            # A * B = target
+            # B = target / A
+            # ------------------------------------------------
 
-            if a == 0:
-                continue
+            if a != 0:
 
-            b = target / a
+                b = target / a
 
-            expr_b = can_make(k, j, b)
+                expr_b = can_make(
+                    k,
+                    j,
+                    b
+                )
 
-            if expr_b is not None:
-                return f"({expr_a}*{expr_b})"
+                if expr_b is not None:
 
-        # ----------------------------------------------------
-        # A / B = target
-        # B = A / target
-        # ----------------------------------------------------
+                    return (
+                        f"({expr_a}*{expr_b})"
+                    )
 
-        if target != 0:
+            # ------------------------------------------------
+            # Division
+            #
+            # A / B = target
+            # B = A / target
+            # ------------------------------------------------
 
-            for a, expr_a in left_values.items():
+            if target != 0:
 
                 b = a / target
 
-                if b == 0:
-                    continue
+                if b != 0:
 
-                expr_b = can_make(k, j, b)
+                    expr_b = can_make(
+                        k,
+                        j,
+                        b
+                    )
 
-                if expr_b is not None:
-                    return f"({expr_a}/{expr_b})"
+                    if expr_b is not None:
 
-        # ----------------------------------------------------
-        # A ^ B = target
-        #
-        # 今回は簡単化のため、
-        # 整数指数だけを扱う。
-        # ----------------------------------------------------
+                        return (
+                            f"({expr_a}/{expr_b})"
+                        )
 
-        if target != 0:
+            # ------------------------------------------------
+            # Exponentiation
+            #
+            # A^B = target
+            #
+            # We know B must be an integer in this stage.
+            #
+            # Instead of guessing A from -100..100,
+            # calculate the exact rational root.
+            # ------------------------------------------------
 
             for exponent in range(0, 11):
 
-                # target = A^exponent
+                # A^0 = 1
                 if exponent == 0:
 
                     if target != 1:
@@ -170,51 +352,57 @@ def can_make(i, j, target):
 
                 else:
 
-                    # target の整数指数根を探す
-                    base = None
-
-                    for candidate in range(-100, 101):
-
-                        if Fraction(candidate) ** exponent == target:
-                            base = Fraction(candidate)
-                            break
+                    base = rational_nth_root(
+                        target,
+                        exponent
+                    )
 
                     if base is None:
                         continue
 
-                expr_a = can_make(i, k, base)
+                # Can the LEFT interval make the base?
+                expr_base = can_make(
+                    i,
+                    k,
+                    base
+                )
 
-                if expr_a is None:
+                if expr_base is None:
                     continue
 
-                expr_b = can_make(
+                # Can the RIGHT interval make the exponent?
+                expr_exponent = can_make(
                     k,
                     j,
                     Fraction(exponent)
                 )
 
-                if expr_b is not None:
-                    return f"({expr_a}^{expr_b})"
+                if expr_exponent is not None:
+
+                    return (
+                        f"({expr_base}^{expr_exponent})"
+                    )
 
     return None
 
 
 # ============================================================
-# ③ 比較テスト
+# ③ Validation
 # ============================================================
 
 def main():
 
-    print("========================================")
-    print("STAGE 9 - SMALL VALIDATION")
-    print("========================================")
-
+    print("# STAGE 9 - SMALL VALIDATION")
     print()
+
     print("Digits:", DIGITS)
     print()
 
-    # 全値DP
-    all_values = generate_values(0, len(DIGITS))
+    # Full DP
+    all_values = generate_values(
+        0,
+        len(DIGITS)
+    )
 
     print(
         "Number of values from full DP:",
@@ -222,18 +410,12 @@ def main():
     )
 
     print()
-
-    # --------------------------------------------------------
-    # 全値DPで得られた「全ての値」が、
-    # 逆向き探索でも作れるか確認する
-    # --------------------------------------------------------
-
     print("Checking reverse search...")
     print()
 
     failures = []
 
-    for index, value in enumerate(all_values):
+    for value in all_values:
 
         expression = can_make(
             0,
@@ -250,56 +432,33 @@ def main():
                 value
             )
 
-            # 最初の数個だけ表示
-            if len(failures) >= 10:
+            if len(failures) >= 20:
                 break
 
     print()
     print("========================================")
-    print("VALIDATION RESULT")
-    print("========================================")
 
     if not failures:
 
-        print()
-        print("SUCCESS!")
-        print()
-        print(
-            "Every value generated by the full DP "
-            "was also found by reverse search."
-        )
-
+        print("VALIDATION SUCCESS!")
         print()
         print(
-            "The two methods agree for DIGITS = 123."
+            "The full DP and reverse search "
+            "agree for DIGITS =",
+            DIGITS
         )
 
     else:
 
-        print()
-        print(
-            "VALIDATION FAILED."
-        )
-
+        print("VALIDATION FAILED.")
         print(
             "Number of failures:",
             len(failures)
         )
 
     print()
-
-    # --------------------------------------------------------
-    # 10958はまだ探索しない
-    # --------------------------------------------------------
-
     print("10958 search:")
     print("NOT RUN YET")
-
-    print()
-    print(
-        "Stage 9 first validates the algorithm "
-        "on a tiny search space."
-    )
 
 
 if __name__ == "__main__":
