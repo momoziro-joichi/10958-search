@@ -1,25 +1,21 @@
 from fractions import Fraction
 from functools import lru_cache
 
-DIGITS = "12345"
-
 
 # ============================================================
-# Exact integer nth root
+# Exact rational arithmetic
 # ============================================================
 
-def integer_nth_root(n, exponent):
+def integer_nth_root_exact(n, exponent):
     """
     Return x if x^exponent == n.
     Otherwise return None.
-
-    n must be a non-negative integer.
     """
 
-    if n < 0:
+    if exponent <= 0:
         return None
 
-    if exponent <= 0:
+    if n < 0:
         return None
 
     if n == 0:
@@ -28,48 +24,28 @@ def integer_nth_root(n, exponent):
     if n == 1:
         return 1
 
-    # Binary search
-    low = 0
-    high = n
+    lo = 0
+    hi = n
 
-    while low <= high:
-
-        mid = (low + high) // 2
+    while lo <= hi:
+        mid = (lo + hi) // 2
         value = mid ** exponent
 
         if value == n:
             return mid
 
         if value < n:
-            low = mid + 1
-
+            lo = mid + 1
         else:
-            high = mid - 1
+            hi = mid - 1
 
     return None
 
 
-# ============================================================
-# Exact rational nth root
-# ============================================================
-
-def rational_nth_root(value, exponent):
+def rational_nth_root_exact(value, exponent):
     """
-    Return the exact rational x satisfying
-
-        x^exponent = value
-
-    if such a rational x exists.
-
+    Return x if x is rational and x^exponent == value.
     Otherwise return None.
-
-    Examples:
-
-        rational_nth_root(Fraction(243, 1024), 5)
-        -> Fraction(3, 4)
-
-        rational_nth_root(Fraction(2), 2)
-        -> None
     """
 
     if exponent <= 0:
@@ -78,18 +54,15 @@ def rational_nth_root(value, exponent):
     numerator = value.numerator
     denominator = value.denominator
 
-    # --------------------------------------------------------
     # Positive / zero
-    # --------------------------------------------------------
-
     if numerator >= 0:
 
-        root_num = integer_nth_root(
+        root_num = integer_nth_root_exact(
             numerator,
             exponent
         )
 
-        root_den = integer_nth_root(
+        root_den = integer_nth_root_exact(
             denominator,
             exponent
         )
@@ -99,22 +72,16 @@ def rational_nth_root(value, exponent):
 
         return Fraction(root_num, root_den)
 
-    # --------------------------------------------------------
     # Negative value
-    #
-    # Even root of a negative number is not rational.
-    # Odd root can be negative.
-    # --------------------------------------------------------
-
     if exponent % 2 == 0:
         return None
 
-    root_num = integer_nth_root(
+    root_num = integer_nth_root_exact(
         -numerator,
         exponent
     )
 
-    root_den = integer_nth_root(
+    root_den = integer_nth_root_exact(
         denominator,
         exponent
     )
@@ -122,175 +89,125 @@ def rational_nth_root(value, exponent):
     if root_num is None or root_den is None:
         return None
 
-    return Fraction(
-        -root_num,
-        root_den
-    )
+    return Fraction(-root_num, root_den)
 
 
 # ============================================================
-# ① Full DP
+# Full DP
 # ============================================================
 
-@lru_cache(maxsize=None)
-def generate_values(i, j):
+def make_solver(digits):
+    """
+    Create a solver for one fixed digit string.
+    """
 
-    result = {}
+    n = len(digits)
 
-    # Concatenation
-    result[Fraction(int(DIGITS[i:j]))] = DIGITS[i:j]
+    @lru_cache(maxsize=None)
+    def full_dp(i, j):
+        """
+        All exact rational values obtainable from digits[i:j].
+        """
 
-    # Split
-    for k in range(i + 1, j):
+        result = {}
 
-        left = generate_values(i, k)
-        right = generate_values(k, j)
+        # Concatenation
+        value = Fraction(int(digits[i:j]))
+        result[value] = digits[i:j]
 
-        for a, expr_a in left.items():
-            for b, expr_b in right.items():
+        # Every binary split
+        for k in range(i + 1, j):
 
-                # +
-                value = a + b
+            left = full_dp(i, k)
+            right = full_dp(k, j)
 
-                if value not in result:
-                    result[value] = (
-                        f"({expr_a}+{expr_b})"
-                    )
+            for a, expr_a in left.items():
+                for b, expr_b in right.items():
 
-                # -
-                value = a - b
-
-                if value not in result:
-                    result[value] = (
-                        f"({expr_a}-{expr_b})"
-                    )
-
-                # *
-                value = a * b
-
-                if value not in result:
-                    result[value] = (
-                        f"({expr_a}*{expr_b})"
-                    )
-
-                # /
-                if b != 0:
-
-                    value = a / b
+                    # Addition
+                    value = a + b
 
                     if value not in result:
                         result[value] = (
-                            f"({expr_a}/{expr_b})"
+                            f"({expr_a}+{expr_b})"
                         )
 
-                # ^
-                if (
-                    b.denominator == 1
-                    and 0 <= b.numerator <= 10
-                    and not (a == 0 and b == 0)
-                ):
-
-                    exponent = b.numerator
-
-                    value = a ** exponent
+                    # Subtraction
+                    value = a - b
 
                     if value not in result:
                         result[value] = (
-                            f"({expr_a}^{expr_b})"
+                            f"({expr_a}-{expr_b})"
                         )
 
-    return result
+                    # Multiplication
+                    value = a * b
 
+                    if value not in result:
+                        result[value] = (
+                            f"({expr_a}*{expr_b})"
+                        )
 
-# ============================================================
-# ② Reverse search
-# ============================================================
+                    # Division
+                    if b != 0:
 
-@lru_cache(maxsize=None)
-def can_make(i, j, target):
-    """
-    Can DIGITS[i:j] make target?
+                        value = a / b
 
-    Returns an expression or None.
-    """
+                        if value not in result:
+                            result[value] = (
+                                f"({expr_a}/{expr_b})"
+                            )
 
-    # --------------------------------------------------------
-    # Concatenation
-    # --------------------------------------------------------
+                    # Integer exponentiation
+                    if (
+                        b.denominator == 1
+                        and 0 <= b.numerator <= 20
+                        and not (a == 0 and b == 0)
+                    ):
 
-    if Fraction(int(DIGITS[i:j])) == target:
-        return DIGITS[i:j]
+                        exponent = b.numerator
+                        value = a ** exponent
 
-    # Single digit
-    if j - i == 1:
-        return None
+                        if value not in result:
+                            result[value] = (
+                                f"({expr_a}^{expr_b})"
+                            )
 
-    # --------------------------------------------------------
-    # Every possible top-level split
-    # --------------------------------------------------------
+        return result
 
-    for k in range(i + 1, j):
+    # ========================================================
+    # Target-directed search
+    # ========================================================
 
-        # ====================================================
-        # LEFT SIDE VALUES
-        # ====================================================
+    @lru_cache(maxsize=None)
+    def can_make(i, j, target):
+        """
+        Can digits[i:j] produce target?
 
-        left_values = generate_values(i, k)
+        Returns an expression or None.
+        """
 
-        for a, expr_a in left_values.items():
+        # Concatenation
+        if Fraction(int(digits[i:j])) == target:
+            return digits[i:j]
 
-            # ------------------------------------------------
-            # Addition
-            #
-            # A + B = target
-            # B = target - A
-            # ------------------------------------------------
+        # One digit
+        if j - i == 1:
+            return None
 
-            b = target - a
+        # Every possible top-level split
+        for k in range(i + 1, j):
 
-            expr_b = can_make(
-                k,
-                j,
-                b
-            )
+            left = full_dp(i, k)
 
-            if expr_b is not None:
+            for a, expr_a in left.items():
 
-                return (
-                    f"({expr_a}+{expr_b})"
-                )
+                # ------------------------------------------------
+                # A + B = T
+                # B = T - A
+                # ------------------------------------------------
 
-            # ------------------------------------------------
-            # Subtraction
-            #
-            # A - B = target
-            # B = A - target
-            # ------------------------------------------------
-
-            b = a - target
-
-            expr_b = can_make(
-                k,
-                j,
-                b
-            )
-
-            if expr_b is not None:
-
-                return (
-                    f"({expr_a}-{expr_b})"
-                )
-
-            # ------------------------------------------------
-            # Multiplication
-            #
-            # A * B = target
-            # B = target / A
-            # ------------------------------------------------
-
-            if a != 0:
-
-                b = target / a
+                b = target - a
 
                 expr_b = can_make(
                     k,
@@ -299,23 +216,32 @@ def can_make(i, j, target):
                 )
 
                 if expr_b is not None:
+                    return f"({expr_a}+{expr_b})"
 
-                    return (
-                        f"({expr_a}*{expr_b})"
-                    )
+                # ------------------------------------------------
+                # A - B = T
+                # B = A - T
+                # ------------------------------------------------
 
-            # ------------------------------------------------
-            # Division
-            #
-            # A / B = target
-            # B = A / target
-            # ------------------------------------------------
+                b = a - target
 
-            if target != 0:
+                expr_b = can_make(
+                    k,
+                    j,
+                    b
+                )
 
-                b = a / target
+                if expr_b is not None:
+                    return f"({expr_a}-{expr_b})"
 
-                if b != 0:
+                # ------------------------------------------------
+                # A * B = T
+                # B = T / A
+                # ------------------------------------------------
+
+                if a != 0:
+
+                    b = target / a
 
                     expr_b = can_make(
                         k,
@@ -324,141 +250,187 @@ def can_make(i, j, target):
                     )
 
                     if expr_b is not None:
+                        return f"({expr_a}*{expr_b})"
 
-                        return (
-                            f"({expr_a}/{expr_b})"
+                # ------------------------------------------------
+                # A / B = T
+                # B = A / T
+                # ------------------------------------------------
+
+                if target != 0:
+
+                    b = a / target
+
+                    if b != 0:
+
+                        expr_b = can_make(
+                            k,
+                            j,
+                            b
                         )
 
-            # ------------------------------------------------
-            # Exponentiation
-            #
-            # A^B = target
-            #
-            # We know B must be an integer in this stage.
-            #
-            # Instead of guessing A from -100..100,
-            # calculate the exact rational root.
-            # ------------------------------------------------
+                        if expr_b is not None:
+                            return f"({expr_a}/{expr_b})"
 
-            for exponent in range(0, 11):
+                # ------------------------------------------------
+                # A ^ B = T
+                #
+                # At this stage B is an integer because the
+                # forward DP only permits integer exponents.
+                #
+                # Find exact rational roots instead of guessing
+                # possible bases.
+                # ------------------------------------------------
 
-                # A^0 = 1
-                if exponent == 0:
+                for exponent in range(0, 21):
 
-                    if target != 1:
-                        continue
+                    # A^0 = 1
+                    if exponent == 0:
 
-                    base = Fraction(1)
+                        if target != 1:
+                            continue
 
-                else:
+                        base = Fraction(1)
 
-                    base = rational_nth_root(
-                        target,
-                        exponent
+                    else:
+
+                        base = rational_nth_root_exact(
+                            target,
+                            exponent
+                        )
+
+                        if base is None:
+                            continue
+
+                    expr_base = can_make(
+                        i,
+                        k,
+                        base
                     )
 
-                    if base is None:
+                    if expr_base is None:
                         continue
 
-                # Can the LEFT interval make the base?
-                expr_base = can_make(
-                    i,
-                    k,
-                    base
-                )
-
-                if expr_base is None:
-                    continue
-
-                # Can the RIGHT interval make the exponent?
-                expr_exponent = can_make(
-                    k,
-                    j,
-                    Fraction(exponent)
-                )
-
-                if expr_exponent is not None:
-
-                    return (
-                        f"({expr_base}^{expr_exponent})"
+                    expr_exponent = can_make(
+                        k,
+                        j,
+                        Fraction(exponent)
                     )
 
-    return None
+                    if expr_exponent is not None:
+                        return (
+                            f"({expr_base}^{expr_exponent})"
+                        )
+
+        return None
+
+    return full_dp, can_make
 
 
 # ============================================================
-# ③ Validation
+# Validation
 # ============================================================
 
-def main():
-
-    print("# STAGE 9 - SMALL VALIDATION")
+def validate(digits):
     print()
+    print("========================================")
+    print("VALIDATION")
+    print("Digits:", digits)
+    print("========================================")
 
-    print("Digits:", DIGITS)
-    print()
+    full_dp, can_make = make_solver(digits)
 
-    # Full DP
-    all_values = generate_values(
+    all_values = full_dp(
         0,
-        len(DIGITS)
+        len(digits)
     )
 
     print(
-        "Number of values from full DP:",
+        "Full DP values:",
         len(all_values)
     )
 
-    print()
-    print("Checking reverse search...")
-    print()
-
     failures = []
+
+    print("Checking reverse search...")
 
     for value in all_values:
 
         expression = can_make(
             0,
-            len(DIGITS),
+            len(digits),
             value
         )
 
         if expression is None:
-
             failures.append(value)
 
+    print()
+
+    if failures:
+
+        print("VALIDATION FAILED")
+        print("Failures:", len(failures))
+
+        for value in failures[:20]:
+            print("FAILED:", value)
+
+        return False
+
+    print("VALIDATION SUCCESS")
+    print(
+        "Full DP and target search agree for",
+        digits
+    )
+
+    return True
+
+
+# ============================================================
+# Main
+# ============================================================
+
+def main():
+
+    print("========================================")
+    print("10958 SEARCH PROJECT")
+    print("STAGE 9A - ALGORITHM VALIDATION")
+    print("========================================")
+
+    # Small → larger
+    test_cases = [
+        "123",
+        "1234",
+        "12345",
+    ]
+
+    for digits in test_cases:
+
+        success = validate(digits)
+
+        if not success:
+
+            print()
+            print("STOP.")
             print(
-                "FAILED:",
-                value
+                "The algorithm must be fixed before "
+                "moving to larger digit strings."
             )
 
-            if len(failures) >= 20:
-                break
+            return
 
     print()
     print("========================================")
-
-    if not failures:
-
-        print("VALIDATION SUCCESS!")
-        print()
-        print(
-            "The full DP and reverse search "
-            "agree for DIGITS =",
-            DIGITS
-        )
-
-    else:
-
-        print("VALIDATION FAILED.")
-        print(
-            "Number of failures:",
-            len(failures)
-        )
+    print("ALL VALIDATION TESTS PASSED")
+    print("========================================")
 
     print()
-    print("10958 search:")
-    print("NOT RUN YET")
+    print("10958 search: NOT RUN YET")
+    print()
+    print(
+        "Next stage will optimize the target-directed "
+        "search before attempting 123456789."
+    )
 
 
 if __name__ == "__main__":
