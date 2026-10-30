@@ -3,13 +3,14 @@ Exact search for 10958 using 123456789
 
 ## Current status — bounded search completed
 
-On 2026-10-30, all eight top-level partitions of `123456789 -> 10958`
-completed with **no expression found under the integer-exponent bound -1000..1000**.
-The sum of partition worker wall times was 62.662792 seconds; the largest
-observed worker RSS was 171,492 KiB. These are single-run measurements.
+On 2026-10-31, all eight top-level partitions of `123456789 -> 10958`
+completed with **no expression found under the integer-exponent bound -2000..2000**.
+The sum of partition worker wall times was 146.637999 seconds; the largest
+observed worker RSS was 202,888 KiB. These are single-run measurements.
 This does **not** establish impossibility with unrestricted exponents.
-The active `checkpoint_10958.json` records cap 1000 and requires that CLI option
-when resuming. The previous schema-2 cap-1000 result is archived in
+The active `checkpoint_10958.json` records cap 2000 and requires that CLI option
+when resuming. The previous cap-1000 result is archived unchanged in
+`checkpoint_10958_cap1000_before_verifier.json`. The previous schema-2 cap-1000 result is archived in
 `checkpoint_10958_cap1000_schema2.json`. Historical cap-200 results are in `checkpoint_10958_cap200.json`; earlier
 schema-1 cap-100 checkpoints are retained as historical evidence only.
 See `PROGRESS.md` for test results, exact limits, and measurements.
@@ -176,7 +177,7 @@ Exponentiation is implemented in the current Stage 9A code; see the current stat
 ## Resumable partitioned search
 
 ```bash
-python resume_search.py --max-abs-exponent 1000 --seconds 180 --per-split-seconds 60 --memory-mib 768 --checkpoint checkpoint_10958.json
+python resume_search.py --max-abs-exponent 2000 --seconds 240 --per-split-seconds 60 --memory-mib 768 --checkpoint checkpoint_10958.json
 ```
 
 The top-level operator splits `123456789` at one of eight positions. Each
@@ -189,7 +190,7 @@ The total time budget controls worker allocation; process startup and cleanup
 can add a small amount of overhead. No work is started after that deadline.
 
 Checkpoints bind the digit string, exact target and SHA-256 of the solver and
-both runners. If any of those change, use a new checkpoint path and revalidate;
+both runners and the independent witness verifier. If any of those change, use a new checkpoint path and revalidate;
 a mismatch is rejected. Do not manually change completion statuses or hashes.
 
 Short intervals (up to four digits) now use exact precomputed table lookup.
@@ -287,7 +288,31 @@ The runner passes a canonical Fraction target string to prevent equivalent
 spellings such as 14/2 and 7 from being treated as different record targets.
 
 These checks detect malformed records, not forged mathematical evidence. A
-structurally valid negative record is still trusted, and found expressions
-currently receive presence/digit-order checks in the checkpoint loader; exact
-independent witness evaluation remains in the tests. Budgeted production
-witness verification is the next task. Do not edit checkpoint contents by hand.
+structurally valid negative record is still trusted. Do not edit checkpoint
+contents by hand.
+
+### Independent production witness verification
+
+`verify_expression.py` parses the fully parenthesized solver grammar directly,
+without importing search/DP/root logic, using Python eval, or floating-point
+arithmetic. It checks digit order/count, syntax, all integer exponent bounds,
+undefined arithmetic, the requested outer split, and exact Fraction equality.
+Leading-zero concatenations are supported. It shares Fraction arithmetic with
+the solver, so it is not an independent rational-number implementation.
+
+The worker validates every found expression before reporting success, within
+its existing wall-time and virtual-memory budget. Invalid witnesses return
+worker_error, never a bounded absence. A validation timeout or memory limit is
+an incomplete result. Saved found witnesses are re-evaluated in a budgeted
+worker before resume can return found; failure leaves the checkpoint unchanged.
+The verifier is included in the source fingerprint, invalidating earlier files.
+
+Verify a supplied expression without running the search (Linux):
+
+```bash
+python run_search.py --digits 23 --target 8 --verify-expression '(2^3)' --seconds 5 --memory-mib 128
+```
+
+Expected: found. Replacing the expression with `(2+3)` returns worker_error and
+exit status 2. On the original unverified path that wrong witness could have
+been accepted as found. Returned expressions use `^`, not Python's `**` syntax.

@@ -1,115 +1,115 @@
 {
   "identity": {
     "digits": "123456789",
-    "max_abs_exponent": 1000,
+    "max_abs_exponent": 2000,
     "schema": 3,
-    "solver_sha256": "ba08cff419f62f350208be008ba4a2af19397f94aed7592d14abcd148688d335",
+    "solver_sha256": "eaf83d5b315df5d6e2b3e3cf2879ae443a00b2ab4ea0be4ba9a9db73b168b933",
     "target": "10958"
   },
   "partitions": {
     "1": {
       "attempts": 1,
       "digits": "123456789",
-      "elapsed_seconds": 17.486843,
+      "elapsed_seconds": 38.486115,
       "expression": null,
-      "max_abs_exponent": 1000,
-      "max_rss_kib": 42320,
+      "max_abs_exponent": 2000,
+      "max_rss_kib": 44276,
       "memory_budget_mib": 768,
       "root_split": 1,
       "status": "not_found_bounded",
       "target": "10958",
-      "time_budget_seconds": 30.0
+      "time_budget_seconds": 45.0
     },
     "2": {
       "attempts": 1,
       "digits": "123456789",
-      "elapsed_seconds": 14.503091,
+      "elapsed_seconds": 42.44085,
       "expression": null,
-      "max_abs_exponent": 1000,
-      "max_rss_kib": 171492,
+      "max_abs_exponent": 2000,
+      "max_rss_kib": 202888,
       "memory_budget_mib": 768,
       "root_split": 2,
       "status": "not_found_bounded",
       "target": "10958",
-      "time_budget_seconds": 30.0
+      "time_budget_seconds": 45.0
     },
     "3": {
       "attempts": 1,
       "digits": "123456789",
-      "elapsed_seconds": 5.694111,
+      "elapsed_seconds": 15.288573,
       "expression": null,
-      "max_abs_exponent": 1000,
-      "max_rss_kib": 31988,
+      "max_abs_exponent": 2000,
+      "max_rss_kib": 32032,
       "memory_budget_mib": 768,
       "root_split": 3,
       "status": "not_found_bounded",
       "target": "10958",
-      "time_budget_seconds": 30.0
+      "time_budget_seconds": 45.0
     },
     "4": {
       "attempts": 1,
       "digits": "123456789",
-      "elapsed_seconds": 4.266853,
+      "elapsed_seconds": 13.837256,
       "expression": null,
-      "max_abs_exponent": 1000,
-      "max_rss_kib": 17744,
+      "max_abs_exponent": 2000,
+      "max_rss_kib": 17824,
       "memory_budget_mib": 768,
       "root_split": 4,
       "status": "not_found_bounded",
       "target": "10958",
-      "time_budget_seconds": 30.0
+      "time_budget_seconds": 45.0
     },
     "5": {
       "attempts": 1,
       "digits": "123456789",
-      "elapsed_seconds": 0.061735,
+      "elapsed_seconds": 0.080848,
       "expression": null,
-      "max_abs_exponent": 1000,
-      "max_rss_kib": 14524,
+      "max_abs_exponent": 2000,
+      "max_rss_kib": 14640,
       "memory_budget_mib": 768,
       "root_split": 5,
       "status": "not_found_bounded",
       "target": "10958",
-      "time_budget_seconds": 30.0
+      "time_budget_seconds": 45.0
     },
     "6": {
       "attempts": 1,
       "digits": "123456789",
-      "elapsed_seconds": 0.460767,
+      "elapsed_seconds": 0.548887,
       "expression": null,
-      "max_abs_exponent": 1000,
-      "max_rss_kib": 23152,
+      "max_abs_exponent": 2000,
+      "max_rss_kib": 24408,
       "memory_budget_mib": 768,
       "root_split": 6,
       "status": "not_found_bounded",
       "target": "10958",
-      "time_budget_seconds": 30.0
+      "time_budget_seconds": 45.0
     },
     "7": {
       "attempts": 1,
       "digits": "123456789",
-      "elapsed_seconds": 6.38821,
+      "elapsed_seconds": 7.454266,
       "expression": null,
-      "max_abs_exponent": 1000,
-      "max_rss_kib": 94696,
+      "max_abs_exponent": 2000,
+      "max_rss_kib": 111756,
       "memory_budget_mib": 768,
       "root_split": 7,
       "status": "not_found_bounded",
       "target": "10958",
-      "time_budget_seconds": 30.0
+      "time_budget_seconds": 45.0
     },
     "8": {
       "attempts": 1,
       "digits": "123456789",
-      "elapsed_seconds": 13.801182,
+      "elapsed_seconds": 28.501204,
       "expression": null,
-      "max_abs_exponent": 1000,
-      "max_rss_kib": 38084,
+      "max_abs_exponent": 2000,
+      "max_rss_kib": 38980,
       "memory_budget_mib": 768,
       "root_split": 8,
       "status": "not_found_bounded",
       "target": "10958",
-      "time_budget_seconds": 30.0
+      "time_budget_seconds": 45.0
     }
   },
   "status": "not_found_bounded"

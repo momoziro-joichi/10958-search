@@ -415,3 +415,61 @@ subprocess launch guard confirmed subsequent resume skips all eight partitions;
 the checkpoint stayed byte-identical. This is bounded absence only, not proof
 for unrestricted integer exponents. Total nine-digit allocation was 180s, below
 the 600s run limit; no paid compute used.
+
+
+## 2026-10-31 — independent production witness verification
+
+Starting commit: 641e1c3f40a893b0c1a8bda85054aebe05fabfaf. PR #1 is still
+open; main remains c036d134e49d582619fe08761165f3f9b550d828.
+
+Added verify_expression.py: a direct parser for digit literals and fully
+parenthesized binary operations, with exact Fraction evaluation. It shares
+no search/root/DP routines and uses neither eval nor floating-point arithmetic.
+It checks digit order/count, syntax, each exponent's integer/cap constraints,
+division/zero-power exclusions, the requested root split and final target.
+
+Every newly found expression is verified inside the existing bounded worker;
+verification errors are worker_error, not not_found_bounded. Verification-only
+CLI mode reuses the same timeout and RLIMIT_AS enforcement. Saved found results
+are re-evaluated using that mode before resume returns success. Failed resume
+verification preserves the saved file. The source fingerprint now also covers
+the verifier module, so previous source versions are explicitly incompatible.
+
+New tests inject a wrong solver witness, alter a structurally valid saved
+witness's value, check independent evaluation against small forward witness
+sets, rational/negative bases, high exponent 2000, digit/syntax/cap violations,
+undefined arithmetic, and a real verification timeout. Focused 19-test run
+passed in 1.313s. Reproduce: python -m unittest -v test_verifier.
+
+Remaining limits: negative checkpoint flags are structurally checked rather
+than mathematically certified; Fraction is shared by both evaluators; unfinished
+partitions still restart. No unrestricted-exponent impossibility claim is made.
+
+Full verification: 34 tests passed in 93.932s (94.097123s including startup),
+peak child RSS 61,208KiB. Linux/CPython 3.12, one run, 180s timeout and
+768MiB RLIMIT_AS. Tests finished before the performance measurement.
+
+The cap-1000 checkpoint was rejected for source mismatch and archived unchanged
+as checkpoint_10958_cap1000_before_verifier.json. Expanded search uses a fresh
+checkpoint at cap 2000; no completion flags or source hashes were reused.
+
+```bash
+python resume_search.py --max-abs-exponent 2000 --seconds 240 --per-split-seconds 45 --memory-mib 768 --checkpoint checkpoint_10958.json
+```
+
+Total nine-digit search allocation is 240s, within the 600s limit. Each child
+has a 768MiB virtual-memory cap. No paid resources are used.
+
+Cap-2000 result: **all 8/8 partitions completed, not_found_bounded**.
+Sum of worker wall times 146.637999s; maximum child RSS 202,888KiB.
+All partitions required one attempt. Split 2 was the slowest at 42.440850s,
+close to the 45s per-partition allowance; split 1 took 38.486115s.
+This is one measurement, not a controlled benchmark against the prior run.
+Subsequent resume was checked with worker launching forbidden; all partitions
+were skipped and checkpoint bytes remained unchanged. No expression was found
+under integer exponents -2000..2000; unrestricted powers remain unresolved.
+
+Next: profile split 2 and the single-digit exponent path at cap 2000 before
+increasing the cap again. Avoid assuming that the same 45s partition budget
+will suffice for a larger domain. Retain the new completed checkpoint unless
+source changes invalidate it; never rewrite fingerprints to reuse old results.

@@ -16,7 +16,7 @@ from search import MAX_ABS_EXPONENT
 def identity(digits, target, max_abs_exponent=MAX_ABS_EXPONENT):
     root = Path(__file__).resolve().parent
     digest = hashlib.sha256()
-    for name in ("search.py", "run_search.py", "resume_search.py"):
+    for name in ("search.py", "run_search.py", "resume_search.py", "verify_expression.py"):
         digest.update(name.encode())
         digest.update((root / name).read_bytes())
     return {"schema": 3, "max_abs_exponent": max_abs_exponent, "digits": digits, "target": str(Fraction(target)),
@@ -134,6 +134,20 @@ def run(args):
         save(args.checkpoint, state)
         return state
     if state.get("status") == "found":
+        # Recheck saved witnesses in the same resource-limited worker. A
+        # checkpoint flag is not evidence that the expression is valid.
+        command = [sys.executable, str(Path(__file__).with_name("run_search.py")),
+                   "--digits", args.digits, "--target", expected["target"],
+                   "--max-abs-exponent", str(args.max_abs_exponent),
+                   "--seconds", str(args.seconds), "--memory-mib", str(args.memory_mib),
+                   "--verify-expression", state["expression"]]
+        checked = subprocess.run(command, capture_output=True, text=True)
+        try:
+            result = json.loads(checked.stdout)
+        except ValueError as error:
+            raise ValueError("Saved witness verification produced invalid output") from error
+        if checked.returncode or not isinstance(result, dict) or result.get("status") != "found":
+            raise ValueError("Saved witness verification failed or exceeded its budget")
         return state
     deadline = time.monotonic() + args.seconds
     splits = sorted(range(1, len(args.digits)), key=lambda k: (

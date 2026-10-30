@@ -15,12 +15,21 @@ def worker(args):
     resource.setrlimit(resource.RLIMIT_AS, (limit, limit))
     from fractions import Fraction
     from search import make_solver
+    from verify_expression import verify_expression
     try:
-        _, search = make_solver(args.digits, root_split=args.split,
-                                max_abs_exponent=args.max_abs_exponent)
-        expression = search(0, len(args.digits), Fraction(args.target))
+        expression = args.verify_expression
+        if expression is None:
+            _, search = make_solver(args.digits, root_split=args.split,
+                                    max_abs_exponent=args.max_abs_exponent)
+            expression = search(0, len(args.digits), Fraction(args.target))
+        if expression is not None:
+            verify_expression(expression, args.digits, args.target,
+                              args.max_abs_exponent, args.split)
         result = {"status": "found" if expression is not None else "not_found_bounded",
                   "expression": expression}
+    except (ValueError, RecursionError) as error:
+        result = {"status": "worker_error", "expression": None,
+                  "error": "Witness verification failed: " + str(error)}
     except MemoryError:
         result = {"status": "memory_limit", "expression": None}
     result["max_rss_kib"] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -35,6 +44,7 @@ def main():
     parser.add_argument("--memory-mib", type=int, default=512)
     parser.add_argument("--split", type=int, help="Only this top-level split (1-based)")
     parser.add_argument("--max-abs-exponent", type=int, default=MAX_ABS_EXPONENT)
+    parser.add_argument("--verify-expression", help="Verify this witness without searching")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.max_abs_exponent < 0:
@@ -61,6 +71,8 @@ def main():
                "--max-abs-exponent", str(args.max_abs_exponent)]
     if args.split is not None:
         command += ["--split", str(args.split)]
+    if args.verify_expression is not None:
+        command += ["--verify-expression", args.verify_expression]
     started = time.perf_counter()
     try:
         completed = subprocess.run(command, capture_output=True, text=True,
