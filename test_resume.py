@@ -59,10 +59,15 @@ class CheckpointTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             args = self.args(Path(directory) / "state.json")
             with patch("resume_search.subprocess.run") as execute:
-                execute.return_value.stdout = json.dumps({"status": "timeout"})
+                record = dict(status="timeout", digits="23", target="7", root_split=1,
+                              max_abs_exponent=100, expression=None,
+                              elapsed_seconds=1, time_budget_seconds=1, memory_budget_mib=128)
+                execute.return_value.stdout = json.dumps(record)
+                execute.return_value.returncode = 2
                 state = run(args)
                 self.assertEqual(state["status"], "incomplete")
-                execute.return_value.stdout = json.dumps({"status": "not_found_bounded"})
+                execute.return_value.stdout = json.dumps(dict(record, status="not_found_bounded"))
+                execute.return_value.returncode = 0
                 state = run(args)
                 self.assertEqual(state["status"], "not_found_bounded")
                 self.assertEqual(state["partitions"]["1"]["attempts"], 2)

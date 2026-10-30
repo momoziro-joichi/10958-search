@@ -5,11 +5,12 @@ Exact search for 10958 using 123456789
 
 On 2026-10-30, all eight top-level partitions of `123456789 -> 10958`
 completed with **no expression found under the integer-exponent bound -1000..1000**.
-The sum of partition worker wall times was 55.789549 seconds; the largest
-observed worker RSS was 171,380 KiB. These are single-run measurements.
+The sum of partition worker wall times was 62.662792 seconds; the largest
+observed worker RSS was 171,492 KiB. These are single-run measurements.
 This does **not** establish impossibility with unrestricted exponents.
 The active `checkpoint_10958.json` records cap 1000 and requires that CLI option
-when resuming. Cap-200 results are in `checkpoint_10958_cap200.json`; earlier
+when resuming. The previous schema-2 cap-1000 result is archived in
+`checkpoint_10958_cap1000_schema2.json`. Historical cap-200 results are in `checkpoint_10958_cap200.json`; earlier
 schema-1 cap-100 checkpoints are retained as historical evidence only.
 See `PROGRESS.md` for test results, exact limits, and measurements.
 
@@ -242,9 +243,9 @@ that cap to every exponent node, in forward DP and all reverse-search paths.
 A cap of zero still permits nonzero bases raised to zero; it does not disable
 exponentiation. Negative powers are permitted down to -N when the base is nonzero.
 
-Schema-2 checkpoints record the cap explicitly, as well as input and source
+Schema-3 checkpoints record the cap explicitly, as well as input and source
 fingerprints. A different cap or source version is rejected before any completed
-partition can be reused. Schema-1 checkpoints are historical records and cannot
+partition can be reused. Schema-1 and schema-2 checkpoints are historical records and cannot
 be resumed by this version. Use a fresh path when expanding the cap:
 
 ```bash
@@ -269,3 +270,24 @@ bound. Every witness is evaluated with Fraction and checked for digit order.
 The independent AST evaluator now accepts an explicit cap and checks every
 power node, even when the final value is small. These are correctness tests,
 not an extension of the completed nine-digit search domain.
+
+
+### Checkpoint content validation
+
+Schema 3 validates each partition's input, exponent cap, split number, attempt
+count, status, timing and memory fields before it can be skipped. Unknown or
+noncanonical split keys, duplicate JSON keys, missing fields, inconsistent
+aggregate completion, and contradictory expression/status records are rejected.
+An interruption after the last completed partition but before final aggregation
+is accepted and finalized without rerunning those partitions.
+
+Fresh worker output is checked before saving; malformed JSON or a status/exit
+code mismatch becomes a retryable worker_error, never a completed absence.
+The runner passes a canonical Fraction target string to prevent equivalent
+spellings such as 14/2 and 7 from being treated as different record targets.
+
+These checks detect malformed records, not forged mathematical evidence. A
+structurally valid negative record is still trusted, and found expressions
+currently receive presence/digit-order checks in the checkpoint loader; exact
+independent witness evaluation remains in the tests. Budgeted production
+witness verification is the next task. Do not edit checkpoint contents by hand.

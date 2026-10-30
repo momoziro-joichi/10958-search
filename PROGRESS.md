@@ -363,3 +363,55 @@ Full-suite verification after the evaluator change: **24 tests passed in
 78.795s**, 78.899774s including startup, peak child RSS 62,908KiB, with a
 180s timeout and 768MiB RLIMIT_AS. This includes all earlier regressions,
 CLI/timeout/resume tests, exhaustive small-space oracle and new high-cap tests.
+
+
+## 2026-10-30 — validate checkpoint records before reuse
+
+Starting commit: cf9871357c3867f91ce87d2a95af94001186eb37; PR #1 remained
+open and main unchanged. Continued the locally staged work after an interrupted
+session; its full-suite process result was unavailable, so it is not counted
+as a successful run and the final suite was started again.
+
+Fixed the reproduced acceptance of a completion-only partition record. Schema
+3 validates required input/cap/split/attempt/timing/memory/status fields, rejects
+duplicate JSON keys and noncanonical split keys, and checks aggregate completion
+against all partitions. An incomplete aggregate with all partitions done is
+allowed for crash recovery and finalized without worker launches. Worker JSON
+is checked before persistence, including status/exit-code consistency; invalid
+output becomes retryable worker_error. Equivalent rational target strings are
+canonicalized before passing them to the subprocess.
+
+Added five corruption/recovery test methods, and updated the existing mocked
+retry test to use realistic worker metadata/exit codes. Coverage includes missing
+fields, wrong types/inputs, non-finite timings, unknown statuses, duplicate keys,
+contradictory completion, found record presence/digit checks, malformed worker
+output, exit-code mismatch, and canonical rational targets.
+
+The old cap-1000 checkpoint correctly failed the new source/schema identity
+check and was archived unchanged as checkpoint_10958_cap1000_schema2.json.
+No status or hash was copied to the new checkpoint. Previous cap-200 and
+cap-100 files also remain historical records.
+
+Remaining limitation: structural validation does not independently prove a
+negative result or evaluate a found witness's value. Tests evaluate witnesses
+exactly; production witness verification in a budgeted subprocess is next.
+Then profile larger exponent caps and assess expansion within fixed budgets.
+
+Final verification: 29 tests passed in 83.470 seconds (83.591125 seconds
+including startup), peak child RSS 62,784KiB. Linux, Python 3.12, single
+measurement, 180s timeout / 768MiB RLIMIT_AS. Reproduce with
+`python -m unittest -q` under the resource wrapper documented above.
+
+Fresh schema-3 search command (180s total, 30s per split, 768MiB per worker):
+
+```bash
+python resume_search.py --max-abs-exponent 1000 --seconds 180 --per-split-seconds 30 --memory-mib 768 --checkpoint checkpoint_10958.json
+```
+
+Fresh result: all eight partitions completed with not_found_bounded at
+cap 1000. Sum of worker wall times: 62.662792s; peak child RSS: 171,492KiB.
+Single observation, no simultaneous full-suite run. All attempts=1. A mocked
+subprocess launch guard confirmed subsequent resume skips all eight partitions;
+the checkpoint stayed byte-identical. This is bounded absence only, not proof
+for unrestricted integer exponents. Total nine-digit allocation was 180s, below
+the 600s run limit; no paid compute used.
