@@ -122,7 +122,7 @@ def rational_nth_root_exact(value, exponent):
 # Solver factory
 # ============================================================
 
-def make_solver(digits, *, root_split=None, lookup_digits=4):
+def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True):
 
     if not digits or any(c not in "0123456789" for c in digits):
         raise ValueError("digits must be a nonempty ASCII digit string")
@@ -266,6 +266,37 @@ def make_solver(digits, *, root_split=None, lookup_digits=4):
         ) else sorted(range(i + 1, j), key=lambda k: (abs(2 * k - i - j), k))
         for k in splits:
 
+            # A single right digit fixes the operand/exponent. Invert it
+            # directly instead of materializing a potentially huge left table.
+            if edge_inversion and j - k == 1:
+                b = Fraction(int(digits[k:j]))
+                expr_b = digits[k:j]
+                candidates = [(target - b, "+"), (target + b, "-")]
+                if b:
+                    candidates += [(target / b, "*"), (target * b, "/")]
+                elif target == 0:
+                    return f"({digits[i:k]}*{expr_b})"
+                for base, operator in candidates:
+                    expr_a = can_make(i, k, base)
+                    if expr_a is not None:
+                        return f"({expr_a}{operator}{expr_b})"
+                if b == 0:
+                    # A string containing a nonzero digit has a nonzero
+                    # concatenation; an all-zero string cannot make nonzero.
+                    if target == 1 and int(digits[i:k]) != 0:
+                        return f"({digits[i:k]}^{expr_b})"
+                elif b <= MAX_ABS_EXPONENT:
+                    root = rational_nth_root_exact(target, b.numerator)
+                    if root is not None:
+                        roots = [root]
+                        if b.numerator % 2 == 0 and root != 0:
+                            roots.append(-root)
+                        for base in roots:
+                            expr_a = can_make(i, k, base)
+                            if expr_a is not None:
+                                return f"({expr_a}^{expr_b})"
+                continue
+
             left = full_dp(i, k)
 
             # =================================================
@@ -353,6 +384,20 @@ def make_solver(digits, *, root_split=None, lookup_digits=4):
             # enumerate the actual possible exponents
             # from the right interval.
             # =================================================
+
+            # With a one-digit base, checking every integer in the existing
+            # exponent domain is cheap and avoids generating a large right DP.
+            if edge_inversion and k - i == 1:
+                a = Fraction(int(digits[i:k]))
+                for exponent in range(-MAX_ABS_EXPONENT, MAX_ABS_EXPONENT + 1):
+                    if a == 0 and exponent <= 0:
+                        continue
+                    if a ** exponent != target:
+                        continue
+                    expr_b = can_make(k, j, Fraction(exponent))
+                    if expr_b is not None:
+                        return f"({digits[i:k]}^{expr_b})"
+                continue
 
             right = full_dp(k, j)
 

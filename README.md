@@ -1,7 +1,17 @@
 # 10958-search
 Exact search for 10958 using 123456789
 
-## Current status — Stage 9A validation
+## Current status — bounded search completed
+
+On 2026-10-30, all eight top-level partitions of `123456789 -> 10958`
+completed with **no expression found under the integer-exponent bound -100..100**.
+The sum of partition worker wall times was 31.543464 seconds; the largest
+observed worker RSS was 163,356 KiB. These are single-run measurements.
+This does **not** establish impossibility with unrestricted exponents.
+The code, exact limits, checkpoint, tests and per-partition results are recorded
+in `PROGRESS.md` and `checkpoint_10958.json`.
+
+### Arithmetic and validation
 
 `search.py` implements concatenation, `+`, `-`, `*`, `/`, and integer
 exponentiation using exact `Fraction` arithmetic. Negative exponents and
@@ -184,3 +194,19 @@ Other intervals still use reverse search, trying balanced splits first. Tests
 explicitly use `lookup_digits=0` to exercise the original reverse algorithm,
 and independently compare hybrid results and partition unions on small spaces.
 This changes execution order and reuse, not the operation rules or exponent cap.
+
+
+### Single-digit edge inversion
+
+When the right operand is a single digit, the solver now inverts each operator
+and solves only the required left targets. It no longer builds the entire large
+left value table for that split. Zero multiplication, zero exponent, and both
+signs of even roots are handled explicitly.
+
+When the left base is a single digit, exponentiation checks the complete existing
+integer exponent range -100 through 100, then asks whether a matching exponent
+can be formed on the right. This avoids building an eight-digit exponent table.
+This is exact within the same exponent cap; floating-point logarithms are not
+used. `edge_inversion=False` retains the preceding implementation for differential
+tests. Source changes invalidate old checkpoints; archived checkpoints are
+historical evidence and are not silently reused.

@@ -152,3 +152,64 @@ Only `not_found_bounded` partitions are skipped; an interrupted partition restar
 | 8 | memory_limit | 2 | 38.969 |
 
 Overall: **incomplete**, no witness. Six splits (2 through 7) completed under the exponent bound; split 1 timed out and split 8 exceeded memory. This is not an impossibility proof.
+
+
+## 2026-10-30 — invert single-digit edge operands
+
+Starting commit: `f9100f21d8e041238195a947d61465279e8b536d`.
+The remote head and local tracked file blob hashes were checked before editing;
+PR #1 remained open and main unchanged.
+
+### Changes and completeness within the cap
+
+- For a single right digit b, solve the left targets T-b, T+b, T/b and T*b
+  for +,-,*,/ respectively. Handle b=0 separately. For exponentiation, use
+  exact roots and both signs for even b; zero exponent requires a nonzero base.
+  No large left DP table is built for this split.
+- For a single left digit a, check each integer exponent in the complete
+  existing [-100,100] range and recursively construct only exponents for which
+  a**b equals the exact target. Exclude zero to nonpositive powers. This avoids
+  generating the entire right exponent table.
+- Both paths recurse on strictly shorter intervals; other splits retain the
+  existing algorithm. `edge_inversion=False` preserves the prior path for tests.
+- The all-zero-base special case is exact under these rules: an all-zero string
+  cannot produce a nonzero value when 0^0, negative powers of zero and division
+  by zero are excluded; a string with any nonzero digit has a nonzero concat.
+
+### Tests and checkpoint handling
+
+15 tests passed in 55.833 seconds, under a 120s timeout and 768 MiB address-space
+budget. The new differential test compares both edge splits, with short-table
+lookup disabled, against the prior reverse implementation for all 64 strings
+of length 3 over 0..3 and 1234,12345,2300,2331. It tests every forward value plus
+sample negative targets, and independently evaluates returned expressions and
+checks digit order. Existing tests continue to exercise the old reverse path.
+
+The old checkpoint correctly failed the changed-source fingerprint check. It
+is archived as `checkpoint_10958_before_edges.json`; the new checkpoint is
+computed from scratch, without copying completed statuses from the old solver.
+
+Search command (maximum 300s allocated, 45s per partition, 768 MiB per child):
+
+```bash
+python resume_search.py --seconds 300 --per-split-seconds 45 --memory-mib 768 --checkpoint checkpoint_10958.json
+```
+
+### Completed partition result
+
+| Split | Status | Seconds | Peak RSS (KiB) |
+| ---: | --- | ---: | ---: |
+| 1 | not_found_bounded | 7.743 | 41888 |
+| 2 | not_found_bounded | 8.442 | 163356 |
+| 3 | not_found_bounded | 1.930 | 31692 |
+| 4 | not_found_bounded | 1.011 | 17716 |
+| 5 | not_found_bounded | 0.070 | 14444 |
+| 6 | not_found_bounded | 0.609 | 23164 |
+| 7 | not_found_bounded | 6.072 | 93100 |
+| 8 | not_found_bounded | 5.666 | 36972 |
+
+All eight partitions completed, with no expression found in the current bounded search. The sum of recorded worker wall times was 31.543464s; highest child RSS was 163,356 KiB. These are single-run observations. The completed checkpoint was resumed with subprocess launching mocked, confirming all eight partitions were skipped.
+
+This is a completed negative result for the implemented integer-exponent domain [-100,100], not a proof for unrestricted powers. Next: strengthen independent small-space oracle coverage, then expose and validate configurable exponent limits before expanding the domain.
+
+Cross-check: the unpartitioned runner also completed with `not_found_bounded` in 25.253217s, peak RSS 247,324 KiB, using a 60s/768MiB budget. Raw output is in `result_10958_unpartitioned.json`. It uses the same solver, so it checks partition orchestration but is not an independent proof of the solver.
