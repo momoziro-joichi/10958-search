@@ -48,7 +48,7 @@ for longer inputs or unrestricted powers. In particular, `1234` now recovers
 ### Budgeted target search (Linux)
 
 ```bash
-python run_search.py --digits 123456789 --target 10958 --seconds 20 --memory-mib 512
+python run_search.py --digits 123456789 --target 10958 --seconds 60 --memory-mib 768
 ```
 
 `run_search.py` runs the solver in a separate process. The parent enforces a
@@ -210,3 +210,23 @@ This is exact within the same exponent cap; floating-point logarithms are not
 used. `edge_inversion=False` retains the preceding implementation for differential
 tests. Source changes invalidate old checkpoints; archived checkpoints are
 historical evidence and are not silently reused.
+
+
+### Independent small-space enumeration
+
+```bash
+python -m unittest -v test_oracle
+```
+
+`test_oracle.py` first enumerates every digit tokenization, then every binary
+expression tree and permitted operator, without using the production DP,
+reverse/root routines, memoization or intermediate value deduplication.
+For all 256 four-digit strings over 0..3, it enumerates 168,288 valid expression
+trees and obtains 21,359 distinct values summed across inputs. It compares these
+sets with forward DP, then checks 24,147 target queries against reverse search
+with short-interval lookup disabled. Returned expressions are independently
+re-evaluated and checked for digit order. Hand-calculated examples and +/-100
+versus +/-101 exponent boundaries also test the oracle itself.
+
+This adds independent small-space evidence, not a separate nine-digit
+impossibility proof. The completed nine-digit checkpoint remains unchanged.

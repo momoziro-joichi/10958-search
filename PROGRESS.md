@@ -213,3 +213,40 @@ All eight partitions completed, with no expression found in the current bounded 
 This is a completed negative result for the implemented integer-exponent domain [-100,100], not a proof for unrestricted powers. Next: strengthen independent small-space oracle coverage, then expose and validate configurable exponent limits before expanding the domain.
 
 Cross-check: the unpartitioned runner also completed with `not_found_bounded` in 25.253217s, peak RSS 247,324 KiB, using a 60s/768MiB budget. Raw output is in `result_10958_unpartitioned.json`. It uses the same solver, so it checks partition orchestration but is not an independent proof of the solver.
+
+
+## 2026-10-30 — independent syntax-tree oracle
+
+Starting commit: `25c389a0ed16c9db9b33972219c65aa694c15ff0`.
+PR #1 was open and unchanged. Local source, README, progress log and checkpoint
+blob hashes matched the remote tree before editing.
+
+Added `test_oracle.py`. Unlike the production interval DP, this oracle first
+chooses all token boundaries, then all binary expression trees and operators.
+It does not use production arithmetic-selection/root functions, memoization or
+intermediate value deduplication. It still shares Python Fraction arithmetic;
+that dependency is not an independent rational-arithmetic implementation.
+
+Measured exhaustive validation (Linux, 120s timeout / 768MiB address-space cap):
+
+- 256 inputs: every four-digit string over 0,1,2,3.
+- 168,288 valid expression trees before final value deduplication.
+- 21,359 distinct values summed separately for each input.
+- 24,147 reverse queries, including absent half-integer targets.
+- Forward value sets matched exactly; reverse membership matched the oracle;
+  all returned witnesses evaluated exactly and preserved the input digit order.
+- The exhaustive test passed in 16.824 seconds.
+
+A second test checked hand-calculated 23/00/20 value sets and inclusion/exclusion
+at positive and negative exponent limits 100/101; it passed in 0.001 seconds.
+The earlier 15 tests were not rerun because their code and all solver/runner
+files were unchanged. There are now 17 discoverable test methods.
+
+The existing nine-digit checkpoint fingerprint was verified and is compatible.
+Its eight completed partitions were retained; the completed search was not
+repeated. Result remains **not_found_bounded** for integer exponents -100..100.
+No claim is made for unrestricted exponents.
+
+Next: make the exponent cap an explicit solver/CLI/checkpoint parameter, test
+nondefault caps (especially 0 and boundaries), then budget an expanded search.
+Do not modify the constant in place and silently reuse a completed checkpoint.
