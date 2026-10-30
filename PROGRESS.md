@@ -473,3 +473,30 @@ Next: profile split 2 and the single-digit exponent path at cap 2000 before
 increasing the cap again. Avoid assuming that the same 45s partition budget
 will suffice for a larger domain. Retain the new completed checkpoint unless
 source changes invalidate it; never rewrite fingerprints to reuse old results.
+
+
+## 2026-10-31: cap-2000 regression and split-2 profile
+
+Extended all three LargeExponentTests to caps 200, 1000, and 2000, retaining the earlier caps. Run: python -m unittest -q test_large_limits. All 3 tests passed in 23.740 seconds; 6,381 independently enumerated trees and 3,838 reverse queries. Includes positive/negative exponent and rational-base boundaries and internal-node evaluator bounds. The full suite was not rerun for this test-only extension.
+
+Profiled source c03a84b7b60ba690ba957ec78d9529367bdbb599 using cProfile, digits 123456789, target Fraction(10958), root_split=2, max_abs_exponent=2000, default lookup and edge inversion. Linux address-space limit 768 MiB and external timeout 180 seconds. Result None (bounded absence), 59.222 seconds including profiler overhead. Single measurement; regression tests ran concurrently during part of the profile, so this is not a standalone wall-time benchmark.
+
+127,471,503 calls: Fraction.__pow__ 7,565,966 calls, 27.249 seconds own time / 33.592 cumulative; cached_can_make 5.008 own / 59.221 cumulative; Fraction.__eq__ 17,032,868 calls, 4.080 own; full_dp 20.582 cumulative. Cumulative times overlap and must not be added. Fraction power own time is about 46% of total profile time. This supports investigating repeated exponent evaluation first; it does not establish a speedup or prove all calls originate in the single-digit scan. No production solver change or checkpoint change was made.
+
+Reproduction (repository root, Linux):
+
+```bash
+timeout 180 python - <<'PY'
+import cProfile, pstats, resource
+from fractions import Fraction
+from search import make_solver
+resource.setrlimit(resource.RLIMIT_AS, (805306368, 805306368))
+p = cProfile.Profile()
+p.enable()
+f, r = make_solver('123456789', root_split=2, max_abs_exponent=2000)
+result = r(0, 9, Fraction(10958))
+p.disable()
+print('result', result)
+pstats.Stats(p).strip_dirs().sort_stats('tottime').print_stats(15)
+PY
+```
