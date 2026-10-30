@@ -229,8 +229,14 @@ def make_solver(digits):
     # TARGET-DIRECTED SEARCH
     # ========================================================
 
-    @lru_cache(maxsize=None)
     def can_make(i, j, target):
+        # Do not retain millions of distinct failed single-digit targets.
+        if j - i == 1:
+            return digits[i:j] if Fraction(int(digits[i:j])) == target else None
+        return cached_can_make(i, j, target)
+
+    @lru_cache(maxsize=50000)
+    def cached_can_make(i, j, target):
 
         # ----------------------------------------------------
         # Concatenation
@@ -379,12 +385,15 @@ def make_solver(digits):
                     bases.append(-root)
 
                 for base in bases:
-                    expr_a = can_make(i, k, base)
+                    expr_a = left.get(base)
                     if expr_a is not None:
                         return f"({expr_a}^{expr_b})"
 
         return None
 
+    # Preserve the existing cache inspection/cleanup interface.
+    can_make.cache_clear = cached_can_make.cache_clear
+    can_make.cache_info = cached_can_make.cache_info
     return full_dp, can_make
 
 

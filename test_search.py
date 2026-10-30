@@ -50,6 +50,14 @@ class SearchTests(unittest.TestCase):
         self.assertEqual(reverse(0, 2, Fraction(8)), "(2^3)")
         self.assertIsNone(reverse(0, 2, Fraction(7)))
 
+    def test_leaf_queries_do_not_fill_cache(self):
+        _, reverse = make_solver("23")
+        for target in range(10000):
+            self.assertEqual(reverse(0, 1, Fraction(target)),
+                             "2" if target == 2 else None)
+        self.assertEqual(reverse.cache_info().currsize, 0)
+        self.assertEqual(reverse.cache_info().maxsize, 50000)
+
     def test_regressions(self):
         cases = [
             ("1234", Fraction(234256)),  # (1-23)^4

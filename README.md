@@ -35,10 +35,34 @@ and `12345` (2,453 values). These are bounded validation results, not a proof
 for longer inputs or unrestricted powers. In particular, `1234` now recovers
 `(1-23)^4 = 234256` and `((1/2)-3)^4 = 625/16`.
 
-**The current script does not run the `123456789 -> 10958` search.**
-Its final `10958 search: NOT RUN YET` message is intentional.
-Large-input time and memory usage remain unresolved; there is no complete
-10958 result from this version.
+### Budgeted target search (Linux)
+
+```bash
+python run_search.py --digits 123456789 --target 10958 --seconds 20 --memory-mib 512
+```
+
+`run_search.py` runs the solver in a separate process. The parent enforces a
+wall-clock timeout and kills/waits for the worker on expiry. The Linux worker
+uses `RLIMIT_AS` to limit virtual address space (not just resident memory).
+Other platforms are rejected rather than silently running without memory limits.
+The default budget is 30 seconds and 512 MiB. JSON output distinguishes `found`,
+`not_found_bounded`, `timeout`, `memory_limit`, and `worker_error`.
+Incomplete/error runs exit with status 2; completed searches exit with status 0.
+A timeout does not prove absence of a solution. No checkpoint/resume is
+implemented yet: rerunning starts over.
+
+The first budgeted `123456789 -> 10958` attempt ended in **timeout** at
+20.026 seconds with a 512 MiB address-space budget. No expression was returned;
+the search was not completed. See `PROGRESS.md` for measurements and next work.
+
+`python search.py` still runs only the validation suite, so its final
+`10958 search: NOT RUN YET` message refers to that invocation.
+
+Reverse-search memoization now retains at most 50,000 non-leaf states.
+Single-digit queries are answered without caching, and power-base candidates
+are looked up in the already-built left DP table. Cache eviction affects runtime,
+not the allowed expressions; full DP tables are still unbounded within the
+worker's process memory budget.
 
 The sections below record historical runs under different rules and are not
 new results from the current implementation.
