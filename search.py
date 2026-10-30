@@ -6,7 +6,7 @@ from functools import lru_cache
 # Configuration
 # ============================================================
 
-DIGITS = "12345"
+MAX_ABS_EXPONENT = 100
 
 
 # ============================================================
@@ -31,8 +31,14 @@ def integer_nth_root_exact(n, exponent):
     if n == 1:
         return 1
 
+    if exponent == 1:
+        return n
+
+    if exponent >= n.bit_length():
+        return None
+
     lo = 0
-    hi = n
+    hi = 1 << ((n.bit_length() + exponent - 1) // exponent)
 
     while lo <= hi:
 
@@ -118,7 +124,8 @@ def rational_nth_root_exact(value, exponent):
 
 def make_solver(digits):
 
-    n = len(digits)
+    if not digits or any(c not in "0123456789" for c in digits):
+        raise ValueError("digits must be a nonempty ASCII digit string")
 
     # ========================================================
     # FULL DP
@@ -196,23 +203,18 @@ def make_solver(digits):
                     # Forward rule:
                     # exponent must be an integer.
                     #
-                    # No artificial upper limit here.
+                    # Both search directions use MAX_ABS_EXPONENT.
                     # ----------------------------------------
 
                     if (
                         b.denominator == 1
-                        and not (a == 0 and b == 0)
+                        and not (a == 0 and b <= 0)
                     ):
 
                         exponent = b.numerator
 
-                        # Avoid enormous useless powers
-                        # during validation.
-                        #
-                        # This is NOT a mathematical restriction
-                        # of the target search; it only prevents
-                        # pathological Python integer explosions.
-                        if abs(exponent) <= 100:
+                        # This bound limits the searched expression space.
+                        if abs(exponent) <= MAX_ABS_EXPONENT:
 
                             value = a ** exponent
 
@@ -285,6 +287,10 @@ def make_solver(digits):
                         f"({expr_a}-{expr_b})"
                     )
 
+                # Zero products/quotients cannot be inverted by division.
+                if a == 0 and target == 0:
+                    return f"({expr_a}*{digits[k:j]})"
+
                 # A * B = T
                 if a != 0:
 
@@ -342,56 +348,40 @@ def make_solver(digits):
                 exponent_int = exponent.numerator
 
                 # Same practical safety boundary as full DP
-                if abs(exponent_int) > 100:
+                if abs(exponent_int) > MAX_ABS_EXPONENT:
                     continue
 
-                # A^0 = 1
+                # Every nonzero base satisfies A^0 = 1.
                 if exponent_int == 0:
+                    if target == 1:
+                        for base, expr_a in left.items():
+                            if base != 0:
+                                return f"({expr_a}^{expr_b})"
+                    continue
 
-                    if target != 1:
+                # Invert negative powers before taking the exact root.
+                if exponent_int < 0:
+                    if target == 0:
                         continue
-
-                    base = Fraction(1)
-
+                    root_target = Fraction(1) / target
                 else:
+                    root_target = target
 
-                    base = rational_nth_root_exact(
-                        target,
-                        abs(exponent_int)
-                    )
-
-                    if base is None:
-                        continue
-
-                    # Negative exponent:
-                    #
-                    # A^(-n) = target
-                    # A^n = 1/target
-                    #
-                    if exponent_int < 0:
-
-                        if target == 0:
-                            continue
-
-                        base = rational_nth_root_exact(
-                            Fraction(1, 1) / target,
-                            -exponent_int
-                        )
-
-                        if base is None:
-                            continue
-
-                expr_a = can_make(
-                    i,
-                    k,
-                    base
+                root = rational_nth_root_exact(
+                    root_target, abs(exponent_int)
                 )
+                if root is None:
+                    continue
 
-                if expr_a is not None:
+                # Even powers have both positive and negative base candidates.
+                bases = [root]
+                if exponent_int % 2 == 0 and root != 0:
+                    bases.append(-root)
 
-                    return (
-                        f"({expr_a}^{expr_b})"
-                    )
+                for base in bases:
+                    expr_a = can_make(i, k, base)
+                    if expr_a is not None:
+                        return f"({expr_a}^{expr_b})"
 
         return None
 
