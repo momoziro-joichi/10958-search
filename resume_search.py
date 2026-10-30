@@ -10,15 +10,16 @@ import sys
 import tempfile
 import time
 from fractions import Fraction
+from search import MAX_ABS_EXPONENT
 
 
-def identity(digits, target):
+def identity(digits, target, max_abs_exponent=MAX_ABS_EXPONENT):
     root = Path(__file__).resolve().parent
     digest = hashlib.sha256()
     for name in ("search.py", "run_search.py", "resume_search.py"):
         digest.update(name.encode())
         digest.update((root / name).read_bytes())
-    return {"schema": 1, "digits": digits, "target": str(Fraction(target)),
+    return {"schema": 2, "max_abs_exponent": max_abs_exponent, "digits": digits, "target": str(Fraction(target)),
             "solver_sha256": digest.hexdigest()}
 
 
@@ -52,7 +53,7 @@ def load(path, expected):
 
 
 def run(args):
-    expected = identity(args.digits, args.target)
+    expected = identity(args.digits, args.target, args.max_abs_exponent)
     state = load(args.checkpoint, expected)
     partitions = state["partitions"]
     # Concatenation does not belong to a binary split.
@@ -77,7 +78,8 @@ def run(args):
         command = [sys.executable, str(Path(__file__).with_name("run_search.py")),
                    "--digits", args.digits, "--target", args.target,
                    "--split", str(split), "--seconds", str(budget),
-                   "--memory-mib", str(args.memory_mib)]
+                   "--memory-mib", str(args.memory_mib),
+                   "--max-abs-exponent", str(args.max_abs_exponent)]
         # The inner parent owns/kills the worker. Allow cleanup/startup overhead.
         completed = subprocess.run(command, capture_output=True, text=True)
         try:
@@ -108,8 +110,11 @@ def main():
     parser.add_argument("--seconds", type=float, default=120)
     parser.add_argument("--per-split-seconds", type=float, default=15)
     parser.add_argument("--memory-mib", type=int, default=512)
+    parser.add_argument("--max-abs-exponent", type=int, default=MAX_ABS_EXPONENT)
     parser.add_argument("--checkpoint", default="checkpoint.json")
     args = parser.parse_args()
+    if args.max_abs_exponent < 0:
+        parser.error("max-abs-exponent must be nonnegative")
     if not sys.platform.startswith("linux"):
         parser.error("Linux required for resource limits and checkpoint locking")
     if any(not math.isfinite(v) or v <= 0 for v in (args.seconds, args.per_split_seconds)):

@@ -39,7 +39,7 @@ class PartitionTests(unittest.TestCase):
 class CheckpointTests(unittest.TestCase):
     def args(self, path):
         return argparse.Namespace(digits="23", target="7", seconds=5,
-                                  per_split_seconds=1, memory_mib=128,
+                                  per_split_seconds=1, memory_mib=128, max_abs_exponent=100,
                                   checkpoint=str(path))
 
     def test_atomic_round_trip_and_version_rejection(self):

@@ -122,7 +122,11 @@ def rational_nth_root_exact(value, exponent):
 # Solver factory
 # ============================================================
 
-def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True):
+def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True,
+                max_abs_exponent=MAX_ABS_EXPONENT):
+
+    if type(max_abs_exponent) is not int or max_abs_exponent < 0:
+        raise ValueError("max_abs_exponent must be a nonnegative integer")
 
     if not digits or any(c not in "0123456789" for c in digits):
         raise ValueError("digits must be a nonempty ASCII digit string")
@@ -208,7 +212,7 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
                     # Forward rule:
                     # exponent must be an integer.
                     #
-                    # Both search directions use MAX_ABS_EXPONENT.
+                    # Both search directions use max_abs_exponent.
                     # ----------------------------------------
 
                     if (
@@ -219,7 +223,7 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
                         exponent = b.numerator
 
                         # This bound limits the searched expression space.
-                        if abs(exponent) <= MAX_ABS_EXPONENT:
+                        if abs(exponent) <= max_abs_exponent:
 
                             value = a ** exponent
 
@@ -285,7 +289,7 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
                     # concatenation; an all-zero string cannot make nonzero.
                     if target == 1 and int(digits[i:k]) != 0:
                         return f"({digits[i:k]}^{expr_b})"
-                elif b <= MAX_ABS_EXPONENT:
+                elif b <= max_abs_exponent:
                     root = rational_nth_root_exact(target, b.numerator)
                     if root is not None:
                         roots = [root]
@@ -389,7 +393,7 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
             # exponent domain is cheap and avoids generating a large right DP.
             if edge_inversion and k - i == 1:
                 a = Fraction(int(digits[i:k]))
-                for exponent in range(-MAX_ABS_EXPONENT, MAX_ABS_EXPONENT + 1):
+                for exponent in range(-max_abs_exponent, max_abs_exponent + 1):
                     if a == 0 and exponent <= 0:
                         continue
                     if a ** exponent != target:
@@ -410,7 +414,7 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
                 exponent_int = exponent.numerator
 
                 # Same practical safety boundary as full DP
-                if abs(exponent_int) > MAX_ABS_EXPONENT:
+                if abs(exponent_int) > max_abs_exponent:
                     continue
 
                 # Every nonzero base satisfies A^0 = 1.

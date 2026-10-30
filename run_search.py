@@ -6,6 +6,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from search import MAX_ABS_EXPONENT
 
 
 def worker(args):
@@ -15,7 +16,8 @@ def worker(args):
     from fractions import Fraction
     from search import make_solver
     try:
-        _, search = make_solver(args.digits, root_split=args.split)
+        _, search = make_solver(args.digits, root_split=args.split,
+                                max_abs_exponent=args.max_abs_exponent)
         expression = search(0, len(args.digits), Fraction(args.target))
         result = {"status": "found" if expression is not None else "not_found_bounded",
                   "expression": expression}
@@ -32,8 +34,11 @@ def main():
     parser.add_argument("--seconds", type=float, default=30)
     parser.add_argument("--memory-mib", type=int, default=512)
     parser.add_argument("--split", type=int, help="Only this top-level split (1-based)")
+    parser.add_argument("--max-abs-exponent", type=int, default=MAX_ABS_EXPONENT)
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.max_abs_exponent < 0:
+        parser.error("max-abs-exponent must be nonnegative")
     if not sys.platform.startswith("linux"):
         parser.error("Linux is required to enforce the memory budget with RLIMIT_AS")
     if not math.isfinite(args.seconds) or args.seconds <= 0 or args.memory_mib < 64:
@@ -52,7 +57,8 @@ def main():
         return
     command = [sys.executable, str(Path(__file__).resolve()), "--worker",
                "--digits", args.digits, "--target", args.target,
-               "--seconds", str(args.seconds), "--memory-mib", str(args.memory_mib)]
+               "--seconds", str(args.seconds), "--memory-mib", str(args.memory_mib),
+               "--max-abs-exponent", str(args.max_abs_exponent)]
     if args.split is not None:
         command += ["--split", str(args.split)]
     started = time.perf_counter()
@@ -70,11 +76,10 @@ def main():
     except subprocess.TimeoutExpired:
         # subprocess.run kills and waits for the worker before raising.
         result = {"status": "timeout", "expression": None}
-    from search import MAX_ABS_EXPONENT
     result.update(digits=args.digits, target=args.target, root_split=args.split,
                   elapsed_seconds=round(time.perf_counter() - started, 6),
                   time_budget_seconds=args.seconds, memory_budget_mib=args.memory_mib,
-                  max_abs_exponent=MAX_ABS_EXPONENT)
+                  max_abs_exponent=args.max_abs_exponent)
     print(json.dumps(result, sort_keys=True))
     if result["status"] not in ("found", "not_found_bounded"):
         sys.exit(2)

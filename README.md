@@ -4,12 +4,14 @@ Exact search for 10958 using 123456789
 ## Current status — bounded search completed
 
 On 2026-10-30, all eight top-level partitions of `123456789 -> 10958`
-completed with **no expression found under the integer-exponent bound -100..100**.
-The sum of partition worker wall times was 31.543464 seconds; the largest
-observed worker RSS was 163,356 KiB. These are single-run measurements.
+completed with **no expression found under the integer-exponent bound -1000..1000**.
+The sum of partition worker wall times was 55.789549 seconds; the largest
+observed worker RSS was 171,380 KiB. These are single-run measurements.
 This does **not** establish impossibility with unrestricted exponents.
-The code, exact limits, checkpoint, tests and per-partition results are recorded
-in `PROGRESS.md` and `checkpoint_10958.json`.
+The active `checkpoint_10958.json` records cap 1000 and requires that CLI option
+when resuming. Cap-200 results are in `checkpoint_10958_cap200.json`; earlier
+schema-1 cap-100 checkpoints are retained as historical evidence only.
+See `PROGRESS.md` for test results, exact limits, and measurements.
 
 ### Arithmetic and validation
 
@@ -19,7 +21,7 @@ rational bases are supported. `^` in returned expressions means exponentiation;
 Python itself uses `**`.
 
 Both forward DP and reverse search restrict every exponent to
-`abs(exponent) <= MAX_ABS_EXPONENT` (currently 100). This **limits the searched
+`abs(exponent) <= max_abs_exponent` (default 100). This **limits the searched
 expression space**; it is not a complete unrestricted search.
 `0^0`, zero to a negative power, and division by zero are excluded.
 The digit order is preserved and each input digit is used exactly once.
@@ -173,7 +175,7 @@ Exponentiation is implemented in the current Stage 9A code; see the current stat
 ## Resumable partitioned search
 
 ```bash
-python resume_search.py --seconds 180 --per-split-seconds 60 --memory-mib 768 --checkpoint checkpoint_10958.json
+python resume_search.py --max-abs-exponent 1000 --seconds 180 --per-split-seconds 60 --memory-mib 768 --checkpoint checkpoint_10958.json
 ```
 
 The top-level operator splits `123456789` at one of eight positions. Each
@@ -204,7 +206,7 @@ left value table for that split. Zero multiplication, zero exponent, and both
 signs of even roots are handled explicitly.
 
 When the left base is a single digit, exponentiation checks the complete existing
-integer exponent range -100 through 100, then asks whether a matching exponent
+configured integer exponent range -N through N, then asks whether a matching exponent
 can be formed on the right. This avoids building an eight-digit exponent table.
 This is exact within the same exponent cap; floating-point logarithms are not
 used. `edge_inversion=False` retains the preceding implementation for differential
@@ -229,4 +231,25 @@ re-evaluated and checked for digit order. Hand-calculated examples and +/-100
 versus +/-101 exponent boundaries also test the oracle itself.
 
 This adds independent small-space evidence, not a separate nine-digit
-impossibility proof. The completed nine-digit checkpoint remains unchanged.
+impossibility proof. These small-space tests do not establish the result for unrestricted powers.
+
+
+### Configurable exponent cap
+
+Both runners accept `--max-abs-exponent N` (nonnegative integer, default 100).
+The solver API accepts `make_solver(digits, max_abs_exponent=N)` and applies
+that cap to every exponent node, in forward DP and all reverse-search paths.
+A cap of zero still permits nonzero bases raised to zero; it does not disable
+exponentiation. Negative powers are permitted down to -N when the base is nonzero.
+
+Schema-2 checkpoints record the cap explicitly, as well as input and source
+fingerprints. A different cap or source version is rejected before any completed
+partition can be reused. Schema-1 checkpoints are historical records and cannot
+be resumed by this version. Use a fresh path when expanding the cap:
+
+```bash
+python resume_search.py --max-abs-exponent 200 --seconds 400 --per-split-seconds 45 --memory-mib 768 --checkpoint checkpoint_cap200.json
+```
+
+Increasing the cap expands the expression space and can sharply increase time
+and memory use. A completed negative result applies only to the recorded cap.

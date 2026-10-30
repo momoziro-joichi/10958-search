@@ -250,3 +250,59 @@ No claim is made for unrestricted exponents.
 Next: make the exponent cap an explicit solver/CLI/checkpoint parameter, test
 nondefault caps (especially 0 and boundaries), then budget an expanded search.
 Do not modify the constant in place and silently reuse a completed checkpoint.
+
+
+## 2026-10-30 — explicit exponent limits and checkpoint schema 2
+
+Starting commit: `217ff9aa046205e8c0196a059cb21cd49b7fcb20`.
+PR #1 remained open, with the previous head unchanged.
+
+- Added nonnegative integer `max_abs_exponent` to make_solver, retaining default
+  100. Every forward/reverse path captures the per-solver value, including both
+  single-digit edge optimizations. Booleans, nonintegers and negative API caps
+  are rejected; both CLIs reject negative caps.
+- Added `--max-abs-exponent` to both runners, propagated it to worker processes,
+  and report the actual selected cap in result JSON.
+- Schema 2 checkpoint identity now includes the cap explicitly, together with
+  the source fingerprint. Mismatched caps cannot reuse completed partitions.
+- Kept cap zero meaningful: nonzero A^0 is allowed, rather than disabling powers.
+
+Validation: all 21 tests passed in 69.015s with a 180s timeout and 768MiB
+address-space budget. New tests compare caps 0,1,2,3 with the independent oracle
+for 64 three-digit strings each (256 input/cap pairs), positive 100/101 and
+negative 1/2 boundaries, cap-zero behavior, API validation, checkpoint mismatch,
+and propagation through both CLIs. An extra assertion of the exact `(2^101)`
+witness was subsequently added; the affected boundary test passed in 0.001s.
+
+The old completed cap-100 checkpoint was rejected by the new source/schema
+check and archived as `checkpoint_10958_cap100_schema1.json`. No completion
+flags were copied forward. The expanded domains were freshly enumerated.
+
+First expanded run:
+
+```bash
+python resume_search.py --max-abs-exponent 200 --seconds 400 --per-split-seconds 45 --memory-mib 768 --checkpoint checkpoint_10958.json
+```
+
+All eight partitions completed with `not_found_bounded`. That complete result
+was retained as `checkpoint_10958_cap200.json` before starting the next domain:
+
+```bash
+python resume_search.py --max-abs-exponent 1000 --seconds 180 --per-split-seconds 20 --memory-mib 768 --checkpoint checkpoint_10958.json
+```
+
+The two total search allocations sum to 580 seconds, below the 600-second run
+budget, and each child is capped at 768MiB of virtual address space. Actual
+worker wall times and final statuses follow below. These are single observations,
+not statistically controlled performance comparisons.
+
+### Expanded-domain results
+
+| Cap | Completed partitions | Sum of worker seconds | Peak RSS (KiB) |
+| ---: | ---: | ---: | ---: |
+| 200 | 8/8 | 28.843495 | 163916 |
+| 1000 | 8/8 | 55.789549 | 171380 |
+
+Both domains completed with **not_found_bounded**; no witness was returned. The cap-1000 checkpoint rejects the default cap 100 and skips all completed partitions when resumed with cap 1000 (verified without launching workers). There is still no claim about unrestricted integer powers or rational exponents.
+
+Next: add independent cap-200/1000 small-space tests and strengthen checkpoint record validation; then assess further expansion with measured budgets instead of assuming completeness beyond the cap.
