@@ -45,13 +45,13 @@ class SearchTests(unittest.TestCase):
         self.assertEqual(evaluate(expression), target)
 
     def test_minimal_power(self):
-        forward, reverse = make_solver("23")
+        forward, reverse = make_solver("23", lookup_digits=0)
         self.assertEqual(forward(0, 2)[Fraction(8)], "(2^3)")
         self.assertEqual(reverse(0, 2, Fraction(8)), "(2^3)")
         self.assertIsNone(reverse(0, 2, Fraction(7)))
 
     def test_leaf_queries_do_not_fill_cache(self):
-        _, reverse = make_solver("23")
+        _, reverse = make_solver("23", lookup_digits=0)
         for target in range(10000):
             self.assertEqual(reverse(0, 1, Fraction(target)),
                              "2" if target == 2 else None)
@@ -69,7 +69,7 @@ class SearchTests(unittest.TestCase):
         ]
         for digits, target in cases:
             with self.subTest(digits=digits, target=target):
-                forward, reverse = make_solver(digits)
+                forward, reverse = make_solver(digits, lookup_digits=0)
                 self.assert_witness(digits, target, forward(0, len(digits))[target])
                 self.assert_witness(digits, target, reverse(0, len(digits), target))
 
@@ -93,7 +93,7 @@ class SearchTests(unittest.TestCase):
         cases = ["".join(p) for p in itertools.product("0123", repeat=3)]
         cases += ["1234", "12345"]
         for digits in cases:
-            forward, reverse = make_solver(digits)
+            forward, reverse = make_solver(digits, lookup_digits=0)
             values = forward(0, len(digits))
             for target, expression in values.items():
                 self.assert_witness(digits, target, expression)

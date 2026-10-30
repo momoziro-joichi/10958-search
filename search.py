@@ -122,10 +122,15 @@ def rational_nth_root_exact(value, exponent):
 # Solver factory
 # ============================================================
 
-def make_solver(digits):
+def make_solver(digits, *, root_split=None, lookup_digits=4):
 
     if not digits or any(c not in "0123456789" for c in digits):
         raise ValueError("digits must be a nonempty ASCII digit string")
+
+    if root_split is not None and not 1 <= root_split < len(digits):
+        raise ValueError("root_split must be inside the digit string")
+    if not isinstance(lookup_digits, int) or lookup_digits < 0:
+        raise ValueError("lookup_digits must be a nonnegative integer")
 
     # ========================================================
     # FULL DP
@@ -233,6 +238,9 @@ def make_solver(digits):
         # Do not retain millions of distinct failed single-digit targets.
         if j - i == 1:
             return digits[i:j] if Fraction(int(digits[i:j])) == target else None
+        restricted_root = root_split is not None and i == 0 and j == len(digits)
+        if j - i <= lookup_digits and not restricted_root:
+            return full_dp(i, j).get(target)
         return cached_can_make(i, j, target)
 
     @lru_cache(maxsize=50000)
@@ -253,7 +261,10 @@ def make_solver(digits):
         # Every possible split
         # ----------------------------------------------------
 
-        for k in range(i + 1, j):
+        splits = (root_split,) if (
+            root_split is not None and i == 0 and j == len(digits)
+        ) else sorted(range(i + 1, j), key=lambda k: (abs(2 * k - i - j), k))
+        for k in splits:
 
             left = full_dp(i, k)
 

@@ -85,3 +85,70 @@ when the limit is reached. Default validation also passed for 123 (35 values),
 Remaining limits: exponent absolute value <= 100; no checkpoint/resume yet;
 full DP tables can still exhaust the process memory budget. The runner's memory
 enforcement is Linux-only. No paid compute was used.
+
+
+## 2026-10-30 — partition checkpoints and hybrid lookup
+
+Starting commit: `ccfaab098bd90ba6270c092a4e7f1909365f599b`.
+
+- Added `root_split` to constrain only the top-level split; recursive intervals
+  retain all permitted splits. The union of all partitions plus concatenation
+  covers the same bounded expression space.
+- Added short-interval DP lookup (default <=4 digits) and balanced split order.
+  Existing witness tests explicitly disable lookup to keep exercising reverse
+  search, rather than silently comparing DP to itself.
+- Added `resume_search.py`: atomic JSON replacement, exclusive process lock,
+  input/code fingerprint validation, completed-partition skipping, and retry of
+  unfinished partitions. No inside-partition continuation is claimed.
+- 14 tests passed in 11.788s. New tests cover partition unions, independent exact
+  witness values and digit order, checkpoint round trips, version mismatch,
+  retry/skip semantics, and a real subprocess resume. This timing is not directly
+  comparable with the historical four-test benchmark above.
+
+### First partition pass
+
+180-second total allocation, at most 20s per split, 512 MiB virtual-memory cap.
+Completed splits 3,4,5,6,7 without a witness. Splits 1 and 2 timed out; split 8
+hit the memory cap. A second pass used 180s total / 60s per split / 768 MiB,
+reusing the checkpoint and skipping the five completed splits.
+
+### Profiling observation
+
+A separate 10-second cProfile sample of split 2 (512 MiB, interrupted by a
+signal timer) recorded about 22.17 million calls. Fraction arithmetic wrappers
+accounted for 3.476s cumulative, equality 1.882s, and full_dp 1.609s. Cumulative
+times overlap and must not be summed. The profiler and one search worker ran
+concurrently, so these are bottleneck observations, not clean speed benchmarks.
+
+### Next priority
+
+Avoid constructing an eight-digit forward table when one side of a top-level
+split is only one digit. Explore reversing from the smaller side and exact
+integer-exponent inversion; verify the new path against the existing reverse
+solver on small inputs before using any prior negative results. Source changes
+invalidate the checkpoint fingerprint and require a fresh checkpoint.
+
+Reproduction:
+
+```bash
+python -m unittest -v
+python resume_search.py --seconds 180 --per-split-seconds 60 --memory-mib 768 --checkpoint checkpoint_10958.json
+```
+
+The checkpoint is committed with the code so a later worker can resume it.
+Only `not_found_bounded` partitions are skipped; an interrupted partition restarts.
+
+### Saved second-pass result
+
+| Split | Status | Attempts | Latest seconds |
+| ---: | --- | ---: | ---: |
+| 1 | timeout | 2 | 60.098 |
+| 2 | not_found_bounded | 2 | 21.700 |
+| 3 | not_found_bounded | 1 | 9.113 |
+| 4 | not_found_bounded | 1 | 4.687 |
+| 5 | not_found_bounded | 1 | 0.126 |
+| 6 | not_found_bounded | 1 | 0.626 |
+| 7 | not_found_bounded | 1 | 8.135 |
+| 8 | memory_limit | 2 | 38.969 |
+
+Overall: **incomplete**, no witness. Six splits (2 through 7) completed under the exponent bound; split 1 timed out and split 8 exceeded memory. This is not an impossibility proof.

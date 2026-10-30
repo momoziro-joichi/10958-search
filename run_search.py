@@ -15,7 +15,7 @@ def worker(args):
     from fractions import Fraction
     from search import make_solver
     try:
-        _, search = make_solver(args.digits)
+        _, search = make_solver(args.digits, root_split=args.split)
         expression = search(0, len(args.digits), Fraction(args.target))
         result = {"status": "found" if expression is not None else "not_found_bounded",
                   "expression": expression}
@@ -31,6 +31,7 @@ def main():
     parser.add_argument("--target", default="10958")
     parser.add_argument("--seconds", type=float, default=30)
     parser.add_argument("--memory-mib", type=int, default=512)
+    parser.add_argument("--split", type=int, help="Only this top-level split (1-based)")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if not sys.platform.startswith("linux"):
@@ -39,6 +40,8 @@ def main():
         parser.error("seconds must be finite and positive; memory-mib must be >= 64")
     if not args.digits or any(c not in "0123456789" for c in args.digits):
         parser.error("digits must be a nonempty ASCII digit string")
+    if args.split is not None and not 1 <= args.split < len(args.digits):
+        parser.error("split must be inside the digit string")
     from fractions import Fraction
     try:
         Fraction(args.target)
@@ -50,6 +53,8 @@ def main():
     command = [sys.executable, str(Path(__file__).resolve()), "--worker",
                "--digits", args.digits, "--target", args.target,
                "--seconds", str(args.seconds), "--memory-mib", str(args.memory_mib)]
+    if args.split is not None:
+        command += ["--split", str(args.split)]
     started = time.perf_counter()
     try:
         completed = subprocess.run(command, capture_output=True, text=True,
@@ -66,7 +71,7 @@ def main():
         # subprocess.run kills and waits for the worker before raising.
         result = {"status": "timeout", "expression": None}
     from search import MAX_ABS_EXPONENT
-    result.update(digits=args.digits, target=args.target,
+    result.update(digits=args.digits, target=args.target, root_split=args.split,
                   elapsed_seconds=round(time.perf_counter() - started, 6),
                   time_budget_seconds=args.seconds, memory_budget_mib=args.memory_mib,
                   max_abs_exponent=MAX_ABS_EXPONENT)

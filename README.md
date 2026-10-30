@@ -48,8 +48,8 @@ Other platforms are rejected rather than silently running without memory limits.
 The default budget is 30 seconds and 512 MiB. JSON output distinguishes `found`,
 `not_found_bounded`, `timeout`, `memory_limit`, and `worker_error`.
 Incomplete/error runs exit with status 2; completed searches exit with status 0.
-A timeout does not prove absence of a solution. No checkpoint/resume is
-implemented yet: rerunning starts over.
+A timeout does not prove absence of a solution. Rerunning this single-job command starts over. Use the partitioned runner below
+to retain completed top-level splits.
 
 The first budgeted `123456789 -> 10958` attempt ended in **timeout** at
 20.026 seconds with a 512 MiB address-space budget. No expression was returned;
@@ -159,3 +159,28 @@ Status:
 Computationally expensive
 These results do not prove that 10958 is impossible.
 Exponentiation is implemented in the current Stage 9A code; see the current status above.
+
+## Resumable partitioned search
+
+```bash
+python resume_search.py --seconds 180 --per-split-seconds 60 --memory-mib 768 --checkpoint checkpoint_10958.json
+```
+
+The top-level operator splits `123456789` at one of eight positions. Each
+partition searches all permitted operators at that split; concatenation is
+checked separately. A checkpoint saves each finished partition using an atomic
+file replacement, and a file lock prevents concurrent writers. On resume,
+completed negative partitions are skipped, while timeouts and memory-limited
+partitions are retried. **Progress inside an unfinished partition is not saved.**
+The total time budget controls worker allocation; process startup and cleanup
+can add a small amount of overhead. No work is started after that deadline.
+
+Checkpoints bind the digit string, exact target and SHA-256 of the solver and
+both runners. If any of those change, use a new checkpoint path and revalidate;
+a mismatch is rejected. Do not manually change completion statuses or hashes.
+
+Short intervals (up to four digits) now use exact precomputed table lookup.
+Other intervals still use reverse search, trying balanced splits first. Tests
+explicitly use `lookup_digits=0` to exercise the original reverse algorithm,
+and independently compare hybrid results and partition unions on small spaces.
+This changes execution order and reuse, not the operation rules or exponent cap.
