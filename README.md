@@ -253,3 +253,19 @@ python resume_search.py --max-abs-exponent 200 --seconds 400 --per-split-seconds
 
 Increasing the cap expands the expression space and can sharply increase time
 and memory use. A completed negative result applies only to the recorded cap.
+
+
+### High-cap independent validation
+
+`python -m unittest -v test_large_limits` checks caps 200 and 1000 against
+independent syntax-tree enumeration on `2200`, `2999`, `1234`, and `0000`.
+Both reverse implementations (with and without single-digit edge inversion)
+are compared with the oracle, with short-interval lookup disabled. The tests
+cover 4,251 syntax trees and 2,558 reverse queries, including absent targets.
+
+Separate boundary cases check positive powers, negative powers, and rational
+bases at exponents 200 and 1000, as well as rejection immediately below each
+bound. Every witness is evaluated with Fraction and checked for digit order.
+The independent AST evaluator now accepts an explicit cap and checks every
+power node, even when the final value is small. These are correctness tests,
+not an extension of the completed nine-digit search domain.

@@ -306,3 +306,60 @@ not statistically controlled performance comparisons.
 Both domains completed with **not_found_bounded**; no witness was returned. The cap-1000 checkpoint rejects the default cap 100 and skips all completed partitions when resumed with cap 1000 (verified without launching workers). There is still no claim about unrestricted integer powers or rational exponents.
 
 Next: add independent cap-200/1000 small-space tests and strengthen checkpoint record validation; then assess further expansion with measured budgets instead of assuming completeness beyond the cap.
+
+
+## 2026-10-30 — independent high-cap validation
+
+Starting commit: `d4d23fe72f0d21dae465bb758494eed6b00a5d2a`. PR #1 remained
+open and unmerged; main remained `c036d134e49d582619fe08761165f3f9b550d828`.
+All local tracked source, test, documentation and checkpoint files matched
+remote blob hashes before editing.
+
+Added `test_large_limits.py` and parameterized the independent AST witness
+evaluator's exponent limit (default unchanged). At caps 200 and 1000, the
+independent tokenization/tree oracle enumerates 4,251 valid expressions across
+eight input/cap pairs, then checks 2,558 reverse queries against both edge
+inversion implementations with short-interval lookup disabled. Inputs are
+2200, 2999, 1234 and 0000; 2999 exercises an exponent above 200. Exact value
+and digit order are checked for oracle expressions and returned witnesses.
+
+Additional cases exercise 2^N, 2^(0-N), and (1/2)^N at N=200 and N=1000,
+with a restricted outer split; both reverse paths succeed at N and reject
+the target at cap N-1. Evaluator tests check every power node even when
+large powers cancel to zero, and reject 0^0, zero negative powers and
+fractional exponents. No production search rules were changed.
+
+Focused measurement: Linux/CPython 3.12, one process, 180s timeout and 768MiB
+RLIMIT_AS. Three new tests passed in 7.795s (7.885562s including startup);
+peak child RSS was 19,024KiB. Single-run measurements only.
+
+Reproduce the new tests with `python -m unittest -v test_large_limits`;
+run the entire suite with `python -m unittest -q`. Apply the resource/timeout
+wrapper from the first log entry, changing timeout to 180 seconds.
+
+The cap-1000 checkpoint's identity remains compatible. A mocked subprocess
+that raises on any launch confirmed all eight partitions are skipped; the
+checkpoint remained byte-identical. No nine-digit search was rerun, and no
+new nine-digit timing or expanded absence claim is made. The result remains
+**not_found_bounded for integer exponents -1000..1000**, not unrestricted
+impossibility. No paid resources were used.
+
+### Reproduced follow-up: checkpoint record validation
+
+A temporary synthetic checkpoint with correct identity and partition
+`{"1": {"status": "not_found_bounded"}}` was accepted by `load`, despite
+missing digits, target, cap, root_split and attempts. This was a temporary
+fixture, not an edit to the real checkpoint. Source fingerprints guard
+version mismatch but do not validate each record's content or authenticate
+a negative result. Existing real records contain those fields.
+
+Next priority: reject malformed/contradictory checkpoint records and verify
+found witnesses independently, with corruption tests. Changes to resume_search
+will invalidate the source fingerprint: archive the current checkpoint and
+perform a fresh budgeted run, rather than rewriting hashes or copying statuses.
+Then profile larger exponent caps before choosing another bounded expansion.
+
+Full-suite verification after the evaluator change: **24 tests passed in
+78.795s**, 78.899774s including startup, peak child RSS 62,908KiB, with a
+180s timeout and 768MiB RLIMIT_AS. This includes all earlier regressions,
+CLI/timeout/resume tests, exhaustive small-space oracle and new high-cap tests.

@@ -9,7 +9,7 @@ from search import (
 )
 
 
-def evaluate(expression):
+def evaluate(expression, max_abs_exponent=MAX_ABS_EXPONENT):
     """Evaluate witnesses exactly, without eval or floating-point division."""
     def visit(node):
         if isinstance(node, ast.Constant) and type(node.value) is int:
@@ -27,7 +27,7 @@ def evaluate(expression):
             return a / b
         if isinstance(node.op, ast.Pow):
             assert b.denominator == 1
-            assert abs(b) <= MAX_ABS_EXPONENT
+            assert abs(b) <= max_abs_exponent
             assert not (a == 0 and b <= 0)
             return a ** b.numerator
         raise AssertionError(expression)
