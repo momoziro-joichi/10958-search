@@ -648,3 +648,35 @@ allocation was 180 seconds and no paid compute was used.
 Next: investigate the cost of individual large exact powers and Fraction hashing,
 without adding numeric pruning or claiming unrestricted impossibility. A broader
 cache is not justified by these low reuse rates.
+
+## 2026-10-31 — power/hash cost by integer size
+
+Starting head da11cb32744a117c76bb8ae107292385ef647a92 unchanged.
+Added isolated measurement scripts measure_power_sizes.py and
+measure_hash_sizes.py. Run each with Python from the repository root; each
+has 60s SIGALRM and 768MiB RLIMIT_AS. They temporarily wrap Fraction methods,
+restore them in finally, and group timings by the next power of two above
+numerator.bit_length()+denominator.bit_length(). No solver edits or pruning.
+
+Sequential fresh Linux/Python 3.12 processes, split 2, cap 2000, exact target
+10958 and digits 123456789. Both returned not_found_bounded. Raw output is
+power_size_measurement.json and hash_size_measurement.json.
+
+Power run: 21.029363s wall, RSS 200528KiB; 104101 calls, measured method time
+13.934224s. Only 12 calls producing more than 4,194,304 total bits consumed
+8.700568s (62.4% of measured power time). Maximum output size was 9,903,557
+bits. Thus the remaining power cost is concentrated in a few very large
+results rather than widespread repeated small powers.
+
+Hash run: 22.387748s wall, RSS 200528KiB; 2287050 calls, measured method time
+3.454187s. The 12 hashes above the same threshold consumed only 0.006673s.
+Hashing remains aggregate overhead, but huge-power generation is the first
+priority. Instrumentation overhead and one observation per method prevent
+statistical speedup claims. Full suite not rerun: production unchanged.
+
+Next: identify the digit intervals and expression structures producing those
+12 large powers, then investigate exact target-directed alternatives to their
+forward enumeration. Do not truncate values by bit length: small final targets
+can require large intermediate values. Existing full-domain cap-2000 checkpoint
+remains valid; no full-domain re-execution or unrestricted impossibility claim.
+Total measurement allocation 120s, no paid resources.

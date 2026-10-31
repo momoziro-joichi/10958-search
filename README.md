@@ -349,3 +349,8 @@ A bounded power-cache experiment is reproducible with
 The raw results in `power_cache_measurements.jsonl` show less than 0.1% reuse
 at sizes 128/1024. The cache was not adopted in production; one timing sample
 per size does not establish a speedup. See PROGRESS.md for conditions.
+
+`python measure_power_sizes.py` and `python measure_hash_sizes.py` measure
+operation cost by numerator/denominator bit length (each 60s/768MiB, Linux).
+The committed JSON measurements identify a few huge powers as the main remaining
+cost. These scripts do not prune large values or alter the production solver.
