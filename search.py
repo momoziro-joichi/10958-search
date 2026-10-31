@@ -9,6 +9,36 @@ from functools import lru_cache
 MAX_ABS_EXPONENT = 100
 
 
+def digit_power_exponents(base, target, limit):
+    """All e in [-limit, limit] with base**e == target, for digits 0..9.
+
+    For base >= 2 the positive powers are strictly increasing integers;
+    negative powers are their reciprocals. Repeated exact division identifies
+    the unique exponent without constructing each candidate power.
+    """
+    if base == 0:
+        return range(1, limit + 1) if target == 0 else ()
+    if base == 1:
+        return range(-limit, limit + 1) if target == 1 else ()
+    if target <= 0:
+        return ()
+    if target.denominator == 1:
+        remaining, sign = target.numerator, 1
+    elif target.numerator == 1:
+        remaining, sign = target.denominator, -1
+    else:
+        return ()
+    exponent = 0
+    while remaining != 1:
+        if exponent == limit:
+            return ()
+        remaining, remainder = divmod(remaining, base)
+        if remainder:
+            return ()
+        exponent += 1
+    return (sign * exponent,)
+
+
 # ============================================================
 # Exact integer nth root
 # ============================================================
@@ -389,15 +419,11 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
             # from the right interval.
             # =================================================
 
-            # With a one-digit base, checking every integer in the existing
-            # exponent domain is cheap and avoids generating a large right DP.
+            # Invert powers of a digit exactly; retain all exponents for the
+            # degenerate bases 0 and 1, which are not one-to-one.
             if edge_inversion and k - i == 1:
-                a = Fraction(int(digits[i:k]))
-                for exponent in range(-max_abs_exponent, max_abs_exponent + 1):
-                    if a == 0 and exponent <= 0:
-                        continue
-                    if a ** exponent != target:
-                        continue
+                base = int(digits[i:k])
+                for exponent in digit_power_exponents(base, target, max_abs_exponent):
                     expr_b = can_make(k, j, Fraction(exponent))
                     if expr_b is not None:
                         return f"({digits[i:k]}^{expr_b})"

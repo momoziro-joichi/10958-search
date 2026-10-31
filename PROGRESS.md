@@ -500,3 +500,66 @@ print('result', result)
 pstats.Stats(p).strip_dirs().sort_stats('tottime').print_stats(15)
 PY
 ```
+
+
+## 2026-10-31 — invert digit powers without a linear power scan
+
+Started from c7522897817a0be8ccccf4c70d4037ac9d24eb2a. Incorporated the
+new remote test_large_limits.py and PROGRESS.md before editing; all other
+local tracked files matched the remote tree. The cap-2000 regression/profile
+work above is retained, not overwritten.
+
+A 10s isolated cProfile sample (768MiB) confirmed Fraction.__pow__ as the
+largest own-time entry: 1,816,144 calls, 3.571s own / 5.201s cumulative.
+The sample was deliberately interrupted and is not a complete search result.
+The existing full profile above independently supports the same bottleneck.
+
+For a digit base 2..9, positive integer powers are strictly increasing and
+negative powers are their reciprocals. A positive rational target must therefore
+be an integer or reciprocal integer. Repeated divmod by the base yields the
+unique exponent or rejects a nonpower, stopping at the existing exponent cap.
+No logarithms, approximate roots, new pruning bounds or excluded expressions
+are introduced. Base 0 retains every positive exponent for target 0; base 1
+retains the entire bounded exponent range for target 1.
+
+Added exhaustive direct-power comparison for all ten digit bases, caps
+0/1/2/7/20 and rational/nonpositive targets, plus exact powers and neighboring
+nonpowers at exponents 100/1000/2000 with reciprocal and cap-boundary cases.
+The existing independent oracle and both reverse implementations remain tested.
+
+Before-change split-2 standalone measurement: 39.076633s, peak RSS 203028KiB,
+not_found_bounded. Command: python run_search.py --split 2
+--max-abs-exponent 2000 --seconds 60 --memory-mib 768.
+One process per measurement, Linux/Python 3.12, no concurrent test/search load.
+
+The old cap-2000 checkpoint was rejected by the changed source fingerprint and
+archived unchanged as checkpoint_10958_cap2000_before_digit_inverse.json.
+No completion flag or fingerprint was reused. Fresh full-domain search follows
+tests, with cap 2000 / total 240s / per-split 45s / 768MiB.
+
+Validation: all 36 tests passed in 37.364s (37.470502s including startup),
+peak child RSS 62,896KiB; 180s timeout and 768MiB RLIMIT_AS.
+The retained cap-2000 oracle checked 6,381 trees and 3,838 reverse queries.
+
+Fresh cap-2000 search: all 8/8 partitions not_found_bounded, one attempt each.
+Sum of worker wall times 42.278727s, peak child RSS 202,908KiB.
+The earlier full search took 146.637999s; these are single-run observations,
+not a repeated statistical benchmark. For split 2 in this session, standalone
+before-change time was 39.076633s versus 20.940156s in the new partition run
+(about 46% lower). Both use the same input/cap/768MiB and no profiler; timeout
+allowances differ (60s before, 45s after) and neither expired. RSS stayed near
+203,000KiB. The change targets CPU work, not DP-table memory.
+
+Completed-checkpoint resume skipped all workers and retained identical bytes.
+Search allocations: 10s profile + 60s baseline + 240s new full search = 310s,
+below 600s; tests additionally used a 180s timeout. No paid resources.
+Result remains bounded absence for integer exponents -2000..2000; there is no
+claim for unrestricted exponents. Reproduce the full run using a fresh path:
+
+```bash
+python resume_search.py --max-abs-exponent 2000 --seconds 240 --per-split-seconds 45 --memory-mib 768 --checkpoint checkpoint_fresh.json
+```
+
+Next: profile the remaining split-2 forward-DP/power work, which still dominates
+the full search, before choosing a further cap expansion. Preserve current
+completed partitions unless the source fingerprint changes.

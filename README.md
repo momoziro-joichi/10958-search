@@ -5,11 +5,12 @@ Exact search for 10958 using 123456789
 
 On 2026-10-31, all eight top-level partitions of `123456789 -> 10958`
 completed with **no expression found under the integer-exponent bound -2000..2000**.
-The sum of partition worker wall times was 146.637999 seconds; the largest
-observed worker RSS was 202,888 KiB. These are single-run measurements.
+The sum of partition worker wall times was 42.278727 seconds; the largest
+observed worker RSS was 202,908 KiB. These are single-run measurements.
 This does **not** establish impossibility with unrestricted exponents.
 The active `checkpoint_10958.json` records cap 2000 and requires that CLI option
-when resuming. The previous cap-1000 result is archived unchanged in
+when resuming. The pre-optimization cap-2000 checkpoint is archived unchanged
+in `checkpoint_10958_cap2000_before_digit_inverse.json`. The previous cap-1000 result is archived unchanged in
 `checkpoint_10958_cap1000_before_verifier.json`. The previous schema-2 cap-1000 result is archived in
 `checkpoint_10958_cap1000_schema2.json`. Historical cap-200 results are in `checkpoint_10958_cap200.json`; earlier
 schema-1 cap-100 checkpoints are retained as historical evidence only.
@@ -207,9 +208,11 @@ and solves only the required left targets. It no longer builds the entire large
 left value table for that split. Zero multiplication, zero exponent, and both
 signs of even roots are handled explicitly.
 
-When the left base is a single digit, exponentiation checks the complete existing
-configured integer exponent range -N through N, then asks whether a matching exponent
-can be formed on the right. This avoids building an eight-digit exponent table.
+When the left base is a single digit 2..9, repeated exact integer division
+finds the unique possible exponent (or proves none matches the target).
+Negative exponents require a reciprocal integer target. Bases 0 and 1 retain
+all permitted matching exponents because their powers are not one-to-one.
+The solver then asks whether the exponent can be formed on the right. This avoids building an eight-digit exponent table.
 This is exact within the same exponent cap; floating-point logarithms are not
 used. `edge_inversion=False` retains the preceding implementation for differential
 tests. Source changes invalidate old checkpoints; archived checkpoints are
@@ -259,11 +262,11 @@ and memory use. A completed negative result applies only to the recorded cap.
 
 ### High-cap independent validation
 
-`python -m unittest -v test_large_limits` checks caps 200 and 1000 against
+`python -m unittest -v test_large_limits` checks caps 200, 1000 and 2000 against
 independent syntax-tree enumeration on `2200`, `2999`, `1234`, and `0000`.
 Both reverse implementations (with and without single-digit edge inversion)
 are compared with the oracle, with short-interval lookup disabled. The tests
-cover 4,251 syntax trees and 2,558 reverse queries, including absent targets.
+cover 6,381 syntax trees and 3,838 reverse queries, including absent targets.
 
 Separate boundary cases check positive powers, negative powers, and rational
 bases at exponents 200 and 1000, as well as rejection immediately below each
