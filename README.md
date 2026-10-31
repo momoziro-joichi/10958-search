@@ -354,3 +354,8 @@ per size does not establish a speedup. See PROGRESS.md for conditions.
 operation cost by numerator/denominator bit length (each 60s/768MiB, Linux).
 The committed JSON measurements identify a few huge powers as the main remaining
 cost. These scripts do not prune large values or alter the production solver.
+
+`python trace_large_powers.py` identifies the expressions behind the largest
+powers under the same 60s/768MiB budget. The saved trace locates all twelve
+large events in the right-operand table for `3456789`; see PROGRESS.md for the
+planned exact exponent-target search alternative. No pruning was introduced.

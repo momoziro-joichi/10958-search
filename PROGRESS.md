@@ -680,3 +680,36 @@ forward enumeration. Do not truncate values by bit length: small final targets
 can require large intermediate values. Existing full-domain cap-2000 checkpoint
 remains valid; no full-domain re-execution or unrestricted impossibility claim.
 Total measurement allocation 120s, no paid resources.
+
+## 2026-10-31 — traced the twelve giant powers
+
+Starting head 68370e90071121f599ed735b0f9dfe4a979f92ee was unchanged.
+Added trace_large_powers.py, derived from the bounded power-size measurement.
+It inspects the immediate caller only after a result exceeds 4194304 bits,
+records interval/split and the solver's operand expressions, and discards the
+frame reference immediately. No large integers are serialized. Run:
+
+```
+python trace_large_powers.py > large_power_trace.json
+```
+
+Actual sequential isolated run: 21.826111s, not_found_bounded for split 2,
+cap 2000, 60s SIGALRM / 768MiB RLIMIT_AS. All 12 events occur in full_dp(2,9),
+i.e. the right substring 3456789. All start from 3^(4^5), where 4^5=1024,
+then form nested powers. Largest example: (((3^(4^5))^678)^9), with numerator
+plus denominator bit length 9,903,557. Every individual exponent is within
+cap 2000; flattening the powers and applying the cap to the combined exponent
+would incorrectly change the allowed expression space.
+
+The root split 12 | 3456789 currently builds the entire right DP table for
+exponentiation, then filters it to bounded integer exponents. That creates
+these giant values even though none can serve as an exponent within the cap.
+Do not globally discard large intermediate values: cancellation can need them.
+
+Next concrete experiment: replace only the outer exponent-operand enumeration
+with target-directed queries for integers -cap..cap, keeping recursive operand
+construction exact. Compare runtime/memory with the current table strategy;
+small caps/short intervals may still favor DP. Validate both strategies against
+independent oracle sets, zero/negative/rational boundary cases and all root
+partitions before adopting. Current production code/checkpoint unchanged;
+no new full-domain run or impossibility claim. Raw trace committed for review.
