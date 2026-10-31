@@ -319,3 +319,27 @@ python run_search.py --digits 23 --target 8 --verify-expression '(2^3)' --second
 Expected: found. Replacing the expression with `(2+3)` returns worker_error and
 exit status 2. On the original unverified path that wrong witness could have
 been accepted as found. Returned expressions use `^`, not Python's `**` syntax.
+
+
+### Reproducible profiling without changing checkpoints
+
+```bash
+python profile_search.py --split 2 --max-abs-exponent 2000 --seconds 60 --memory-mib 768 > profile_local.json
+python -m unittest -v test_profile
+```
+
+The profiler launches an isolated Linux worker and enforces wall time and
+virtual memory. JSON output includes the exact input, source SHA-256 values,
+Python/platform versions, cache statistics, RSS, and every profiled function's
+call counts, own time and cumulative time. It does not read or write a search
+checkpoint. On timeout it emits timeout and exits 2; a failed worker emits
+worker_error. Neither means bounded absence. Completed found witnesses are
+independently checked before success.
+
+Profiling adds overhead, so compare ordinary search runtimes separately.
+Cumulative times overlap and must not be summed. The saved
+profile_split2_cap2000.json is one completed observation of the optimized
+solver: 28.694s profiled search / 29.073s including startup and report generation,
+peak RSS 206080KiB. Forward DP accounts for 21.137s cumulative; Fraction power
+accounts for 13.595s own time across 104101 calls. Remaining optimization should
+target forward powers and hashing, not the removed single-digit power scan.

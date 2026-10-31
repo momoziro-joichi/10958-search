@@ -563,3 +563,53 @@ python resume_search.py --max-abs-exponent 2000 --seconds 240 --per-split-second
 Next: profile the remaining split-2 forward-DP/power work, which still dominates
 the full search, before choosing a further cap expansion. Preserve current
 completed partitions unless the source fingerprint changes.
+
+
+## 2026-10-31 — reusable isolated profiler and remaining DP bottleneck
+
+Starting head d9d5f605e7136412611e3f7ece277f44c34434f2, PR #1 open,
+main unchanged. Added profile_search.py, a separate parent/worker profiler
+with wall-time timeout and RLIMIT_AS, canonical rational inputs and source
+fingerprints. JSON reports contain all function counts/times, forward/reverse
+cache statistics, platform/Python, elapsed time and peak RSS. No production
+solver/runner/verifier file changed and no checkpoint was invalidated.
+
+Reproduce:
+
+```bash
+python profile_search.py --split 2 --max-abs-exponent 2000 --seconds 60 --memory-mib 768 > profile_local.json
+python -m unittest -v test_profile
+```
+
+Actual report is committed as profile_split2_cap2000.json. Linux, CPython
+3.12.14, 60s timeout, 768MiB virtual-memory limit, no concurrent tests/search.
+Status not_found_bounded for this partition, 28.693807s inside cProfile,
+29.073107s parent wall time, maximum child RSS 206080KiB. 37,811,044 total
+calls / 36,571,857 primitive calls. Function times are profiler-affected:
+
+| Function | Calls | Own seconds | Cumulative seconds |
+| --- | ---: | ---: | ---: |
+| Fraction.__pow__ | 104101 | 13.594647 | 13.720424 |
+| Fraction.__hash__ | 2287050 | 2.220866 | 5.969380 |
+| full_dp | 31 | 0.738626 | 21.137289 |
+
+Cumulative times overlap. Compared with the earlier profile's 7,565,966 power
+calls, this confirms the digit inversion removed most calls, but remaining
+forward DP powers still account for about 47% of profiled search own time.
+Different timing conditions mean this is not a controlled speedup benchmark.
+The forward table cache had 31 misses and 1,244,866 hits; reverse cache had
+1866 misses and 455 hits, below its 50,000-entry limit. Raising that limit
+is therefore not supported by this measurement.
+
+Three new test methods passed in 0.541s: verified found expression, canonical
+target/bounded absence, real timeout, and invalid budgets/splits/caps. There
+are now 39 discoverable tests; the previous 36 were not rerun because their
+code and production dependencies are unchanged. A mocked launch guard verified
+all eight saved partitions are skipped on resume and checkpoint bytes remain
+identical. Full-domain result remains bounded absence at -2000..2000, with no
+new full-domain search or unrestricted impossibility claim.
+
+Next: measure whether duplicate forward power inputs justify a small bounded
+cache, including retained big-integer memory, before changing search.py. Keep
+exact Fraction results and domain unchanged; reject any optimization that
+regresses independent oracle tests or materially increases memory.
