@@ -613,3 +613,38 @@ Next: measure whether duplicate forward power inputs justify a small bounded
 cache, including retained big-integer memory, before changing search.py. Keep
 exact Fraction results and domain unchanged; reject any optimization that
 regresses independent oracle tests or materially increases memory.
+
+## 2026-10-31 — bounded power-cache experiment
+
+Head fafd60c2e436806be1e48dba3f55565e1808c9c7 was unchanged. Added
+measure_power_cache.py as an isolated experiment, not production integration.
+It wraps Fraction.__pow__ with an LRU inside its process, restores it on exit,
+and enforces 60s via SIGALRM and 768MiB RLIMIT_AS. Run each size in a fresh
+Linux/Python 3.12 process, sequentially, without profiler or concurrent load:
+
+```
+python measure_power_cache.py --size 0
+python measure_power_cache.py --size 128
+python measure_power_cache.py --size 1024
+```
+
+Raw output: power_cache_measurements.jsonl. All use digits 123456789, target
+10958, split 2, cap 2000; all completed not_found_bounded.
+
+| Entries | Seconds | RSS KiB | Hits | Misses |
+| ---: | ---: | ---: | ---: | ---: |
+| 0 | 21.890750 | 201456 | 0 | 104101 |
+| 128 | 21.457452 | 201096 | 11 | 104090 |
+| 1024 | 20.698751 | 201180 | 104 | 103997 |
+
+Each is one observation. Hit rates are only 0.011% and 0.100%; timing differences
+are not sufficient evidence of a reliable speedup. Do not adopt the cache on
+this evidence. Size zero still uses a wrapper, so it is not a pristine baseline.
+RSS includes solver tables and is not retained-cache size. No new correctness
+claim is derived from these experiments; production files and the completed
+checkpoint remain unchanged. The full suite was not rerun. Total measurement
+allocation was 180 seconds and no paid compute was used.
+
+Next: investigate the cost of individual large exact powers and Fraction hashing,
+without adding numeric pruning or claiming unrestricted impossibility. A broader
+cache is not justified by these low reuse rates.

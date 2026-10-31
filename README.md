@@ -343,3 +343,9 @@ solver: 28.694s profiled search / 29.073s including startup and report generatio
 peak RSS 206080KiB. Forward DP accounts for 21.137s cumulative; Fraction power
 accounts for 13.595s own time across 104101 calls. Remaining optimization should
 target forward powers and hashing, not the removed single-digit power scan.
+
+A bounded power-cache experiment is reproducible with
+`python measure_power_cache.py --size 128` (Linux, 60s/768MiB).
+The raw results in `power_cache_measurements.jsonl` show less than 0.1% reuse
+at sizes 128/1024. The cache was not adopted in production; one timing sample
+per size does not establish a speedup. See PROGRESS.md for conditions.
