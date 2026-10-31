@@ -713,3 +713,49 @@ small caps/short intervals may still favor DP. Validate both strategies against
 independent oracle sets, zero/negative/rational boundary cases and all root
 partitions before adopting. Current production code/checkpoint unchanged;
 no new full-domain run or impossibility claim. Raw trace committed for review.
+
+## 2026-10-31 — target-directed exponent operands adopted
+
+Started from df417a480be5468e94f8c2e87143c58533ad8824; remote PR #1 was
+open and unchanged. Local tracked blobs matched remote before editing.
+For right operands longer than four digits, reverse search now checks bounded
+integer exponents against the target's exact rational roots and the left DP
+first, then recursively asks whether the right interval can make that exponent.
+Short operands retain table enumeration. `exponent_lookup_digits=0` forces
+queries in tests; 99 forces the old strategy. Zero exponents require any nonzero
+left base; negative exponents invert nonzero targets; even powers check both
+base signs. Each recursive operand is strictly shorter. No intermediate value
+is discarded and nested powers retain the per-node exponent bound.
+
+Validation: `python -m unittest -q` passed 40 tests in 40.129s (40.287801s
+including startup), under a 180s subprocess deadline and 768MiB RLIMIT_AS.
+New independent partition oracle covers all 27 three-digit strings over 012,
+plus 1234/2200/2999, caps 0/3/10, every root split, both forced exponent
+strategies, reachable values and sampled half-integer misses. Returned witnesses
+are independently evaluated and digit-order checked. Existing high-cap oracle,
+zero/negative/rational boundaries, runner and checkpoint tests also passed.
+Only an explanatory source comment changed after the test run.
+
+The old checkpoint was explicitly rejected with input/version mismatch, then
+archived byte-for-byte as checkpoint_10958_cap2000_before_exponent_queries.json.
+A fresh run used:
+
+```
+python resume_search.py --max-abs-exponent 2000 --seconds 240 --per-split-seconds 45 --memory-mib 768 --checkpoint checkpoint_10958.json
+```
+
+All eight partitions completed, attempts=1 each, not_found_bounded. Worker times
+sum to 23.423295s versus previous 42.278727s; peak RSS 111756KiB versus
+202908KiB. Split 2: 3.186169s / 20104KiB versus 20.940156s / 202908KiB.
+These are single runs, not statistical benchmarks. Full per-partition results
+and source fingerprint are in the new checkpoint. Total search allocation240s,
+per-child virtual memory768MiB, no paid resources. A resume with subprocess.run
+patched to fail if called completed with byte-identical checkpoint: no completed
+partition was recomputed. No expression found for exponents within +/-2000;
+this does not establish impossibility for unrestricted integer exponents.
+
+Next: profile split 7 (now 6.506190s / 111756KiB) and improve its remaining
+forward-table cost without magnitude pruning. Add high-cap forced-query
+partition tests before widening the exponent domain further. Existing profiling
+JSON remains historical and records its own old source hashes. No automation
+was changed.

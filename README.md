@@ -5,8 +5,8 @@ Exact search for 10958 using 123456789
 
 On 2026-10-31, all eight top-level partitions of `123456789 -> 10958`
 completed with **no expression found under the integer-exponent bound -2000..2000**.
-The sum of partition worker wall times was 42.278727 seconds; the largest
-observed worker RSS was 202,908 KiB. These are single-run measurements.
+The sum of partition worker wall times was 23.423295 seconds; the largest
+observed worker RSS was 111,756 KiB. These are single-run measurements.
 This does **not** establish impossibility with unrestricted exponents.
 The active `checkpoint_10958.json` records cap 2000 and requires that CLI option
 when resuming. The pre-optimization cap-2000 checkpoint is archived unchanged
@@ -14,6 +14,10 @@ in `checkpoint_10958_cap2000_before_digit_inverse.json`. The previous cap-1000 r
 `checkpoint_10958_cap1000_before_verifier.json`. The previous schema-2 cap-1000 result is archived in
 `checkpoint_10958_cap1000_schema2.json`. Historical cap-200 results are in `checkpoint_10958_cap200.json`; earlier
 schema-1 cap-100 checkpoints are retained as historical evidence only.
+Long exponent operands now use target-directed bounded-integer queries after exact
+root/base checks, avoiding a full exponent-operand table. No intermediate-value
+size pruning is used. The preceding checkpoint is preserved unchanged in
+`checkpoint_10958_cap2000_before_exponent_queries.json`.
 See `PROGRESS.md` for test results, exact limits, and measurements.
 
 ### Arithmetic and validation

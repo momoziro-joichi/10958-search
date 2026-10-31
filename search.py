@@ -153,7 +153,7 @@ def rational_nth_root_exact(value, exponent):
 # ============================================================
 
 def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True,
-                max_abs_exponent=MAX_ABS_EXPONENT):
+                max_abs_exponent=MAX_ABS_EXPONENT, exponent_lookup_digits=4):
 
     if type(max_abs_exponent) is not int or max_abs_exponent < 0:
         raise ValueError("max_abs_exponent must be a nonnegative integer")
@@ -414,9 +414,8 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
             #
             # A^B = target
             #
-            # Instead of guessing B=0..20,
-            # enumerate the actual possible exponents
-            # from the right interval.
+            # Short right intervals use forward enumeration; long ones
+            # query bounded integer exponents after checking exact roots.
             # =================================================
 
             # Invert powers of a digit exactly; retain all exponents for the
@@ -429,9 +428,13 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
                         return f"({digits[i:k]}^{expr_b})"
                 continue
 
-            right = full_dp(k, j)
+            # Long exponent operands are queried only after a feasible base
+            # is known. Never truncate intermediate values in forward DP.
+            directed = j - k > exponent_lookup_digits
+            candidates = ((Fraction(e), None) for e in
+                          range(-max_abs_exponent, max_abs_exponent + 1)) if directed else full_dp(k, j).items()
 
-            for exponent, expr_b in right.items():
+            for exponent, expr_b in candidates:
 
                 # Forward DP only permits integer exponents
                 if exponent.denominator != 1:
@@ -448,7 +451,10 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
                     if target == 1:
                         for base, expr_a in left.items():
                             if base != 0:
-                                return f"({expr_a}^{expr_b})"
+                                witness = can_make(k, j, exponent) if directed else expr_b
+                                if witness is not None:
+                                    return f"({expr_a}^{witness})"
+                                break
                     continue
 
                 # Invert negative powers before taking the exact root.
@@ -473,7 +479,10 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
                 for base in bases:
                     expr_a = left.get(base)
                     if expr_a is not None:
-                        return f"({expr_a}^{expr_b})"
+                        witness = can_make(k, j, exponent) if directed else expr_b
+                        if witness is not None:
+                            return f"({expr_a}^{witness})"
+                        break
 
         return None
 
