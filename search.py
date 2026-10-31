@@ -153,7 +153,8 @@ def rational_nth_root_exact(value, exponent):
 # ============================================================
 
 def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True,
-                max_abs_exponent=MAX_ABS_EXPONENT, exponent_lookup_digits=4):
+                max_abs_exponent=MAX_ABS_EXPONENT, exponent_lookup_digits=4,
+                right_inversion_digits=2):
 
     if type(max_abs_exponent) is not int or max_abs_exponent < 0:
         raise ValueError("max_abs_exponent must be a nonnegative integer")
@@ -329,6 +330,42 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
                             expr_a = can_make(i, k, base)
                             if expr_a is not None:
                                 return f"({expr_a}^{expr_b})"
+                continue
+
+            # Enumerate a small right operand instead of a large left table.
+            # Each recursive query consumes fewer digits; all values stay exact.
+            if j - k <= right_inversion_digits and k - i > j - k:
+                for b, expr_b in full_dp(k, j).items():
+                    candidates = [(target - b, "+"), (target + b, "-")]
+                    if b:
+                        candidates += [(target / b, "*"), (target * b, "/")]
+                    elif target == 0:
+                        return f"({digits[i:k]}*{expr_b})"
+                    for base, operator in candidates:
+                        expr_a = can_make(i, k, base)
+                        if expr_a is not None:
+                            return f"({expr_a}{operator}{expr_b})"
+                    if b.denominator != 1 or abs(b) > max_abs_exponent:
+                        continue
+                    exponent = b.numerator
+                    if exponent == 0:
+                        # All-zero digits cannot produce a nonzero value.
+                        if target == 1 and int(digits[i:k]) != 0:
+                            return f"({digits[i:k]}^{expr_b})"
+                        continue
+                    if exponent < 0 and target == 0:
+                        continue
+                    root_target = Fraction(1) / target if exponent < 0 else target
+                    root = rational_nth_root_exact(root_target, abs(exponent))
+                    if root is None:
+                        continue
+                    bases = [root]
+                    if exponent % 2 == 0 and root != 0:
+                        bases.append(-root)
+                    for base in bases:
+                        expr_a = can_make(i, k, base)
+                        if expr_a is not None:
+                            return f"({expr_a}^{expr_b})"
                 continue
 
             left = full_dp(i, k)

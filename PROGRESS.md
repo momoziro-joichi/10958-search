@@ -759,3 +759,68 @@ forward-table cost without magnitude pruning. Add high-cap forced-query
 partition tests before widening the exponent domain further. Existing profiling
 JSON remains historical and records its own old source hashes. No automation
 was changed.
+
+## 2026-11-01 — exact inversion of short right operands
+
+Started at b3755ed7dc7f35104d815ef22859ab7729c6abc2; PR #1 open,
+head unchanged, all existing local tracked blobs matched the remote tree.
+Read README, prior progress and active checkpoint before changing production.
+
+Split 7 before-change profile: 14.651911s including profiler overhead,
+30,948,932 calls, RSS115068KiB. Fraction hashing had 1,918,316 calls;
+full_dp cumulative time6.183327s. The large left operand table was built
+before trying the short right operand. Added exact inversion for right operands
+of at most two digits when shorter than the left. Arithmetic is inverted for
+each right value; integer powers use exact roots, reciprocals for negative
+exponents, both signs for even powers, and a nonzero concatenation for exponent
+zero. Zero multiplication and undefined operations are handled explicitly.
+No forward value pruning or altered exponent bound. Recursive intervals shrink.
+`right_inversion_digits=0` disables this path for differential testing.
+
+Validation: 42 tests passed in110.743s (110.848657s with startup), under
+180s timeout and768MiB RLIMIT_AS. New independent root-partition oracle tests
+12012/01212/12300/12323/00012 at split3, caps0/3/100/2000, both right-operand
+strategies:6830 queries, all reachable values plus sampled rational misses.
+Every witness is independently evaluated and digit-order checked. Additional
+forced exponent-query/table comparisons check cap2000 reciprocal powers,
+negative exponents and all-zero failure. Existing tests also passed.
+An initial full-suite attempt exceeded its180s deadline and was killed: it
+combined exhaustive five-digit testing with forced4001-exponent scans for each
+query. Final tests retain exhaustive right-inversion comparisons with the short
+exponent table; forced high-cap exponent scans use selected boundary cases.
+No assertion failure was observed in that timed-out attempt; it was not counted
+as a passing test run. Reproduce final suite with `python -m unittest -q`.
+
+Before changing the active checkpoint, load rejected it for source/version
+mismatch. Archived bytes unchanged in
+checkpoint_10958_cap2000_before_right_inverse.json. Fresh search command:
+
+```
+python resume_search.py --max-abs-exponent 2000 --seconds 240 --per-split-seconds 45 --memory-mib 768 --checkpoint checkpoint_10958.json
+```
+
+All8 partitions completed not_found_bounded, each attempt1. Sum worker wall
+times4.783089s (previous23.423295s); peak RSS24404KiB (previous111756KiB).
+Split7:0.566826s/17368KiB versus previous6.506190s/111756KiB. Separate new
+split7 run0.585611s is saved in split7_right_inverse.json. These are single-run
+measurements, not statistical guarantees. Resume with subprocess.run patched
+to raise on invocation succeeded with byte-identical checkpoint: no reruns.
+
+Profiles, sequential and never overlapping tests/search:
+
+```
+python profile_search.py --split 7 --max-abs-exponent 2000 --seconds 45 --memory-mib 768
+```
+
+Saved before/after JSON includes source hashes. After profile2.000298s,
+5,752,446 calls,RSS20812KiB. Compare profiler results to each other, not normal
+worker times. Total allocated search/profiling budgets375s (45+45+240+45),
+per-child virtual memory768MiB. Tests had separate180s deadlines per attempt.
+No paid resources or automation changes. No expression for10958 found with
+per-node integer exponents within +/-2000; unrestricted impossibility unproven.
+
+Next: benchmark split1 and8, now the largest worker times, and compare a larger
+short-right threshold only with independent oracle tests. Keep completed
+checkpoints intact; widening the exponent bound requires a distinct identity
+and fresh bounded validation. No need to rerun the completed current domain
+unless production changes or a specific diagnostic requires it.
