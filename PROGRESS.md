@@ -920,3 +920,58 @@ Next: bound candidate exponents using exact integer bit lengths before root
 queries (except degenerate targets0,+1,-1), and independently prove/test that
 bound for both positive and reciprocal rational targets. This is a proposed
 optimization, not yet implemented. Do not magnitude-prune intermediate values.
+
+## 2026-11-01 — exact exponent candidate bound
+
+Started b72282e48809f14ff04d4f4e1ad6acff8f73eb2b, PR open and head unchanged.
+Local tracked blobs matched remote. Read README, progress, active checkpoint
+and exponent implementation. Added target_exponent_candidates and applied it
+only to the long exponent-operand reverse-query strategy.
+
+Proof: for a reduced rational base a/b, raising to a nonzero integer exponent
+e leaves coprime components |a|**|e| and b**|e|, swapped for e<0. Every target
+component c>1 is consequently at least2**|e|. Thus |e|<=c.bit_length()-1 for
+EACH such component. Take their minimum and the configured cap. Targets0,+1,-1
+are explicitly exempt; exponent zero can only make1 and remains handled by
+the existing branch. Signed and reciprocal targets obey the same argument.
+The retained integer range may include impossible candidates; exact roots and
+operand construction still decide them. No intermediate sizes are truncated.
+
+`python -m unittest -q`:47 tests passed in132.517s (132.737938s with startup),
+180s subprocess timeout /768MiB virtual memory. New tests enumerate rational
+bases with numerators -6..6, denominators1..6 and exponents -20..20; every
+valid generated power retains its exponent. Additional100/2000/5000 boundary
+powers and reciprocals are retained. Degenerate targets and cap0 tested.
+Forced long-operand queries with and without the bound agree for signed
+rational targets on12345/01212/00000; witnesses independently evaluated.
+Existing independent tree oracles, runner, checkpoint and verifier tests pass.
+Full output in exponent_bound_tests.log.
+
+Old cap5000 checkpoint explicitly rejected with source/version mismatch,
+then archived byte-for-byte in checkpoint_10958_cap5000_before_exponent_bound.json.
+New full-domain command:
+
+```
+python resume_search.py --max-abs-exponent 5000 --seconds 240 --per-split-seconds 45 --memory-mib 768 --checkpoint checkpoint_10958_cap5000.json
+```
+
+All8 partitions not_found_bounded, attempts1. Total6.604807s, peak RSS24496KiB.
+Previous full run12.004513s/24504KiB is historical; do not attribute all of that
+difference to this change. The new checkpoint resumes with no subprocess and
+identical bytes. Other archived results have older source identities and must
+not be forced through version validation. No unrestricted impossibility claim.
+
+Added measure_exponent_bound.py for same-source on/off comparisons. Each worker
+has20s alarm /768MiB RLIMIT_AS, orchestration25s hard timeout. Paired sequential
+orders off/on, on/off, off/on for each split1/8. All12 results not_found_bounded.
+Median seconds off/on: split1=3.841374/3.763919; split8=2.028509/2.266596.
+Raw timings vary widely; a consistent wall-clock speedup is NOT established.
+The change is retained for its proven removal of impossible candidates (e.g.
+10958 at cap5000:10001 integers become27), with this performance limitation
+explicit. Current scope changes no admissible expression or arithmetic rule.
+
+Total search allocation480s (240+12*20), plus separate180s test budget. No paid
+resources or automation modifications. Next: count actual root invocations and
+compare CPU time in controlled paired runs; optimize only remaining proven
+hotspots before widening the cap. Do not redo completed full searches solely
+for status checks. README records both the proof and timing uncertainty.

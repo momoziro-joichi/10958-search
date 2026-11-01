@@ -9,6 +9,21 @@ from functools import lru_cache
 MAX_ABS_EXPONENT = 100
 
 
+def target_exponent_candidates(target, limit):
+    """A necessary bound for rational bases; never a magnitude cutoff.
+
+    For reduced a/b raised to nonzero e, every nonunit numerator or
+    denominator component of the target is an integer |e|-th power.
+    Such a component c is at least 2**|e|, so |e| <= c.bit_length()-1.
+    Negative exponents swap components and obey the same bound.
+    Targets 0, 1 and -1 need the original full exponent range.
+    """
+    if target not in (0, 1, -1):
+        components = (abs(target.numerator), target.denominator)
+        limit = min(limit, *(c.bit_length() - 1 for c in components if c > 1))
+    return range(-limit, limit + 1)
+
+
 def digit_power_exponents(base, target, limit):
     """All e in [-limit, limit] with base**e == target, for digits 0..9.
 
@@ -469,7 +484,7 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
             # is known. Never truncate intermediate values in forward DP.
             directed = j - k > exponent_lookup_digits
             candidates = ((Fraction(e), None) for e in
-                          range(-max_abs_exponent, max_abs_exponent + 1)) if directed else full_dp(k, j).items()
+                          target_exponent_candidates(target, max_abs_exponent)) if directed else full_dp(k, j).items()
 
             for exponent, expr_b in candidates:
 

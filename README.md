@@ -5,13 +5,13 @@ Exact search for 10958 using 123456789
 
 On 2026-11-01, all eight top-level partitions of `123456789 -> 10958`
 completed with **no expression found under the integer-exponent bound -5000..5000**.
-The sum of partition worker wall times was 12.004513 seconds; the largest
-observed worker RSS was 24,504 KiB. These are single-run measurements.
+The sum of partition worker wall times was 6.604807 seconds; the largest
+observed worker RSS was 24,496 KiB. These are single-run measurements.
 This does **not** establish impossibility with unrestricted exponents.
 The latest checkpoint is `checkpoint_10958_cap5000.json` (cap 5000).
 Resume it with `python resume_search.py --max-abs-exponent 5000 --seconds 240
 --per-split-seconds 45 --memory-mib 768 --checkpoint checkpoint_10958_cap5000.json`
-(on one line). The completed `checkpoint_10958.json` retains cap 2000 unchanged. The pre-optimization cap-2000 checkpoint is archived unchanged
+(on one line). The historical `checkpoint_10958.json` retains cap 2000 unchanged but uses an older source fingerprint. The pre-optimization cap-2000 checkpoint is archived unchanged
 in `checkpoint_10958_cap2000_before_digit_inverse.json`. The previous cap-1000 result is archived unchanged in
 `checkpoint_10958_cap1000_before_verifier.json`. The previous schema-2 cap-1000 result is archived in
 `checkpoint_10958_cap1000_schema2.json`. Historical cap-200 results are in `checkpoint_10958_cap200.json`; earlier
@@ -388,3 +388,29 @@ All18 measurements are in `root_cache_measurements.jsonl` (cap5000, splits1/8,
 three runs per size). Caches were not adopted: both cache sizes had slower
 median times on both splits. Solver and completed checkpoints remain unchanged.
 See PROGRESS.md for numerical results and measurement limitations.
+
+
+### Exact target-based exponent bound
+
+For a reduced rational target other than0,1,-1, each nonunit absolute numerator
+or denominator component c must itself be an integer |e|-th power. Therefore
+c >= 2**|e| and |e| <= c.bit_length()-1. Negative exponents swap numerator and
+denominator, so the same bound applies. Long exponent-operand queries now use
+the minimum of these component bounds and the configured exponent cap. Targets
+0,1,-1 keep the full configured range. No intermediate-value pruning is used.
+For target10958 at cap5000, this reduces candidate integers from10001 to27
+(including zero, subsequently rejected). The exact-root check is still required.
+
+The preceding cap5000 checkpoint is preserved unchanged as
+`checkpoint_10958_cap5000_before_exponent_bound.json`; the latest checkpoint
+was recomputed with the new source fingerprint. Three paired timing samples per
+split were noisy and did not demonstrate a consistent speedup on both splits;
+see `exponent_bound_measurements.jsonl` and PROGRESS.md. Reproduce a comparison:
+
+```bash
+python measure_exponent_bound.py --split 1 --unbounded-candidates
+python measure_exponent_bound.py --split 1
+```
+
+Both commands retain the per-node exponent cap5000; the first disables only
+the mathematical target-based candidate bound, not the configured search limit.
