@@ -975,3 +975,25 @@ resources or automation modifications. Next: count actual root invocations and
 compare CPU time in controlled paired runs; optimize only remaining proven
 hotspots before widening the cap. Do not redo completed full searches solely
 for status checks. README records both the proof and timing uncertainty.
+
+## 2026-11-01 — root invocation counts and process CPU time
+
+Latest PR head1a6373084fa9de2c9f2425c21011b5ffbf94158c confirmed unchanged.
+Extended measure_exponent_bound.py with process CPU time and actual rational
+root invocation counts. Both modes use the same counting wrapper; finally
+restores it. Production and checkpoints unchanged. Four isolated sequential
+CLI runs (splits1/8, off/on) completed and JSON assertions checked status,
+positive call counts and CPU times. No production full-suite rerun needed.
+
+At cap5000, split1 root calls549962 ->150850; CPU1.511065 ->1.056225s.
+Split8 calls547390 ->148244; CPU1.293592 ->0.913322s. Peak RSS19980KiB.
+These are single paired measurements with counting overhead, not a statistical
+speed guarantee. They confirm the intended reduction in actual root calls.
+Raw results: exponent_bound_cpu.jsonl. Reproduce each split with:
+`python measure_exponent_bound.py --split 1 --unbounded-candidates` then
+`python measure_exponent_bound.py --split 1` (also split8).
+Each run20s alarm,768MiB RLIMIT_AS,25s external hard timeout; total search
+allocation80s. No paid resources, no automation changes. Both diagnostic
+splits remain not_found_bounded. Full cap5000 result remains the earlier
+completed search, not an unrestricted impossibility proof. Next prioritize
+remaining arithmetic/reverse-search CPU cost; retain the exact exponent bound.
