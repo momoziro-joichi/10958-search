@@ -371,3 +371,20 @@ cost. These scripts do not prune large values or alter the production solver.
 powers under the same 60s/768MiB budget. The saved trace locates all twelve
 large events in the right-operand table for `3456789`; see PROGRESS.md for the
 planned exact exponent-target search alternative. No pruning was introduced.
+
+### Root-cache experiment (2026-11-01)
+
+`measure_root_cache.py` compares an unwrapped baseline with 1024/16384-entry
+LRU caches of exact rational roots, admitting only inputs whose combined
+numerator/denominator bit length is at most256. Each isolated run has a30s
+alarm and768MiB virtual-memory ceiling. Example:
+
+```bash
+python measure_root_cache.py --split 1 --size 1024
+python -m unittest -v test_root_cache
+```
+
+All18 measurements are in `root_cache_measurements.jsonl` (cap5000, splits1/8,
+three runs per size). Caches were not adopted: both cache sizes had slower
+median times on both splits. Solver and completed checkpoints remain unchanged.
+See PROGRESS.md for numerical results and measurement limitations.

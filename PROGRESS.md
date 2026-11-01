@@ -870,3 +870,53 @@ Total search/profiling allocation300s (30+30+240), each child virtual memory
 to reduce repeated exact root checks before increasing the cap again. Compare
 root caching only with a strict memory bound and measured hit rate; avoid
 repeating the earlier unsuccessful general power-cache experiment.
+
+## 2026-11-01 — bounded rational-root cache rejected after measurement
+
+Started at ff351df7cf40a15d00598440a5ee11ce5c288b24, PR #1 open and unchanged.
+Compared local tracked files with remote blobs (matched), then read README,
+previous progress and cap5000 checkpoint. No production source changed.
+
+Added measure_root_cache.py: isolated baseline versus LRU sizes1024/16384.
+Input admission requires combined numerator/denominator bit length<=256;
+larger inputs bypass the cache, preventing a fixed entry count from retaining
+arbitrarily large rationals. Exponents come from the cap5000 solver. Baseline
+uses the original function directly; experimental wrappers are restored in a
+finally block. Workers have30s SIGALRM /768MiB RLIMIT_AS; orchestration adds a
+35s hard subprocess timeout. Found witnesses would be independently verified.
+Results include cap, budgets, source hash, RSS and cache hit/miss counts.
+
+New test_root_cache.py checks independently generated exact powers (including
+negative/rational bases), irrational and negative-even misses, repeat hits,
+eviction and large-input bypass. `python -m unittest -v test_root_cache`:
+2 tests passed in0.074s. Production unchanged, previous full suite not rerun.
+
+Reproduction: sequentially run `python measure_root_cache.py --split S --size N`
+for S=1,8 and N=0,1024,16384, three times per combination. Actual order used
+sizes0/1024/16384, then16384/1024/0, then0/1024/16384, each over splits1/8.
+All18 JSON rows committed in root_cache_measurements.jsonl, allnot_found_bounded.
+Median wall seconds (baseline /1024 /16384):
+- split1:2.869067 /3.426224 /4.816251.
+- split8:2.300254 /3.845431 /4.116472.
+Peak RSS KiB for those settings: split1=19996/20172/25300;
+split8=19760/19900/24424. Hit rates:1024 about1.61%/2.52%;
+16384 about14.00%/19.51%. Cache bookkeeping did not produce a measured median
+speedup on either split, so neither cache is adopted.
+
+Timings varied substantially (including a19.72s observation). The first batch
+also overlapped the short cache tests; later two batches ran without other
+local test/search commands. Three samples are not a controlled statistical
+performance guarantee. The decision is conservative: no evidence justifies
+adding production memory and lookup overhead. No cached limited misses are
+persisted as completed production search results.
+
+Total allocation18*30=540s search time, below600s; observed runs all completed
+before alarms. No paid resources or automation changes. The existing cap5000
+checkpoint resumes byte-identically with subprocess invocation prohibited.
+10958 remains not_found_bounded for +/-5000 from the earlier full search;
+only diagnostic splits were repeated now, not the entire completed domain.
+
+Next: bound candidate exponents using exact integer bit lengths before root
+queries (except degenerate targets0,+1,-1), and independently prove/test that
+bound for both positive and reciprocal rational targets. This is a proposed
+optimization, not yet implemented. Do not magnitude-prune intermediate values.
