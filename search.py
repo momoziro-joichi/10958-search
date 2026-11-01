@@ -6,7 +6,52 @@ from functools import lru_cache
 # Configuration
 # ============================================================
 
-DIGITS = "12345"
+MAX_ABS_EXPONENT = 100
+
+
+def target_exponent_candidates(target, limit):
+    """A necessary bound for rational bases; never a magnitude cutoff.
+
+    For reduced a/b raised to nonzero e, every nonunit numerator or
+    denominator component of the target is an integer |e|-th power.
+    Such a component c is at least 2**|e|, so |e| <= c.bit_length()-1.
+    Negative exponents swap components and obey the same bound.
+    Targets 0, 1 and -1 need the original full exponent range.
+    """
+    if target not in (0, 1, -1):
+        components = (abs(target.numerator), target.denominator)
+        limit = min(limit, *(c.bit_length() - 1 for c in components if c > 1))
+    return range(-limit, limit + 1)
+
+
+def digit_power_exponents(base, target, limit):
+    """All e in [-limit, limit] with base**e == target, for digits 0..9.
+
+    For base >= 2 the positive powers are strictly increasing integers;
+    negative powers are their reciprocals. Repeated exact division identifies
+    the unique exponent without constructing each candidate power.
+    """
+    if base == 0:
+        return range(1, limit + 1) if target == 0 else ()
+    if base == 1:
+        return range(-limit, limit + 1) if target == 1 else ()
+    if target <= 0:
+        return ()
+    if target.denominator == 1:
+        remaining, sign = target.numerator, 1
+    elif target.numerator == 1:
+        remaining, sign = target.denominator, -1
+    else:
+        return ()
+    exponent = 0
+    while remaining != 1:
+        if exponent == limit:
+            return ()
+        remaining, remainder = divmod(remaining, base)
+        if remainder:
+            return ()
+        exponent += 1
+    return (sign * exponent,)
 
 
 # ============================================================
@@ -31,8 +76,14 @@ def integer_nth_root_exact(n, exponent):
     if n == 1:
         return 1
 
+    if exponent == 1:
+        return n
+
+    if exponent >= n.bit_length():
+        return None
+
     lo = 0
-    hi = n
+    hi = 1 << ((n.bit_length() + exponent - 1) // exponent)
 
     while lo <= hi:
 
@@ -116,9 +167,20 @@ def rational_nth_root_exact(value, exponent):
 # Solver factory
 # ============================================================
 
-def make_solver(digits):
+def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True,
+                max_abs_exponent=MAX_ABS_EXPONENT, exponent_lookup_digits=4,
+                right_inversion_digits=2):
 
-    n = len(digits)
+    if type(max_abs_exponent) is not int or max_abs_exponent < 0:
+        raise ValueError("max_abs_exponent must be a nonnegative integer")
+
+    if not digits or any(c not in "0123456789" for c in digits):
+        raise ValueError("digits must be a nonempty ASCII digit string")
+
+    if root_split is not None and not 1 <= root_split < len(digits):
+        raise ValueError("root_split must be inside the digit string")
+    if not isinstance(lookup_digits, int) or lookup_digits < 0:
+        raise ValueError("lookup_digits must be a nonnegative integer")
 
     # ========================================================
     # FULL DP
@@ -196,23 +258,18 @@ def make_solver(digits):
                     # Forward rule:
                     # exponent must be an integer.
                     #
-                    # No artificial upper limit here.
+                    # Both search directions use max_abs_exponent.
                     # ----------------------------------------
 
                     if (
                         b.denominator == 1
-                        and not (a == 0 and b == 0)
+                        and not (a == 0 and b <= 0)
                     ):
 
                         exponent = b.numerator
 
-                        # Avoid enormous useless powers
-                        # during validation.
-                        #
-                        # This is NOT a mathematical restriction
-                        # of the target search; it only prevents
-                        # pathological Python integer explosions.
-                        if abs(exponent) <= 100:
+                        # This bound limits the searched expression space.
+                        if abs(exponent) <= max_abs_exponent:
 
                             value = a ** exponent
 
@@ -227,8 +284,17 @@ def make_solver(digits):
     # TARGET-DIRECTED SEARCH
     # ========================================================
 
-    @lru_cache(maxsize=None)
     def can_make(i, j, target):
+        # Do not retain millions of distinct failed single-digit targets.
+        if j - i == 1:
+            return digits[i:j] if Fraction(int(digits[i:j])) == target else None
+        restricted_root = root_split is not None and i == 0 and j == len(digits)
+        if j - i <= lookup_digits and not restricted_root:
+            return full_dp(i, j).get(target)
+        return cached_can_make(i, j, target)
+
+    @lru_cache(maxsize=50000)
+    def cached_can_make(i, j, target):
 
         # ----------------------------------------------------
         # Concatenation
@@ -245,7 +311,77 @@ def make_solver(digits):
         # Every possible split
         # ----------------------------------------------------
 
-        for k in range(i + 1, j):
+        splits = (root_split,) if (
+            root_split is not None and i == 0 and j == len(digits)
+        ) else sorted(range(i + 1, j), key=lambda k: (abs(2 * k - i - j), k))
+        for k in splits:
+
+            # A single right digit fixes the operand/exponent. Invert it
+            # directly instead of materializing a potentially huge left table.
+            if edge_inversion and j - k == 1:
+                b = Fraction(int(digits[k:j]))
+                expr_b = digits[k:j]
+                candidates = [(target - b, "+"), (target + b, "-")]
+                if b:
+                    candidates += [(target / b, "*"), (target * b, "/")]
+                elif target == 0:
+                    return f"({digits[i:k]}*{expr_b})"
+                for base, operator in candidates:
+                    expr_a = can_make(i, k, base)
+                    if expr_a is not None:
+                        return f"({expr_a}{operator}{expr_b})"
+                if b == 0:
+                    # A string containing a nonzero digit has a nonzero
+                    # concatenation; an all-zero string cannot make nonzero.
+                    if target == 1 and int(digits[i:k]) != 0:
+                        return f"({digits[i:k]}^{expr_b})"
+                elif b <= max_abs_exponent:
+                    root = rational_nth_root_exact(target, b.numerator)
+                    if root is not None:
+                        roots = [root]
+                        if b.numerator % 2 == 0 and root != 0:
+                            roots.append(-root)
+                        for base in roots:
+                            expr_a = can_make(i, k, base)
+                            if expr_a is not None:
+                                return f"({expr_a}^{expr_b})"
+                continue
+
+            # Enumerate a small right operand instead of a large left table.
+            # Each recursive query consumes fewer digits; all values stay exact.
+            if j - k <= right_inversion_digits and k - i > j - k:
+                for b, expr_b in full_dp(k, j).items():
+                    candidates = [(target - b, "+"), (target + b, "-")]
+                    if b:
+                        candidates += [(target / b, "*"), (target * b, "/")]
+                    elif target == 0:
+                        return f"({digits[i:k]}*{expr_b})"
+                    for base, operator in candidates:
+                        expr_a = can_make(i, k, base)
+                        if expr_a is not None:
+                            return f"({expr_a}{operator}{expr_b})"
+                    if b.denominator != 1 or abs(b) > max_abs_exponent:
+                        continue
+                    exponent = b.numerator
+                    if exponent == 0:
+                        # All-zero digits cannot produce a nonzero value.
+                        if target == 1 and int(digits[i:k]) != 0:
+                            return f"({digits[i:k]}^{expr_b})"
+                        continue
+                    if exponent < 0 and target == 0:
+                        continue
+                    root_target = Fraction(1) / target if exponent < 0 else target
+                    root = rational_nth_root_exact(root_target, abs(exponent))
+                    if root is None:
+                        continue
+                    bases = [root]
+                    if exponent % 2 == 0 and root != 0:
+                        bases.append(-root)
+                    for base in bases:
+                        expr_a = can_make(i, k, base)
+                        if expr_a is not None:
+                            return f"({expr_a}^{expr_b})"
+                continue
 
             left = full_dp(i, k)
 
@@ -284,6 +420,10 @@ def make_solver(digits):
                     return (
                         f"({expr_a}-{expr_b})"
                     )
+
+                # Zero products/quotients cannot be inverted by division.
+                if a == 0 and target == 0:
+                    return f"({expr_a}*{digits[k:j]})"
 
                 # A * B = T
                 if a != 0:
@@ -326,14 +466,27 @@ def make_solver(digits):
             #
             # A^B = target
             #
-            # Instead of guessing B=0..20,
-            # enumerate the actual possible exponents
-            # from the right interval.
+            # Short right intervals use forward enumeration; long ones
+            # query bounded integer exponents after checking exact roots.
             # =================================================
 
-            right = full_dp(k, j)
+            # Invert powers of a digit exactly; retain all exponents for the
+            # degenerate bases 0 and 1, which are not one-to-one.
+            if edge_inversion and k - i == 1:
+                base = int(digits[i:k])
+                for exponent in digit_power_exponents(base, target, max_abs_exponent):
+                    expr_b = can_make(k, j, Fraction(exponent))
+                    if expr_b is not None:
+                        return f"({digits[i:k]}^{expr_b})"
+                continue
 
-            for exponent, expr_b in right.items():
+            # Long exponent operands are queried only after a feasible base
+            # is known. Never truncate intermediate values in forward DP.
+            directed = j - k > exponent_lookup_digits
+            candidates = ((Fraction(e), None) for e in
+                          target_exponent_candidates(target, max_abs_exponent)) if directed else full_dp(k, j).items()
+
+            for exponent, expr_b in candidates:
 
                 # Forward DP only permits integer exponents
                 if exponent.denominator != 1:
@@ -342,59 +495,52 @@ def make_solver(digits):
                 exponent_int = exponent.numerator
 
                 # Same practical safety boundary as full DP
-                if abs(exponent_int) > 100:
+                if abs(exponent_int) > max_abs_exponent:
                     continue
 
-                # A^0 = 1
+                # Every nonzero base satisfies A^0 = 1.
                 if exponent_int == 0:
+                    if target == 1:
+                        for base, expr_a in left.items():
+                            if base != 0:
+                                witness = can_make(k, j, exponent) if directed else expr_b
+                                if witness is not None:
+                                    return f"({expr_a}^{witness})"
+                                break
+                    continue
 
-                    if target != 1:
+                # Invert negative powers before taking the exact root.
+                if exponent_int < 0:
+                    if target == 0:
                         continue
-
-                    base = Fraction(1)
-
+                    root_target = Fraction(1) / target
                 else:
+                    root_target = target
 
-                    base = rational_nth_root_exact(
-                        target,
-                        abs(exponent_int)
-                    )
-
-                    if base is None:
-                        continue
-
-                    # Negative exponent:
-                    #
-                    # A^(-n) = target
-                    # A^n = 1/target
-                    #
-                    if exponent_int < 0:
-
-                        if target == 0:
-                            continue
-
-                        base = rational_nth_root_exact(
-                            Fraction(1, 1) / target,
-                            -exponent_int
-                        )
-
-                        if base is None:
-                            continue
-
-                expr_a = can_make(
-                    i,
-                    k,
-                    base
+                root = rational_nth_root_exact(
+                    root_target, abs(exponent_int)
                 )
+                if root is None:
+                    continue
 
-                if expr_a is not None:
+                # Even powers have both positive and negative base candidates.
+                bases = [root]
+                if exponent_int % 2 == 0 and root != 0:
+                    bases.append(-root)
 
-                    return (
-                        f"({expr_a}^{expr_b})"
-                    )
+                for base in bases:
+                    expr_a = left.get(base)
+                    if expr_a is not None:
+                        witness = can_make(k, j, exponent) if directed else expr_b
+                        if witness is not None:
+                            return f"({expr_a}^{witness})"
+                        break
 
         return None
 
+    # Preserve the existing cache inspection/cleanup interface.
+    can_make.cache_clear = cached_can_make.cache_clear
+    can_make.cache_info = cached_can_make.cache_info
     return full_dp, can_make
 
 

@@ -1,0 +1,9 @@
+test_evaluator_enforces_selected_cap_at_every_node (test_large_limits.LargeExponentTests.test_evaluator_enforces_selected_cap_at_every_node) ... ok
+test_independent_large_cap_spaces (test_large_limits.LargeExponentTests.test_independent_large_cap_spaces) ... ok
+test_large_power_boundaries_and_rational_roots (test_large_limits.LargeExponentTests.test_large_power_boundaries_and_rational_roots) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 7.154s
+
+OK
+High-cap oracle: 8513 syntax trees, 5118 reverse queries

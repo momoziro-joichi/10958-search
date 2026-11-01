@@ -1,0 +1,1 @@
+{"digits": "123456789", "elapsed_seconds": 0.585611, "expression": null, "max_abs_exponent": 2000, "max_rss_kib": 17368, "memory_budget_mib": 768, "root_split": 7, "status": "not_found_bounded", "target": "10958", "time_budget_seconds": 45.0}
