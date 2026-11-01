@@ -824,3 +824,49 @@ short-right threshold only with independent oracle tests. Keep completed
 checkpoints intact; widening the exponent bound requires a distinct identity
 and fresh bounded validation. No need to rerun the completed current domain
 unless production changes or a specific diagnostic requires it.
+
+## 2026-11-01 — cap5000 validated and completed
+
+Starting PR #1 head6b117ea1a14e80d993954001b5f71a15709da70f was open and
+unchanged. Existing tracked local blobs matched remote; read README, progress
+and checkpoint. Production solver/runner/verifier unchanged this session.
+
+Sequential cap2000 diagnostics (30s /768MiB each):
+
+```
+python profile_search.py --split 1 --max-abs-exponent 2000 --seconds 30 --memory-mib 768 > profile_split1_cap2000.json
+python profile_search.py --split 8 --max-abs-exponent 2000 --seconds 30 --memory-mib 768 > profile_split8_cap2000.json
+```
+
+Both not_found_bounded. Profile-inclusive wall times6.022981/5.903019s,
+RSS23812/23056KiB. cached_can_make largest own time1.152/1.106s; hashing
+0.477/0.411s. Profiles include overhead and are not ordinary worker benchmarks.
+Raw function statistics and source fingerprints saved. No new cache adopted.
+
+Expanded all three test_large_limits tests to cap5000: independent syntax-tree
+oracle, positive/negative exponents and rational-base boundary N vs N-1, and
+independent evaluator checks per-node limits. `python -m unittest -v
+test_large_limits` passed3 tests in7.154s (8.362508s including startup),
+120s deadline /768MiB RLIMIT_AS. Combined oracle covers8513 syntax trees and
+5118 reverse queries across caps200/1000/2000/5000, four inputs and both edge
+settings. Previous full42-test suite remains the last full-suite run; only the
+modified test module was rerun because production code is unchanged.
+
+New domain, separate checkpoint, no cap2000 partitions reexecuted as a search:
+
+```
+python resume_search.py --max-abs-exponent 5000 --seconds 240 --per-split-seconds 45 --memory-mib 768 --checkpoint checkpoint_10958_cap5000.json
+```
+
+All8 partitions completed not_found_bounded, attempts1 each. Worker times sum
+12.004513s, peak RSS24504KiB. Split1=3.988367s and8=3.467448s. Every exponent
+at every node is bounded by5000; exact Fraction/digit-order rules unchanged.
+This is bounded absence, not an unrestricted impossibility proof. Original
+cap2000 checkpoint retained byte-for-byte. Both checkpoints were resumed with
+subprocess.run patched to reject execution: completed with identical bytes.
+
+Total search/profiling allocation300s (30+30+240), each child virtual memory
+768MiB. No paid resources or automation changes. Next: use the saved profiles
+to reduce repeated exact root checks before increasing the cap again. Compare
+root caching only with a strict memory bound and measured hit rate; avoid
+repeating the earlier unsuccessful general power-cache experiment.

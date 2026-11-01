@@ -15,7 +15,7 @@ class LargeExponentTests(unittest.TestCase):
 
     def test_independent_large_cap_spaces(self):
         trees = queries = 0
-        for cap in (200, 1000, 2000):
+        for cap in (200, 1000, 2000, 5000):
             for digits in ('2200', '2999', '1234', '0000'):
                 expected = set()
                 for tokens in tokenizations(digits):
@@ -41,7 +41,7 @@ class LargeExponentTests(unittest.TestCase):
         print(f'High-cap oracle: {trees} syntax trees, {queries} reverse queries')
 
     def test_large_power_boundaries_and_rational_roots(self):
-        for exponent in (200, 1000, 2000):
+        for exponent in (200, 1000, 2000, 5000):
             # Restrict the outer split so other arithmetic cannot disguise an
             # excluded power. Expected values are computed independently.
             for digits, split, target in (
@@ -63,7 +63,7 @@ class LargeExponentTests(unittest.TestCase):
                         reverse.cache_clear()
 
     def test_evaluator_enforces_selected_cap_at_every_node(self):
-        for exponent in (200, 1000, 2000):
+        for exponent in (200, 1000, 2000, 5000):
             expression = f'((2^{exponent})-(2^{exponent}))'
             self.assertEqual(evaluate(expression, exponent), 0)
             with self.assertRaises(AssertionError):
