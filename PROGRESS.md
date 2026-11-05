@@ -1020,3 +1020,24 @@ checkpoint migration, paid resources or automation changes.
 Next: investigate repeated Fraction hashing on short-interval lookup paths,
 using measured reuse and bounded storage before changing production. Current
 10958 result remains bounded absence within +/-5000, not unrestricted proof.
+
+## 2026-11-05 — bounded short-lookup hash reuse measurement
+
+Started at42f6da07d1427537a4a9367fbf703abbf5c46a5e, PR head confirmed.
+Added measure_hash_reuse.py. It counts Fraction hash calls only from can_make's
+short-interval lookup path, excluding restricted roots; a1024-entry recent-value
+LRU uses integer tuple keys, admitting combined numerator/denominator bits<=256.
+It delegates every hash to the original implementation and restores it finally.
+The measurement cache does not change solver results. Frame references released.
+
+`python measure_hash_reuse.py`: split1 cap5000 not_found_bounded;
+413663 short lookup hash calls,58587 recent-value hits (~14.16%),5298 large
+input bypasses. Raw JSON saved. Initial diagnostic included reverse-cache calls;
+the final guard excludes them and its run supersedes that diagnostic. Each run
+30s alarm/768MiB RLIMIT_AS plus35s parent timeout; total allocation60s.
+JSON checks verified hits<=calls and both runs completed successfully. No
+production changes, full-suite rerun, checkpoint changes or paid resources.
+This measures bounded reuse, not actual cache speedup; frames add overhead.
+Next: compare integer-tuple keyed short lookup against Fraction keys with the
+independent oracle before adoption. Current full cap5000 bounded absence remains
+unchanged; unrestricted impossibility is not established.
