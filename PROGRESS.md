@@ -997,3 +997,26 @@ allocation80s. No paid resources, no automation changes. Both diagnostic
 splits remain not_found_bounded. Full cap5000 result remains the earlier
 completed search, not an unrestricted impossibility proof. Next prioritize
 remaining arithmetic/reverse-search CPU cost; retain the exact exponent bound.
+
+## 2026-11-05 — current arithmetic profile and CPU reporting
+
+Confirmed PR #1 open at6a6bfd2c85fad9535f623dd674fb81b46d56ce59; read current
+source, README, checkpoint and prior progress. Added search_cpu_seconds to
+profile_search.py so process CPU consumption is separated from wall time.
+Existing3 profiler tests passed in0.797s, covering completed searches, invalid
+arguments and timeout classification. Production solver/checkpoints unchanged.
+
+Reproduced splits1/8 at cap5000 using `python profile_search.py --split 1
+--max-abs-exponent 5000 --seconds 30 --memory-mib 768` (also split8).
+Saved profile_split1_cap5000.json and profile_split8_cap5000.json.
+Final wall times4.301833/3.707620s; process CPU4.204910/3.610650s;
+RSS23824/23088KiB. Both not_found_bounded. These include profiler overhead.
+Initial diagnostic profiles identified cached_can_make as largest own-time
+function and Fraction hashing/division as substantial costs. No speculative
+arithmetic cache adopted. Four diagnostic runs total120s allocated,768MiB per
+child; initial two preceded the CPU-field addition. No full-domain rerun or
+checkpoint migration, paid resources or automation changes.
+
+Next: investigate repeated Fraction hashing on short-interval lookup paths,
+using measured reuse and bounded storage before changing production. Current
+10958 result remains bounded absence within +/-5000, not unrestricted proof.

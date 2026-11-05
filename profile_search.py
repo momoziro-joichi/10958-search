@@ -22,12 +22,14 @@ def worker(args):
     forward, reverse = make_solver(args.digits, root_split=args.split,
                                    max_abs_exponent=args.max_abs_exponent)
     profiler = cProfile.Profile()
+    cpu_started = time.process_time()
     started = time.perf_counter()
     try:
         profiler.enable()
         expression = reverse(0, len(args.digits), Fraction(args.target))
     finally:
         profiler.disable()
+    search_cpu_seconds = time.process_time() - cpu_started
     search_seconds = time.perf_counter() - started
     if expression is not None:
         verify_expression(expression, args.digits, args.target,
@@ -41,6 +43,7 @@ def worker(args):
     functions.sort(key=lambda row: row['own_seconds'], reverse=True)
     print(json.dumps(dict(status='found' if expression is not None else 'not_found_bounded',
                           expression=expression, search_seconds=search_seconds,
+                          search_cpu_seconds=search_cpu_seconds,
                           total_calls=stats.total_calls, primitive_calls=stats.prim_calls,
                           functions=functions, forward_cache=forward.cache_info()._asdict(),
                           reverse_cache=reverse.cache_info()._asdict(),
