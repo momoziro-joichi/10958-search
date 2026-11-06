@@ -1041,3 +1041,28 @@ This measures bounded reuse, not actual cache speedup; frames add overhead.
 Next: compare integer-tuple keyed short lookup against Fraction keys with the
 independent oracle before adoption. Current full cap5000 bounded absence remains
 unchanged; unrestricted impossibility is not established.
+
+## 2026-11-06 — tuple-key short lookup prototype
+
+Confirmed latest PR head4842badd81c2852174fd84aa7cc5405626b9b84d.
+Added isolated experiment_tuple_lookup.py: constructs an in-memory experimental
+solver from the current source, asserting exactly one lookup replacement.
+Short tables are indexed by reduced (numerator,denominator) integer tuples;
+all arithmetic and original DP remain Fraction. Production files unchanged.
+
+`python experiment_tuple_lookup.py --tuple --validate` independently enumerates
+64 three-digit inputs over0123 plus1234, checking2597 reachable/missing targets
+and independently verifying every returned witness. Passed in0.056661s.
+Sequential baseline/tuple/tuple/baseline split1 cap5000 timings:
+1.177958 /0.599076 /0.619537 /1.297658 seconds; RSS20000/16000/16000/19996KiB.
+All four not_found_bounded. Raw results in tuple_lookup_experiment.jsonl.
+Commands: `python experiment_tuple_lookup.py` and same with `--tuple`.
+Each child60s alarm,768MiB virtual memory,65s external timeout. Search allocation
+240s plus60s validation. No paid resources or automation changes.
+
+Promising small sample, not a statistical speed guarantee. Not adopted yet:
+the prototype retains an additional table per short interval and its cache
+cleanup is not integrated into the solver interface. Next implement explicit
+cleanup, exercise full independent/high-cap suite and all partitions before
+production adoption. Existing completed cap5000 checkpoint remains untouched;
+no new full-domain search or unrestricted impossibility claim.
