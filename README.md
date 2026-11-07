@@ -414,3 +414,28 @@ python measure_exponent_bound.py --split 1
 
 Both commands retain the per-node exponent cap5000; the first disables only
 the mathematical target-based candidate bound, not the configured search limit.
+
+
+### Exact tuple lookup for short intervals
+
+Short-interval probes use normalized `(numerator, denominator)` keys built
+from the Fraction DP table. Arithmetic remains exact Fraction arithmetic;
+no values or expressions are pruned. `can_make.cache_clear()` clears both
+reverse-search and tuple lookup caches; `full_dp.cache_clear()` clears the
+underlying DP cache. `can_make.lookup_cache_info()` exposes tuple-table counts.
+
+Compare the previous Fraction-key lookup with production:
+
+```bash
+python experiment_tuple_lookup.py
+python experiment_tuple_lookup.py --tuple
+python experiment_tuple_lookup.py --tuple --validate
+python -m unittest -q
+```
+
+The pre-change checkpoint is archived unchanged as
+`checkpoint_10958_cap5000_before_tuple_lookup.json`. The active cap5000
+checkpoint was recomputed for the new source fingerprint: all eight partitions
+completed with no witness under the per-node exponent limit. This is not a
+proof of impossibility without that limit. Timing samples and their conditions
+are recorded in `tuple_lookup_production_measurements.json` and PROGRESS.md.

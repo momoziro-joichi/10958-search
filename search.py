@@ -284,13 +284,20 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
     # TARGET-DIRECTED SEARCH
     # ========================================================
 
+    @lru_cache(maxsize=None)
+    def tuple_table(i, j):
+        # Fraction is normalized: this key preserves exact equality while
+        # avoiding modular-inverse hashing on repeated rational probes.
+        return {(v.numerator, v.denominator): expr
+                for v, expr in full_dp(i, j).items()}
+
     def can_make(i, j, target):
         # Do not retain millions of distinct failed single-digit targets.
         if j - i == 1:
             return digits[i:j] if Fraction(int(digits[i:j])) == target else None
         restricted_root = root_split is not None and i == 0 and j == len(digits)
         if j - i <= lookup_digits and not restricted_root:
-            return full_dp(i, j).get(target)
+            return tuple_table(i, j).get((target.numerator, target.denominator))
         return cached_can_make(i, j, target)
 
     @lru_cache(maxsize=50000)
@@ -539,7 +546,12 @@ def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True
         return None
 
     # Preserve the existing cache inspection/cleanup interface.
-    can_make.cache_clear = cached_can_make.cache_clear
+    def clear_reverse_caches():
+        cached_can_make.cache_clear()
+        tuple_table.cache_clear()
+
+    can_make.cache_clear = clear_reverse_caches
+    can_make.lookup_cache_info = tuple_table.cache_info
     can_make.cache_info = cached_can_make.cache_info
     return full_dp, can_make
 

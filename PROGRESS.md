@@ -1066,3 +1066,48 @@ cleanup is not integrated into the solver interface. Next implement explicit
 cleanup, exercise full independent/high-cap suite and all partitions before
 production adoption. Existing completed cap5000 checkpoint remains untouched;
 no new full-domain search or unrestricted impossibility claim.
+
+
+## 2026-11-07: production tuple lookup and cache lifecycle
+
+Started from PR #1 head f2447763fa01a05655d3d5452e2c220689e58852.
+Adopted the previous tuple-key short-interval prototype in search.py. Fraction
+arithmetic and DP contents remain unchanged. Normalized numerator/denominator
+keys avoid Fraction hashing during repeated probes. Reverse cache cleanup now
+also releases tuple tables; DP cleanup remains explicit. Added regression tests
+for rational normalization, integer queries, cleanup and rebuilding witnesses.
+The comparison script now reconstructs the old Fraction-key path in memory;
+`--tuple` runs production, preserving the previous comparison commands.
+
+Validation: `python -m unittest -q` passed all49 tests in99.339s
+(99.480583s including startup), under180s and768MiB RLIMIT_AS.
+Raw test output: tuple_lookup_tests.json; worker_error/timeout lines there are
+intentional mocked error-handling tests, not failures. Independent prototype
+validation (`python experiment_tuple_lookup.py --tuple --validate`) passed2597
+queries in0.059333s. Full suite includes independent tree enumeration, high-cap
+boundaries, negative/zero/rational powers, and expression verification.
+
+Performance: split1/cap5000 baseline/production/production/baseline samples were
+1.039301/0.605587/0.673240/1.089548s; peak RSS21280/15232/15232/21268KiB.
+See tuple_lookup_production_measurements.json. Each sample was limited to60s,
+768MiB, and ran concurrently with the full test suite. These samples support
+adoption but are not controlled CPU benchmarks or a general speedup guarantee.
+
+Old active checkpoint was rejected by the new source fingerprint, then archived
+byte-for-byte as checkpoint_10958_cap5000_before_tuple_lookup.json. Fresh search:
+
+```bash
+python resume_search.py --max-abs-exponent 5000 --seconds 240 --per-split-seconds 45 --memory-mib 768 --checkpoint checkpoint_10958_cap5000.json
+```
+
+All8 partitions completed not_found_bounded; summed child search time3.015593s,
+peak RSS21664KiB. Search wall budget240s (45s per child), virtual memory768MiB.
+Resume was tested with subprocess.run replaced by an assertion: zero workers
+launched and checkpoint bytes unchanged. No completed old-source partitions
+were silently reused. No paid resources or unbounded computations were used.
+10958 is NOT FOUND within the per-node absolute exponent cap5000; unrestricted
+impossibility remains unproved. Historical cap2000 checkpoint remains historical.
+
+Next: profile the production path again with CPU time, then assess a larger
+exponent cap within the existing600s/768MiB ceilings. Keep checkpoint identities
+separate when limits or solver sources differ; do not rerun completed partitions.

@@ -1,4 +1,4 @@
-"""Isolated tuple-key lookup experiment; does not alter production files."""
+"""Compare production tuple lookup with the previous Fraction-key lookup."""
 import argparse
 from fractions import Fraction
 import hashlib
@@ -13,20 +13,14 @@ import search
 from verify_expression import verify_expression
 
 
-def experimental_factory():
-    source=Path(search.__file__).read_text()
-    old='return full_dp(i, j).get(target)'
-    assert source.count(old)==1
-    insertion='''    @lru_cache(maxsize=None)
-    def tuple_table(i, j):
-        return {(v.numerator, v.denominator): expr
-                for v, expr in full_dp(i, j).items()}
-
-'''
-    source=source.replace('    def can_make(i, j, target):',insertion+'    def can_make(i, j, target):')
-    source=source.replace(old,'return tuple_table(i, j).get((target.numerator, target.denominator))')
-    module=types.ModuleType('tuple_experiment')
-    exec(compile(source,'tuple_experiment','exec'),module.__dict__)
+def baseline_factory():
+    """Reproduce the previous Fraction-key path without changing disk files."""
+    source = Path(search.__file__).read_text()
+    old = 'return tuple_table(i, j).get((target.numerator, target.denominator))'
+    assert source.count(old) == 1
+    source = source.replace(old, 'return full_dp(i, j).get(target)')
+    module = types.ModuleType('fraction_baseline')
+    exec(compile(source, 'fraction_baseline', 'exec'), module.__dict__)
     return module.make_solver
 
 
@@ -38,7 +32,7 @@ def main():
     resource.setrlimit(resource.RLIMIT_AS,(768*1024**2,)*2)
     def expired(*args): raise TimeoutError('60s budget')
     signal.signal(signal.SIGALRM,expired);signal.alarm(60)
-    factory=experimental_factory() if a.tuple else search.make_solver
+    factory=search.make_solver if a.tuple else baseline_factory()
     started=time.perf_counter()
     if a.validate:
         from test_oracle import oracle
