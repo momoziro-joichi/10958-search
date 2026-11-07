@@ -3,14 +3,15 @@ Exact search for 10958 using 123456789
 
 ## Current status — bounded search completed
 
-On 2026-11-01, all eight top-level partitions of `123456789 -> 10958`
-completed with **no expression found under the integer-exponent bound -5000..5000**.
-The sum of partition worker wall times was 6.604807 seconds; the largest
-observed worker RSS was 24,496 KiB. These are single-run measurements.
+On 2026-11-07, all eight top-level partitions of `123456789 -> 10958`
+completed with **no expression found under the integer-exponent bound -10000..10000**.
+The sum of partition worker wall times was 4.386485 seconds; the largest
+observed worker RSS was 21,732 KiB. These are single-run measurements.
 This does **not** establish impossibility with unrestricted exponents.
-The latest checkpoint is `checkpoint_10958_cap5000.json` (cap 5000).
-Resume it with `python resume_search.py --max-abs-exponent 5000 --seconds 240
---per-split-seconds 45 --memory-mib 768 --checkpoint checkpoint_10958_cap5000.json`
+The latest checkpoint is `checkpoint_10958_cap10000.json` (cap 10000).
+The completed cap5000 checkpoint is also retained without changes.
+Resume with `python resume_search.py --max-abs-exponent 10000 --seconds 240
+--per-split-seconds 30 --memory-mib 768 --checkpoint checkpoint_10958_cap10000.json`
 (on one line). The historical `checkpoint_10958.json` retains cap 2000 unchanged but uses an older source fingerprint. The pre-optimization cap-2000 checkpoint is archived unchanged
 in `checkpoint_10958_cap2000_before_digit_inverse.json`. The previous cap-1000 result is archived unchanged in
 `checkpoint_10958_cap1000_before_verifier.json`. The previous schema-2 cap-1000 result is archived in

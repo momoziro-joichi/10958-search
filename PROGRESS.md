@@ -1111,3 +1111,46 @@ impossibility remains unproved. Historical cap2000 checkpoint remains historical
 Next: profile the production path again with CPU time, then assess a larger
 exponent cap within the existing600s/768MiB ceilings. Keep checkpoint identities
 separate when limits or solver sources differ; do not rerun completed partitions.
+
+
+## 2026-11-07: cap10000 boundary coverage and completed search
+
+Continued from PR #1 head6d09e8a904e0bc321f120d28eb2a3949e6a52e51.
+Production solver sources were unchanged; completed cap5000 partitions were
+not rerun for the new search. Added10000 to all high-cap test loops, covering
+independent syntax-tree enumeration, cap N versus N-1, rational reciprocal
+powers, edge inversion on/off and evaluator per-node cap enforcement.
+`python -m unittest -q test_large_limits` passed3 tests in58.209s
+(58.335341s with startup), enumerating10645 trees and6398 reverse queries.
+Budget180s and768MiB RLIMIT_AS; output saved in cap10000_tests.json.
+The preceding full49-test pass remains applicable to unchanged production code;
+this run executed the changed high-cap module, not another full-suite run.
+
+Production cProfile results at cap5000: split1 CPU3.157116s/wall3.157709s,
+RSS18560KiB; split8 CPU2.703419s/wall2.703336s, RSS17664KiB. Profiling adds
+instrumentation overhead; these are not uninstrumented search times. Both ran
+with30s/768MiB limits, concurrently with the high-cap test process. The largest
+own-time functions were cached_can_make, can_make, and Fraction operations.
+Full function counts, source hashes and environment metadata are stored in
+profile_tuple_split1_cap5000.json and profile_tuple_split8_cap5000.json.
+Reproduce with `python profile_search.py --split 1 --max-abs-exponent 5000
+--seconds 30 --memory-mib 768` (one line; repeat with split8).
+
+New separate checkpoint, unchanged solver fingerprint, changed exponent identity:
+
+```bash
+python resume_search.py --max-abs-exponent 10000 --seconds 240 --per-split-seconds 30 --memory-mib 768 --checkpoint checkpoint_10958_cap10000.json
+```
+
+All8 partitions completed not_found_bounded; summed worker wall time4.386485s,
+peak RSS21732KiB. Search budget240s, each child30s and768MiB virtual memory.
+Resume with subprocess.run mocked to raise verified zero new workers and
+byte-identical checkpoint contents. Existing checkpoints were preserved.
+10958 remains NOT FOUND under per-node |exponent|<=10000, not an unrestricted
+impossibility proof. Tests and profiling ran concurrently, so avoid interpreting
+single wall-time comparisons as stable performance ratios.
+
+Next priority: analyze whether larger caps add reachable exponent operands in
+these digit partitions before increasing caps mechanically. Use independent
+small-input checks for any new completeness argument or inverse-search change.
+No new paid resources, no indefinite execution, no automation changes.
