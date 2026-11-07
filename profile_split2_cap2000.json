@@ -1,0 +1,451 @@
+{
+  "digits": "123456789",
+  "elapsed_seconds": 29.073107408999988,
+  "expression": null,
+  "forward_cache": {
+    "currsize": 31,
+    "hits": 1244866,
+    "maxsize": null,
+    "misses": 31
+  },
+  "functions": [
+    {
+      "cumulative_seconds": 13.720424034,
+      "file": "fractions.py",
+      "line": 801,
+      "name": "__pow__",
+      "own_seconds": 13.594647315000001,
+      "primitive_calls": 104101,
+      "total_calls": 104101
+    },
+    {
+      "cumulative_seconds": 5.969380379,
+      "file": "fractions.py",
+      "line": 908,
+      "name": "__hash__",
+      "own_seconds": 2.2208655950000002,
+      "primitive_calls": 2287050,
+      "total_calls": 2287050
+    },
+    {
+      "cumulative_seconds": 1.8916953300000001,
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.pow>",
+      "own_seconds": 1.8916953300000001,
+      "primitive_calls": 1948956,
+      "total_calls": 1948956
+    },
+    {
+      "cumulative_seconds": 3.748514784,
+      "file": "fractions.py",
+      "line": 24,
+      "name": "_hash_algorithm",
+      "own_seconds": 1.269838111,
+      "primitive_calls": 1948956,
+      "total_calls": 1948956
+    },
+    {
+      "cumulative_seconds": 28.693496363,
+      "file": "search.py",
+      "line": 280,
+      "name": "cached_can_make",
+      "own_seconds": 1.098008667,
+      "primitive_calls": 1,
+      "total_calls": 1866
+    },
+    {
+      "cumulative_seconds": 1.1720252370000002,
+      "file": "fractions.py",
+      "line": 317,
+      "name": "_from_coprime_ints",
+      "own_seconds": 0.888520304,
+      "primitive_calls": 2309275,
+      "total_calls": 2309275
+    },
+    {
+      "cumulative_seconds": 4.2377868560000005,
+      "file": "fractions.py",
+      "line": 613,
+      "name": "forward",
+      "own_seconds": 0.8759943520000001,
+      "primitive_calls": 2205173,
+      "total_calls": 2205173
+    },
+    {
+      "cumulative_seconds": 4.654976725,
+      "file": "~",
+      "line": 0,
+      "name": "<method 'setdefault' of 'dict' objects>",
+      "own_seconds": 0.7721464870000001,
+      "primitive_calls": 1045508,
+      "total_calls": 1045508
+    },
+    {
+      "cumulative_seconds": 21.137288852,
+      "file": "search.py",
+      "line": 173,
+      "name": "full_dp",
+      "own_seconds": 0.7386256600000001,
+      "primitive_calls": 9,
+      "total_calls": 31
+    },
+    {
+      "cumulative_seconds": 1.380269484,
+      "file": "fractions.py",
+      "line": 758,
+      "name": "_div",
+      "own_seconds": 0.736547688,
+      "primitive_calls": 878310,
+      "total_calls": 878310
+    },
+    {
+      "cumulative_seconds": 1.020450276,
+      "file": "fractions.py",
+      "line": 912,
+      "name": "__eq__",
+      "own_seconds": 0.6081692470000001,
+      "primitive_calls": 2109138,
+      "total_calls": 2109138
+    },
+    {
+      "cumulative_seconds": 1.054096924,
+      "file": "fractions.py",
+      "line": 726,
+      "name": "_sub",
+      "own_seconds": 0.543644243,
+      "primitive_calls": 852393,
+      "total_calls": 852393
+    },
+    {
+      "cumulative_seconds": 28.693577173,
+      "file": "search.py",
+      "line": 271,
+      "name": "can_make",
+      "own_seconds": 0.455139355,
+      "primitive_calls": 1,
+      "total_calls": 1237299
+    },
+    {
+      "cumulative_seconds": 0.407007806,
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method math.gcd>",
+      "own_seconds": 0.407007806,
+      "primitive_calls": 3382092,
+      "total_calls": 3382092
+    },
+    {
+      "cumulative_seconds": 0.39447027900000003,
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.hash>",
+      "own_seconds": 0.39447027900000003,
+      "primitive_calls": 3897912,
+      "total_calls": 3897912
+    },
+    {
+      "cumulative_seconds": 0.6086318350000001,
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.isinstance>",
+      "own_seconds": 0.357266256,
+      "primitive_calls": 2773619,
+      "total_calls": 2773619
+    },
+    {
+      "cumulative_seconds": 3.1585094110000003,
+      "file": "~",
+      "line": 0,
+      "name": "<method 'get' of 'dict' objects>",
+      "own_seconds": 0.32661447200000004,
+      "primitive_calls": 1239190,
+      "total_calls": 1239190
+    },
+    {
+      "cumulative_seconds": 0.28758215400000003,
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method __new__ of type object at 0x144d380>",
+      "own_seconds": 0.28758215400000003,
+      "primitive_calls": 2343478,
+      "total_calls": 2343478
+    },
+    {
+      "cumulative_seconds": 0.24799519700000003,
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.abs>",
+      "own_seconds": 0.24799519700000003,
+      "primitive_calls": 2530057,
+      "total_calls": 2530057
+    },
+    {
+      "cumulative_seconds": 0.38053011800000003,
+      "file": "fractions.py",
+      "line": 742,
+      "name": "_mul",
+      "own_seconds": 0.188765639,
+      "primitive_calls": 237235,
+      "total_calls": 237235
+    },
+    {
+      "cumulative_seconds": 0.35630505300000004,
+      "file": "fractions.py",
+      "line": 710,
+      "name": "_add",
+      "own_seconds": 0.17662713900000002,
+      "primitive_calls": 237235,
+      "total_calls": 237235
+    },
+    {
+      "cumulative_seconds": 0.251365579,
+      "file": "<frozen abc>",
+      "line": 117,
+      "name": "__instancecheck__",
+      "own_seconds": 0.15510795400000002,
+      "primitive_calls": 568444,
+      "total_calls": 568444
+    },
+    {
+      "cumulative_seconds": 0.11793806800000001,
+      "file": "fractions.py",
+      "line": 401,
+      "name": "denominator",
+      "own_seconds": 0.11793806800000001,
+      "primitive_calls": 1582085,
+      "total_calls": 1582085
+    },
+    {
+      "cumulative_seconds": 0.096257625,
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method _abc._abc_instancecheck>",
+      "own_seconds": 0.096252347,
+      "primitive_calls": 568444,
+      "total_calls": 568444
+    },
+    {
+      "cumulative_seconds": 0.08679505700000001,
+      "file": "fractions.py",
+      "line": 397,
+      "name": "numerator",
+      "own_seconds": 0.08679505700000001,
+      "primitive_calls": 1038750,
+      "total_calls": 1038750
+    },
+    {
+      "cumulative_seconds": 0.133959092,
+      "file": "search.py",
+      "line": 93,
+      "name": "rational_nth_root_exact",
+      "own_seconds": 0.060079855,
+      "primitive_calls": 88521,
+      "total_calls": 88521
+    },
+    {
+      "cumulative_seconds": 0.055070832,
+      "file": "search.py",
+      "line": 46,
+      "name": "integer_nth_root_exact",
+      "own_seconds": 0.043426088,
+      "primitive_calls": 144790,
+      "total_calls": 144790
+    },
+    {
+      "cumulative_seconds": 0.023181505,
+      "file": "fractions.py",
+      "line": 186,
+      "name": "__new__",
+      "own_seconds": 0.018428223,
+      "primitive_calls": 34203,
+      "total_calls": 34203
+    },
+    {
+      "cumulative_seconds": 0.011644744,
+      "file": "~",
+      "line": 0,
+      "name": "<method 'bit_length' of 'int' objects>",
+      "own_seconds": 0.011644744,
+      "primitive_calls": 118573,
+      "total_calls": 118573
+    },
+    {
+      "cumulative_seconds": 0.011092526,
+      "file": "~",
+      "line": 0,
+      "name": "<method 'items' of 'dict' objects>",
+      "own_seconds": 0.011092526,
+      "primitive_calls": 73170,
+      "total_calls": 73170
+    },
+    {
+      "cumulative_seconds": 0.006243536,
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.sorted>",
+      "own_seconds": 0.0033459270000000003,
+      "primitive_calls": 1865,
+      "total_calls": 1865
+    },
+    {
+      "cumulative_seconds": 0.007123325000000001,
+      "file": "fractions.py",
+      "line": 933,
+      "name": "_richcmp",
+      "own_seconds": 0.002847535,
+      "primitive_calls": 3784,
+      "total_calls": 3784
+    },
+    {
+      "cumulative_seconds": 0.002897609,
+      "file": "search.py",
+      "line": 300,
+      "name": "<lambda>",
+      "own_seconds": 0.002133111,
+      "primitive_calls": 7699,
+      "total_calls": 7699
+    },
+    {
+      "cumulative_seconds": 0.008775602,
+      "file": "fractions.py",
+      "line": 963,
+      "name": "__le__",
+      "own_seconds": 0.0016522770000000002,
+      "primitive_calls": 3784,
+      "total_calls": 3784
+    },
+    {
+      "cumulative_seconds": 0.006635528000000001,
+      "file": "search.py",
+      "line": 12,
+      "name": "digit_power_exponents",
+      "own_seconds": 0.0014597000000000002,
+      "primitive_calls": 1865,
+      "total_calls": 1865
+    },
+    {
+      "cumulative_seconds": 0.0006563130000000001,
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method _operator.le>",
+      "own_seconds": 0.0006563130000000001,
+      "primitive_calls": 3784,
+      "total_calls": 3784
+    },
+    {
+      "cumulative_seconds": 0.00046131300000000003,
+      "file": "fractions.py",
+      "line": 971,
+      "name": "__bool__",
+      "own_seconds": 0.00046131300000000003,
+      "primitive_calls": 1865,
+      "total_calls": 1865
+    },
+    {
+      "cumulative_seconds": 0.00012907400000000002,
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.divmod>",
+      "own_seconds": 0.00012907400000000002,
+      "primitive_calls": 526,
+      "total_calls": 526
+    },
+    {
+      "cumulative_seconds": 2.9544e-05,
+      "file": "~",
+      "line": 0,
+      "name": "<method 'disable' of '_lsprof.Profiler' objects>",
+      "own_seconds": 2.9544e-05,
+      "primitive_calls": 1,
+      "total_calls": 1
+    },
+    {
+      "cumulative_seconds": 9.024e-06,
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.len>",
+      "own_seconds": 9.024e-06,
+      "primitive_calls": 3,
+      "total_calls": 3
+    },
+    {
+      "cumulative_seconds": 4.186e-06,
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method _abc._abc_subclasscheck>",
+      "own_seconds": 3.975e-06,
+      "primitive_calls": 2,
+      "total_calls": 3
+    },
+    {
+      "cumulative_seconds": 2.103e-06,
+      "file": "~",
+      "line": 0,
+      "name": "<method 'match' of 're.Pattern' objects>",
+      "own_seconds": 2.103e-06,
+      "primitive_calls": 1,
+      "total_calls": 1
+    },
+    {
+      "cumulative_seconds": 2.4730000000000003e-06,
+      "file": "fractions.py",
+      "line": 851,
+      "name": "__neg__",
+      "own_seconds": 1.962e-06,
+      "primitive_calls": 1,
+      "total_calls": 1
+    },
+    {
+      "cumulative_seconds": 5.278e-06,
+      "file": "<frozen abc>",
+      "line": 121,
+      "name": "__subclasscheck__",
+      "own_seconds": 1.303e-06,
+      "primitive_calls": 2,
+      "total_calls": 3
+    },
+    {
+      "cumulative_seconds": 1.1520000000000002e-06,
+      "file": "~",
+      "line": 0,
+      "name": "<method 'group' of 're.Match' objects>",
+      "own_seconds": 1.1520000000000002e-06,
+      "primitive_calls": 5,
+      "total_calls": 5
+    },
+    {
+      "cumulative_seconds": 4.21e-07,
+      "file": "~",
+      "line": 0,
+      "name": "<method 'append' of 'list' objects>",
+      "own_seconds": 4.21e-07,
+      "primitive_calls": 1,
+      "total_calls": 1
+    }
+  ],
+  "max_abs_exponent": 2000,
+  "max_rss_kib": 206080,
+  "memory_budget_mib": 768,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "primitive_calls": 36571857,
+  "profile_includes_overhead": true,
+  "python": "3.12.14",
+  "reverse_cache": {
+    "currsize": 1866,
+    "hits": 455,
+    "maxsize": 50000,
+    "misses": 1866
+  },
+  "root_split": 2,
+  "search_seconds": 28.693807213000014,
+  "source_sha256": {
+    "profile_search.py": "efaca7267b4f578b592de2a8a79263f645ed0c0ffd3fdddafb53b187d6dafb22",
+    "search.py": "7b0f342cb6cbd43744e76ac3177af3fea50cf3dc162010e73ef4c800c8d5b378",
+    "verify_expression.py": "74bbe09a9a712944551f8300c791bb15e8e360b63678322c29a0d7bedd5a8946"
+  },
+  "status": "not_found_bounded",
+  "target": "10958",
+  "time_budget_seconds": 60.0,
+  "total_calls": 37811044
+}

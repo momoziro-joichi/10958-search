@@ -1,0 +1,1 @@
+{"status": "not_found_bounded", "split": 1, "cap": 5000, "counts": {"short_lookup_calls": 413663, "recent_value_hits": 58587, "large_bypasses": 5298}, "recent_capacity": 1024, "input_bits": 256, "memory_budget_mib": 768, "time_budget_seconds": 30}
