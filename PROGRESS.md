@@ -1154,3 +1154,41 @@ Next priority: analyze whether larger caps add reachable exponent operands in
 these digit partitions before increasing caps mechanically. Use independent
 small-input checks for any new completeness argument or inverse-search change.
 No new paid resources, no indefinite execution, no automation changes.
+
+
+## 2026-11-08: operand growth audit and cap20000 search
+
+Latest PR #1 head verified as aa97c009a58c8822163747f2aa4314db2f233073.
+Added audit_exponent_operands.py and independent enumeration regression test.
+Production solver unchanged. Audit distinguishes a value being reachable from
+that value being allowed as an exponent at another node. All26 contiguous
+operands of length1..4 starting after digit1 were compared at caps10000/20000:
+43 interval/value pairs enter the allowed exponent band, and21 interval/value
+pairs become reachable. Values across different intervals are counted separately.
+Example: 5^6=15625 already exists at cap10000, but outer powers using it need
+a higher cap. All reported exponent witnesses passed independent exact evaluation.
+Longer operands were not audited; no unrestricted completeness claim is made.
+
+Audit:0.022061s wall,0.022060s CPU,10880KiB peak RSS; budget60s/768MiB.
+`python -m unittest -q test_exponent_operand_audit`:1 test passed in0.041s
+(0.120373s with startup), budget60s/768MiB; compares all26 value sets and bands
+with independent tokenizations and syntax trees. Raw JSON files committed.
+Existing full suite was not rerun because production code is unchanged.
+
+Budgeted search command:
+
+```bash
+python resume_search.py --max-abs-exponent 20000 --seconds 240 --per-split-seconds 30 --memory-mib 768 --checkpoint checkpoint_10958_cap20000.json
+```
+
+All8 partitions completed not_found_bounded, summed child wall3.503715s,
+peak RSS36844KiB. Each child virtual memory<=768MiB; total search budget240s.
+Resume with subprocess.run mocked to raise launched no workers and left bytes
+unchanged. Older completed checkpoints preserved, no fingerprint migration.
+10958 remains NOT FOUND under per-node |exponent|<=20000. This is not a proof
+of unrestricted impossibility. Timings are single samples, not speedup evidence;
+cap20000 peak RSS increased relative to the preceding cap10000 sample.
+
+Next: inspect split6's increased memory and DP power sizes before further cap
+expansion. Preserve exactness; do not introduce unproved magnitude pruning.
+No paid compute, indefinite execution, or scheduled-task modifications.

@@ -3,15 +3,15 @@ Exact search for 10958 using 123456789
 
 ## Current status — bounded search completed
 
-On 2026-11-07, all eight top-level partitions of `123456789 -> 10958`
-completed with **no expression found under the integer-exponent bound -10000..10000**.
-The sum of partition worker wall times was 4.386485 seconds; the largest
-observed worker RSS was 21,732 KiB. These are single-run measurements.
+On 2026-11-08, all eight top-level partitions of `123456789 -> 10958`
+completed with **no expression found under the integer-exponent bound -20000..20000**.
+The sum of partition worker wall times was 3.503715 seconds; the largest
+observed worker RSS was 36,844 KiB. These are single-run measurements.
 This does **not** establish impossibility with unrestricted exponents.
-The latest checkpoint is `checkpoint_10958_cap10000.json` (cap 10000).
-The completed cap5000 checkpoint is also retained without changes.
-Resume with `python resume_search.py --max-abs-exponent 10000 --seconds 240
---per-split-seconds 30 --memory-mib 768 --checkpoint checkpoint_10958_cap10000.json`
+The latest checkpoint is `checkpoint_10958_cap20000.json` (cap 20000).
+Completed cap5000 and cap10000 checkpoints are retained unchanged.
+Resume with `python resume_search.py --max-abs-exponent 20000 --seconds 240
+--per-split-seconds 30 --memory-mib 768 --checkpoint checkpoint_10958_cap20000.json`
 (on one line). The historical `checkpoint_10958.json` retains cap 2000 unchanged but uses an older source fingerprint. The pre-optimization cap-2000 checkpoint is archived unchanged
 in `checkpoint_10958_cap2000_before_digit_inverse.json`. The previous cap-1000 result is archived unchanged in
 `checkpoint_10958_cap1000_before_verifier.json`. The previous schema-2 cap-1000 result is archived in
@@ -440,3 +440,18 @@ checkpoint was recomputed for the new source fingerprint: all eight partitions
 completed with no witness under the per-node exponent limit. This is not a
 proof of impossibility without that limit. Timing samples and their conditions
 are recorded in `tuple_lookup_production_measurements.json` and PROGRESS.md.
+
+
+### Exponent-operand growth audit
+
+`python audit_exponent_operands.py` compares caps10000 and20000 for all26
+contiguous intervals of at most4 digits starting after the first digit.
+These can serve as right operands of powers. It reports newly reachable values
+separately from values newly permitted as exponents of an outer power.
+For example, `5^6=15625` is reachable at either cap but is an allowed outer
+exponent only at20000. The audit found43 interval/value pairs newly allowed as
+exponents and21 newly reachable interval/value pairs. These counts do not cover
+longer operands and are not a completeness proof for unrestricted search.
+`python -m unittest -q test_exponent_operand_audit` checks all26 intervals
+against independent tokenization and syntax-tree enumeration. Raw results are
+in exponent_operand_audit.json and exponent_operand_audit_tests.json.
