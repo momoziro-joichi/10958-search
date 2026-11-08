@@ -1192,3 +1192,27 @@ cap20000 peak RSS increased relative to the preceding cap10000 sample.
 Next: inspect split6's increased memory and DP power sizes before further cap
 expansion. Preserve exactness; do not introduce unproved magnitude pruning.
 No paid compute, indefinite execution, or scheduled-task modifications.
+
+
+## 2026-11-08: partition6 memory investigation
+
+Continued from88706af. Added measure_power_sizes.py: isolated Fraction power
+instrumentation, restored in finally, no production solver/checkpoint changes.
+Reproduce: `python measure_power_sizes.py` (60s/768MiB budget).
+Raw output power_sizes_split6.json counts cumulative result bits, not live bytes
+or retained memory. No result-size pruning is introduced.
+
+Sequential cProfile runs (30s/768MiB each):
+`python profile_search.py --split 6 --max-abs-exponent 10000 --seconds 30 --memory-mib 768`
+and the same command with20000. CPU0.751715/1.568051s, RSS24992/40020KiB.
+Both completed not_found_bounded. DP cache interval counts both27; reverse cache
+entries both1. At cap20000 Fraction.__pow__ own time0.720s dominates. Thus cache
+entry counts alone do not explain memory growth; inspect large integer payloads.
+Profiles include instrumentation overhead and are single samples, not benchmarks.
+Raw profiles and bit counts committed. Existing full tests were not rerun;
+production code is unchanged. Independent uninstrumented profiles agree with
+instrumented search status. These diagnostics rerun partition6 for measurement,
+not checkpoint progress; completed checkpoint files are untouched.
+10958 remains bounded-not-found at cap20000; no unrestricted impossibility claim.
+Next: identify which DP intervals retain the largest power payloads and assess
+releasing temporary tables without losing reachable values. No paid resources.

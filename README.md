@@ -455,3 +455,10 @@ longer operands and are not a completeness proof for unrestricted search.
 `python -m unittest -q test_exponent_operand_audit` checks all26 intervals
 against independent tokenization and syntax-tree enumeration. Raw results are
 in exponent_operand_audit.json and exponent_operand_audit_tests.json.
+
+
+Partition6 memory diagnostics: `python measure_power_sizes.py` measures
+Fraction power result bit lengths under60s/768MiB. See power_sizes_split6.json
+and profile_split6_cap10000.json/profile_split6_cap20000.json. Cumulative bit
+counts are allocation-volume indicators, not live memory usage. Production
+search and completed checkpoints are unchanged by this diagnostic.

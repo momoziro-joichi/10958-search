@@ -1,38 +1,45 @@
-"""Measure exact-power costs by result bit length; isolated 60s/768MiB run."""
-from collections import defaultdict
-from fractions import Fraction
+"""Bounded diagnostic of Fraction power result sizes for partition6."""
+import hashlib
 import json
+from pathlib import Path
 import resource
 import signal
-import time
+from fractions import Fraction
 from search import make_solver
 
-resource.setrlimit(resource.RLIMIT_AS, (768*1024**2, 768*1024**2))
-def expired(*args):
-    raise TimeoutError('measurement budget exhausted')
-signal.signal(signal.SIGALRM, expired)
-signal.alarm(60)
-original = Fraction.__pow__
-buckets = defaultdict(lambda: dict(calls=0, seconds=0.0, max_bits=0))
-def measured(base, exponent):
-    started = time.perf_counter()
-    result = original(base, exponent)
-    elapsed = time.perf_counter() - started
-    bits = result.numerator.bit_length() + result.denominator.bit_length()
-    ceiling = 1 << (max(1, bits)-1).bit_length()
-    row = buckets[ceiling]
-    row['calls'] += 1
-    row['seconds'] += elapsed
-    row['max_bits'] = max(row['max_bits'], bits)
-    return result
-Fraction.__pow__ = measured
-started = time.perf_counter()
-try:
-    expression = make_solver('123456789', root_split=2, max_abs_exponent=2000)[1](0, 9, Fraction(10958))
-    print(json.dumps(dict(status='found' if expression else 'not_found_bounded',
-        expression=expression, seconds=time.perf_counter()-started,
-        max_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
-        buckets=dict(sorted(buckets.items()))), indent=2))
-finally:
-    Fraction.__pow__ = original
-    signal.alarm(0)
+
+def measure(cap):
+    original = Fraction.__pow__
+    calls = total_bits = largest = 0
+    def counted(base, exponent):
+        nonlocal calls, total_bits, largest
+        result = original(base, exponent)
+        if isinstance(result, Fraction):
+            bits = result.numerator.bit_length() + result.denominator.bit_length()
+            calls += 1
+            total_bits += bits
+            largest = max(largest, bits)
+        return result
+    Fraction.__pow__ = counted
+    try:
+        dp, reverse = make_solver('123456789', root_split=6, max_abs_exponent=cap)
+        expression = reverse(0, 9, Fraction(10958))
+        if expression is not None:
+            from verify_expression import verify_expression
+            verify_expression(expression, '123456789', 10958, cap, 6)
+        return dict(cap=cap, status='found' if expression else 'not_found_bounded',
+                    power_calls=calls, cumulative_result_bits=total_bits,
+                    largest_result_bits=largest)
+    finally:
+        Fraction.__pow__ = original
+
+
+if __name__ == '__main__':
+    resource.setrlimit(resource.RLIMIT_AS, (768*1024**2,)*2)
+    def expired(*args):
+        raise TimeoutError('60 second budget')
+    signal.signal(signal.SIGALRM, expired)
+    signal.alarm(60)
+    print(json.dumps(dict(results=[measure(10000), measure(20000)],
+        time_budget_seconds=60, memory_budget_mib=768,
+        source_sha256=hashlib.sha256(Path('search.py').read_bytes()).hexdigest()), indent=2))
