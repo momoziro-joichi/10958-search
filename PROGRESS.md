@@ -1216,3 +1216,24 @@ not checkpoint progress; completed checkpoint files are untouched.
 10958 remains bounded-not-found at cap20000; no unrestricted impossibility claim.
 Next: identify which DP intervals retain the largest power payloads and assess
 releasing temporary tables without losing reachable values. No paid resources.
+
+
+## 2026-11-09: retained DP payload attribution
+
+Head00e41db verified. Added measure_dp_payloads.py, using a temporary profile
+callback restored in finally. It observes completed tables without retaining
+them. Reproduce: `python measure_dp_payloads.py` (60s/768MiB). Production solver
+and checkpoint fingerprints are unchanged. Both cap10000/20000 split6 searches
+completed not_found_bounded;27 tables observed each, matching prior cache counts.
+The123456 interval dominates:24928/25910 entries, integer payload estimate
+1999760/13089688 bytes. Largest expression at20000 is
+((12^(3^4))^(5^6)),4537220 numerator+denominator bits. The23456 interval grows
+from280592 to1479000 estimated bytes. These sys.getsizeof sums double-count
+shared integers and exclude dictionaries/strings; they are not actual RSS.
+All54 largest-per-table witnesses passed independent evaluation and bit-length
+checks. Full regression suite not rerun: no production change. Raw per-table
+results committed in dp_payloads_split6.json. Completed checkpoints untouched.
+10958 remains bounded-not-found at20000, not unrestricted impossibility.
+Next: investigate target-directed root split6 arithmetic to avoid materializing
+all123456 values; freeing this table after construction cannot reduce its peak.
+Do not adopt value-size pruning. No paid compute or indefinite execution.

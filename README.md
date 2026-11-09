@@ -462,3 +462,9 @@ Fraction power result bit lengths under60s/768MiB. See power_sizes_split6.json
 and profile_split6_cap10000.json/profile_split6_cap20000.json. Cumulative bit
 counts are allocation-volume indicators, not live memory usage. Production
 search and completed checkpoints are unchanged by this diagnostic.
+
+
+`python measure_dp_payloads.py` attributes integer payload estimates to completed
+DP intervals (60s/768MiB). Results in dp_payloads_split6.json identify123456 as
+the largest table in split6. Estimates exclude container/string memory and may
+double-count shared integers; they must not be interpreted as measured RSS.
