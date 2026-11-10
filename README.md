@@ -468,3 +468,9 @@ search and completed checkpoints are unchanged by this diagnostic.
 DP intervals (60s/768MiB). Results in dp_payloads_split6.json identify123456 as
 the largest table in split6. Estimates exclude container/string memory and may
 double-count shared integers; they must not be interpreted as measured RSS.
+
+
+`python experiment_right_width3.py` compares the existing right-inversion
+threshold2 with3 and independently checks small root-partition cases. This is
+an experiment; the production default remains2. See PROGRESS.md and
+right_width3_validation.json for scope, timing and remaining validation.

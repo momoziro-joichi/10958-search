@@ -1237,3 +1237,22 @@ results committed in dp_payloads_split6.json. Completed checkpoints untouched.
 Next: investigate target-directed root split6 arithmetic to avoid materializing
 all123456 values; freeing this table after construction cannot reduce its peak.
 Do not adopt value-size pruning. No paid compute or indefinite execution.
+
+
+## 2026-11-10: three-digit right inversion experiment
+
+Head15e73d0 verified. Added experiment_right_width3.py using the existing solver
+parameter right_inversion_digits=3, without changing the production default2.
+Independent root-partition enumeration on0001000/1000001/1200001 at cap3
+passed134 queries, including exact witness verification. Run:
+`python experiment_right_width3.py` (60s/768MiB budget).
+Split6 cap20000 measured1.043881s with width2,0.264491s with width3;
+DP interval cache counts27 versus24. Both returned not_found_bounded.
+An earlier exploratory pair gave1.045982/0.263756s. These are limited samples,
+not a general speedup guarantee; per-variant isolated RSS remains unmeasured.
+Raw validated results: right_width3_validation.json.
+Production sources and completed checkpoints unchanged; full suite not rerun.
+10958 remains bounded-not-found at cap20000, not unrestricted impossibility.
+Next: widen independent three-digit-right coverage to nonzero and negative
+power cases, measure isolated memory, then run all partitions and the full
+suite before changing the default. Do not infer full correctness from134 cases.
