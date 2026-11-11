@@ -11,7 +11,7 @@ from verify_expression import verify_expression
 
 def run():
     queries = 0
-    for digits in ('0001000', '1000001', '1200001'):
+    for digits in ('0001000', '1000001', '1200001', '1201231', '1021012'):
         cap = 3
         expected = {Fraction(int(digits))}
         for a in values(digits[:4],cap):

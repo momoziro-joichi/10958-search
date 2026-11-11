@@ -1256,3 +1256,25 @@ Production sources and completed checkpoints unchanged; full suite not rerun.
 Next: widen independent three-digit-right coverage to nonzero and negative
 power cases, measure isolated memory, then run all partitions and the full
 suite before changing the default. Do not infer full correctness from134 cases.
+
+
+## 2026-11-11: expanded width3 oracle and isolated all-split comparison
+
+Head d7920a4 verified. Extended experiment_right_width3.py with1201231 and
+1021012, bringing independent cap3 root-partition comparisons to2425 queries.
+All passed, with independent exact witness evaluation. Budget60s/768MiB.
+Added benchmark_right_width.py: fresh process for each width/split,30s and
+768MiB per child,16 children maximum480s budget. This avoids contaminating
+per-variant RSS with preceding trials. At cap20000 all8 splits for both widths
+completed not_found_bounded. Width2 summed time3.139224s, peak RSS35220KiB;
+width3 summed time2.107754s, peak RSS12672KiB. Single samples, not a stable
+speedup guarantee. Tests ran concurrently with initial benchmark work.
+Commands: `python experiment_right_width3.py` and
+`python benchmark_right_width.py`. JSON results retained separately from older
+measurements. Production default remains2 and checkpoint source fingerprints
+unchanged. Diagnostic runs intentionally recompute partitions for comparison;
+no completed checkpoint progress was discarded or rewritten.
+10958 remains bounded-not-found at20000, not unrestricted impossibility.
+Next: add explicit width3 high-cap negative/zero/rational boundary regressions,
+then adopt width3 only after a full regression pass and fresh checkpoint with
+new source identity. Full suite was not executed this run. No paid resources.

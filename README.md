@@ -474,3 +474,10 @@ double-count shared integers; they must not be interpreted as measured RSS.
 threshold2 with3 and independently checks small root-partition cases. This is
 an experiment; the production default remains2. See PROGRESS.md and
 right_width3_validation.json for scope, timing and remaining validation.
+
+
+`python benchmark_right_width.py` compares thresholds2/3 in separate processes
+for all8 partitions at cap20000 (30s/768MiB each; total maximum480s).
+See right_width_isolated.json and right_width3_validation_expanded.json.
+The expanded independent oracle covers2425 queries; default remains2 pending
+high-cap boundary regressions and a full-suite adoption check.
