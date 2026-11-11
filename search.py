@@ -169,7 +169,7 @@ def rational_nth_root_exact(value, exponent):
 
 def make_solver(digits, *, root_split=None, lookup_digits=4, edge_inversion=True,
                 max_abs_exponent=MAX_ABS_EXPONENT, exponent_lookup_digits=4,
-                right_inversion_digits=2):
+                right_inversion_digits=3):
 
     if type(max_abs_exponent) is not int or max_abs_exponent < 0:
         raise ValueError("max_abs_exponent must be a nonnegative integer")

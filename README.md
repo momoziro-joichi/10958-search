@@ -3,15 +3,15 @@ Exact search for 10958 using 123456789
 
 ## Current status — bounded search completed
 
-On 2026-11-08, all eight top-level partitions of `123456789 -> 10958`
+On 2026-11-11, all eight top-level partitions of `123456789 -> 10958`
 completed with **no expression found under the integer-exponent bound -20000..20000**.
-The sum of partition worker wall times was 3.503715 seconds; the largest
-observed worker RSS was 36,844 KiB. These are single-run measurements.
+The sum of partition worker wall times was 2.984012 seconds; the largest
+observed worker RSS was 14,336 KiB. These are single-run measurements.
 This does **not** establish impossibility with unrestricted exponents.
-The latest checkpoint is `checkpoint_10958_cap20000.json` (cap 20000).
+The latest checkpoint is `checkpoint_10958_cap20000_width3.json` (cap 20000).
 Completed cap5000 and cap10000 checkpoints are retained unchanged.
 Resume with `python resume_search.py --max-abs-exponent 20000 --seconds 240
---per-split-seconds 30 --memory-mib 768 --checkpoint checkpoint_10958_cap20000.json`
+--per-split-seconds 30 --memory-mib 768 --checkpoint checkpoint_10958_cap20000_width3.json`
 (on one line). The historical `checkpoint_10958.json` retains cap 2000 unchanged but uses an older source fingerprint. The pre-optimization cap-2000 checkpoint is archived unchanged
 in `checkpoint_10958_cap2000_before_digit_inverse.json`. The previous cap-1000 result is archived unchanged in
 `checkpoint_10958_cap1000_before_verifier.json`. The previous schema-2 cap-1000 result is archived in
@@ -481,3 +481,9 @@ for all8 partitions at cap20000 (30s/768MiB each; total maximum480s).
 See right_width_isolated.json and right_width3_validation_expanded.json.
 The expanded independent oracle covers2425 queries; default remains2 pending
 high-cap boundary regressions and a full-suite adoption check.
+
+
+Current production default: right_inversion_digits=3. Earlier experimental
+sections describe historical results. Older checkpoints retain their old source
+fingerprints and cannot be resumed with this source. The width3 checkpoint above
+is current; the old cap20000 checkpoint is preserved unchanged.

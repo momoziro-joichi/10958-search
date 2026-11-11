@@ -1278,3 +1278,25 @@ no completed checkpoint progress was discarded or rewritten.
 Next: add explicit width3 high-cap negative/zero/rational boundary regressions,
 then adopt width3 only after a full regression pass and fresh checkpoint with
 new source identity. Full suite was not executed this run. No paid resources.
+
+
+## 2026-11-11: adopt three-digit right inversion
+
+Started from66ee84e. Changed production default right_inversion_digits2 to3,
+using the existing exact inverse implementation without value pruning. Added
+width3/left-table differential regressions for large powers, reciprocal targets,
+zero and unit targets at cap20000; witnesses independently verified.
+Full `python -m unittest -q`:51 tests passed in145.731s (145.871970s including
+startup), budget240s/768MiB. Raw output width3_full_tests.json includes intentional
+mock worker errors from error-handling tests, not actual test failures.
+
+Fresh source identity checkpoint checkpoint_10958_cap20000_width3.json:
+`python resume_search.py --max-abs-exponent 20000 --seconds 240 --per-split-seconds 30 --memory-mib 768 --checkpoint checkpoint_10958_cap20000_width3.json`
+All8 partitions not_found_bounded, summed worker2.984012s, peakRSS14336KiB.
+Test suite ran concurrently; this is not an isolated speed comparison.
+Resume with subprocess.run mocked to raise launched zero workers and preserved
+checkpoint bytes. Previous checkpoint files remain unchanged and use older
+source fingerprints; do not migrate their completed flags to this version.
+10958 remains bounded-not-found at20000; unrestricted impossibility unproved.
+Next: refresh PR review summary and distinguish adopted code from historical
+experiments before considering further exponent growth. No paid resources.
