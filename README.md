@@ -488,3 +488,11 @@ Current production default: right_inversion_digits=3. Earlier experimental
 sections describe historical results. Older checkpoints retain their old source
 fingerprints and cannot be resumed with this source. The width3 checkpoint above
 is current; the old cap20000 checkpoint is preserved unchanged.
+
+
+Strategy reassessment experiments: run `python strategy_probe.py` and
+`python -m unittest -v test_strategy_probe`. These isolate cap-free target
+exponent candidates, independent structural enumeration and deferred large powers.
+Unsupported evaluation remains explicitly unresolved; it cannot justify absence.
+Production search and checkpoints are unchanged. See PROGRESS.md for measured
+scope, limitations and next steps; this is not an unrestricted nine-digit solver.

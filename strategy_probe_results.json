@@ -1,0 +1,39 @@
+{
+  "exponent_candidates_10958": [
+    -1,
+    1
+  ],
+  "exponent_cap": null,
+  "power_allocation_bits": 4096,
+  "rows": {
+    "123": {
+      "syntax_trees": 61,
+      "unresolved": 0,
+      "invalid": 1,
+      "distinct_evaluated_values": 35,
+      "seconds": 0.00036796599999888713,
+      "target_10958_found": false,
+      "status": "complete"
+    },
+    "1234": {
+      "syntax_trees": 791,
+      "unresolved": 0,
+      "invalid": 34,
+      "distinct_evaluated_values": 261,
+      "seconds": 0.004724801999998363,
+      "target_10958_found": false,
+      "status": "complete"
+    },
+    "12345": {
+      "syntax_trees": 11571,
+      "unresolved": 95,
+      "invalid": 900,
+      "distinct_evaluated_values": 2524,
+      "seconds": 0.10325399999999263,
+      "target_10958_found": false,
+      "status": "incomplete"
+    }
+  },
+  "seconds": 0.10876671099998703,
+  "peak_rss_kib": 11008
+}

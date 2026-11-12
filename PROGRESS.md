@@ -1328,3 +1328,43 @@ Raw output width3_explicit_tests.json. Production source unchanged; prior full
 latest completed domain remains |exponent|<=20000, not_found_bounded.
 Next: broaden independent high-cap coverage without relying only on agreement
 between inverse strategies. No paid resources or checkpoint changes.
+
+## 2026-11-12: three strategy reassessment prototypes
+
+Started at444de6c25e81ba0311e54196f41b78f441c6ef4c, PR open/draft.
+Added strategy_probe.py and test_strategy_probe.py as isolated experiments.
+Existing target bit bounds and test_oracle.py already cover parts of this idea;
+this is NOT a claim that target inversion or independent trees are newly invented.
+
+1. rational_power_candidates returns all feasible integer exponents for a
+nondegenerate rational target without a user cap. Each nonunit reduced component
+must be a perfect |e|-th power and >=2**|e|. Negative targets require odd e.
+For10958 candidates are -1,+1. For0,+/-1 returns None (unbounded family, not empty).
+Production already checks exact roots after its necessary bound: this prototype
+alone is not evidence of a speedup, and does not remove internal-node caps.
+2. Independent syntax trees with no exponent cap:123 has61 trees/35 values;
+1234 has791 trees/261 values, both zero unresolved.12345 has11571 trees,
+2524 evaluated distinct values and95 unresolved trees: INCOMPLETE. No10958
+witness found on these small inputs; no nine-digit search was run.
+3. Defined rational-base integer powers above a conservative allocation estimate
+are kept as LazyPower. Identical defined powers cancel under subtraction/division,
+including2**(10**9), without allocating that integer. Other unsupported symbolic
+arithmetic returns UNKNOWN. Invalid expressions are not simplified into witnesses.
+This is a limited evaluator, not a general symbolic solver; nested symbolic
+exponents, unlike powers and cancellation through other structures remain open.
+The4096-bit power-allocation threshold is NOT a mathematical exclusion:
+all unresolved trees must remain outstanding. It is not an overall memory bound.
+
+Reproduce: python -m unittest -v test_strategy_probe
+and python strategy_probe.py. Four new tests passed in0.147s, including65 input
+comparisons with production DP/reverse (cap100), rational/negative exponent
+candidates and symbolic definedness. Test process used60s timeout/768MiB virtual
+memory; experiment enforces60s alarm/768MiB. Experiment0.108767s, peakRSS11008KiB
+(Linux; single sample). Raw output strategy_probe_results.json. Production full
+suite not rerun: production sources unchanged. Existing checkpoints untouched.
+Latest nine-digit result remains bounded-not-found at20000; unrestricted unknown.
+
+Decision: keep production hybrid as baseline. Before adopting symbolic search,
+classify the95 unresolved12345 trees and add exact operations that resolve those
+families; cross-check each addition. Benchmark actual search cost before replacing
+production. Do not merely double caps or claim this prototype proves completeness.
