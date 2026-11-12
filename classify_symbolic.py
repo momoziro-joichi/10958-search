@@ -1,4 +1,5 @@
 """Budgeted target comparison of previously unresolved small-input trees."""
+import argparse
 import json
 import resource
 import signal
@@ -9,13 +10,18 @@ from strategy_probe import all_trees, evaluate, LazyPower, UNKNOWN, matches_targ
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--digits', default='12345')
+    args = parser.parse_args()
+    if not args.digits or any(c not in '0123456789' for c in args.digits):
+        parser.error('digits must be a nonempty ASCII digit string')
     resource.setrlimit(resource.RLIMIT_AS, (768*1024**2,)*2)
     signal.alarm(60)
     start = time.perf_counter()
     counts = Counter()
     found = []
     unknown = []
-    for tree in all_trees('12345'):
+    for tree in all_trees(args.digits):
         value = evaluate(tree)
         if isinstance(value, LazyPower) or value is UNKNOWN:
             counts['deferred_power' if isinstance(value, LazyPower) else 'parent_'+tree[0]] += 1
@@ -25,7 +31,7 @@ def main():
             found.append(tree)
         if result is None:
             unknown.append(tree)
-    print(json.dumps(dict(digits='12345', target=10958, exponent_cap=None,
+    print(json.dumps(dict(digits=args.digits, target=10958, exponent_cap=None,
                          counts=counts, witnesses=found, unresolved_trees=unknown,
                          seconds=time.perf_counter()-start,
                          peak_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss),indent=2))

@@ -1399,3 +1399,30 @@ Next: classify unresolved six-digit trees with a fixed time/memory budget,
 validate any additional symbolic rules independently, and assess structural
 enumeration growth before adopting it as a production search path. No paid
 resources, automation changes or indefinite computation.
+
+## 2026-11-12: uncapped six-digit target comparison
+
+Verified PR head362ee08423b60d1fcf6f4896655f425024a7a757.
+Initial diagnostic123456 enumeration:181127 rejects,649 unknown,1.984196s.
+Added recursive target inversion for powers with an explicit rational base or
+integer exponent. Feasible exponents are derived from the nondegenerate target,
+not a user cap. Check the exponent subtree against each feasible integer, or
+the base subtree against all rational roots (both signs for even powers).
+Finite per-node caps remain enforced. Special targets0,+/-1 retain conservative
+unknown paths where unsupported. After inversion, four unknown trees remained:
+zero times/divided by a defined nonzero LazyPower. Added exact handling for them.
+
+python -m unittest -q test_strategy_probe:10 tests passed in0.423s
+under60s timeout/768MiB. Coverage includes prior independent low-bit comparisons,
+nested powers, negative even roots, reciprocals, finite cap rejection and zero
+with defined deferred powers. Production full suite not rerun; unchanged solver.
+python classify_symbolic.py --digits 123456:181776 syntax trees all rejected
+against10958, exponent_cap=None, zero unresolved.3.817522s,10752KiB peakRSS,
+single Linux sample,60s alarm/768MiB. Raw symbolic_six_digit_results.json.
+CLI now accepts validated ASCII --digits (default12345 retained).
+Three diagnostic/search runs each allocated60s (180s total); no paid compute.
+
+This completes the implemented uncapped six-digit target comparison, not a
+nine-digit proof. Production files/checkpoints unchanged; nine-digit search
+not rerun and remains bounded-not-found at20000. Next: budget a seven-digit
+classification, measure structural growth, and keep unsupported cases explicit.

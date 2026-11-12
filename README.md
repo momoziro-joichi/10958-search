@@ -501,3 +501,8 @@ scope, limitations and next steps; this is not an unrestricted nine-digit solver
 without an exponent cap. Exact target comparison resolves the95 previously
 deferred trees without constructing huge powers; unresolved cases remain a
 separate outcome. This five-digit experiment is not a nine-digit conclusion.
+
+The symbolic experiment also accepts `--digits 123456`. Recursive exact power
+inversion resolves all181776 six-digit trees against10958 without an exponent
+cap (no match). See symbolic_six_digit_results.json; this is still not a
+nine-digit result or a production solver replacement.

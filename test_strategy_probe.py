@@ -89,5 +89,26 @@ class SymbolicTargetTests(unittest.TestCase):
         self.assertIsNone(matches_target(('^','1',('^','2','9999')),1,cap=20000))
 
 
+class NestedPowerTargetTests(unittest.TestCase):
+    def test_zero_with_defined_large_power(self):
+        from strategy_probe import matches_target
+        for op in ('*', '/'):
+            tree=(op,'0',('^','4',('^','5','6')))
+            self.assertTrue(matches_target(tree,0))
+            self.assertFalse(matches_target(tree,10958))
+
+    def test_nested_unexpanded_powers(self):
+        from strategy_probe import matches_target
+        self.assertFalse(matches_target(('^','12',('^','3',('^','4','56'))),10958))
+        tree=('^',('^','2','5'),'2')
+        self.assertTrue(matches_target(tree,1024,bits=2))
+        self.assertFalse(matches_target(tree,1025,bits=2))
+        negative=('^',('-', '1','3'),'2')
+        self.assertTrue(matches_target(negative,4,bits=1))
+        reciprocal=('^',('^','2','5'),('-', '1','3'))
+        self.assertTrue(matches_target(reciprocal,F(1,1024),bits=2))
+        self.assertFalse(matches_target(tree,1024,bits=2,cap=1))
+
+
 if __name__ == '__main__':
     unittest.main()

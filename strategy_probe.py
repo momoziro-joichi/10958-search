@@ -195,8 +195,36 @@ def matches_target(tree, target, bits=4096, cap=None):
         return lazy_equals(v, target)
     op, left, right = tree
     a, b = evaluate(left, bits, cap), evaluate(right, bits, cap)
+    if a == F(0) and isinstance(b, LazyPower) and b.base != 0 and op in ('*', '/'):
+        return target == 0
     if op == '^' and a == F(1) and isinstance(b, LazyPower) and cap is None:
         return target == 1 if lazy_is_integer(b) else False
+    if op == '^' and target not in (0, 1, -1):
+        # A nondegenerate target admits finitely many exponents even when
+        # the exponent subtree cannot be expanded. Query that subtree exactly.
+        feasible = rational_power_candidates(target)
+        if isinstance(a, F):
+            outcomes = []
+            for e in feasible:
+                if cap is not None and abs(e) > cap:
+                    continue
+                if a == 0 or not lazy_equals(LazyPower(a, e), target):
+                    continue
+                outcomes.append(matches_target(right, F(e), bits, cap))
+            return True if True in outcomes else None if None in outcomes else False
+        if isinstance(b, F):
+            if b.denominator != 1 or int(b) not in feasible:
+                return False
+            e = int(b)
+            if cap is not None and abs(e) > cap:
+                return False
+            t = 1 / target if e < 0 else target
+            n = exact_root(abs(t.numerator), abs(e))
+            d = exact_root(t.denominator, abs(e))
+            root = F(n, d) * (-1 if t < 0 else 1)
+            roots = (root, -root) if e % 2 == 0 else (root,)
+            outcomes = [matches_target(left, r, bits, cap) for r in roots]
+            return True if True in outcomes else None if None in outcomes else False
     if isinstance(a, F):
         if op == '+':
             return matches_target(right, target-a, bits, cap)
