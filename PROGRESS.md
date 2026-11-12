@@ -1426,3 +1426,33 @@ This completes the implemented uncapped six-digit target comparison, not a
 nine-digit proof. Production files/checkpoints unchanged; nine-digit search
 not rerun and remains bounded-not-found at20000. Next: budget a seven-digit
 classification, measure structural growth, and keep unsupported cases explicit.
+
+## 2026-11-12: seven-digit structural enumeration and bounded runner reporting
+
+Verified latest head54a3c7b2483d967cf7edb9dba46e07eb1c1bd54e.
+Added validated --seconds (1..600), signal timeout and MemoryError reporting
+with partial counts; unresolved samples capped at100 while counts remain exact.
+This is diagnostic reporting, not checkpoint/resume. Abrupt process kill is not
+covered. Status distinguishes enumeration completion from unresolved decisions.
+
+python classify_symbolic.py --digits 1234567 --seconds 120:
+2994531 trees enumerated,2994491 rejected,40 unresolved,zero witnesses.
+73.643974s,10752KiB peakRSS,120s/768MiB budget, no exponent cap.
+Raw symbolic_seven_digit_results.json. Initial output used status=complete for
+enumeration completion; after noticing ambiguity, metadata was normalized to
+status=unresolved, enumeration_complete=true without repeating search. New
+runner emits this distinction directly. Numerical counts/timing are unchanged.
+Examples of unresolved cases: zero times/divided by4+5**(6**7), whose
+definedness/nonzero property is not propagated through symbolic arithmetic.
+
+python -m unittest -q test_strategy_probe test_symbolic_runner:
+13 tests passed in0.325s. New tests cover completion, timeout/memory exception
+partial-count preservation, bounded samples and unresolved status. Production
+full suite not run: production solver/checkpoints unchanged. Nine-digit not run.
+
+Structural tree count is sum over k=0..n-1 of binomial(n-1,k)*Catalan(k)*5**k:
+n7=2994531,n8=51038586,n9=892467691 (includes undefined expressions).
+Do not scale naive enumeration directly to nine digits. Next priorities:
+propagate conservative definedness/sign information to resolve the40 cases;
+measure bounded reuse of subtree evaluation before attempting8/9 digits.
+No paid compute, automation changes or unbounded execution.

@@ -506,3 +506,8 @@ The symbolic experiment also accepts `--digits 123456`. Recursive exact power
 inversion resolves all181776 six-digit trees against10958 without an exponent
 cap (no match). See symbolic_six_digit_results.json; this is still not a
 nine-digit result or a production solver replacement.
+
+Seven-digit diagnostic: `python classify_symbolic.py --digits 1234567 --seconds 120`.
+All2994531 trees were enumerated;40 remained unresolved and no witness was found.
+This is NOT an absence result. Output distinguishes enumeration_complete from
+status=unresolved and retains partial counts on timeout. See PROGRESS.md.
