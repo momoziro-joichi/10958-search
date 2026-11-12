@@ -195,6 +195,13 @@ def matches_target(tree, target, bits=4096, cap=None):
         return lazy_equals(v, target)
     op, left, right = tree
     a, b = evaluate(left, bits, cap), evaluate(right, bits, cap)
+    # Even if the other operand is unresolved or undefined, zero times
+    # it (or zero divided by it) cannot equal a NONZERO target. This is
+    # rejection only: never infer a defined zero-valued witness here.
+    if target != 0 and op in ('*', '/') and a == F(0):
+        return False
+    if target != 0 and op == '*' and b == F(0):
+        return False
     if a == F(0) and isinstance(b, LazyPower) and b.base != 0 and op in ('*', '/'):
         return target == 0
     if op == '^' and a == F(1) and isinstance(b, LazyPower) and cap is None:

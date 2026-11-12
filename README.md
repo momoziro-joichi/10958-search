@@ -511,3 +511,8 @@ Seven-digit diagnostic: `python classify_symbolic.py --digits 1234567 --seconds 
 All2994531 trees were enumerated;40 remained unresolved and no witness was found.
 This is NOT an absence result. Output distinguishes enumeration_complete from
 status=unresolved and retains partial counts on timeout. See PROGRESS.md.
+
+Subsequent zero-factor/numerator rejection resolved the40 seven-digit cases.
+A fresh full enumeration rejected all2994531 trees against10958 with no exponent
+cap and zero unknowns; see symbolic_seven_digit_resolved.json. The earlier
+unresolved file is historical. Nine-digit unrestricted status remains unknown.

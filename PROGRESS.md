@@ -1456,3 +1456,31 @@ Do not scale naive enumeration directly to nine digits. Next priorities:
 propagate conservative definedness/sign information to resolve the40 cases;
 measure bounded reuse of subtree evaluation before attempting8/9 digits.
 No paid compute, automation changes or unbounded execution.
+
+## 2026-11-12: close all forty seven-digit target unknowns
+
+Verified headc1ee3e346386d12fa69847be6050e680edf49fc7.
+All40 saved unknowns have a zero factor or numerator. Added rejection for
+NONZERO targets:0*X,X*0,0/X cannot equal10958 whether X is defined or not.
+This does NOT assert these expressions are defined or equal0. When target0
+is requested and X remains unsupported, keep None; undefined operands are
+still rejected. General sign/definedness propagation was considered but was
+unnecessary for these40 target rejections, so no speculative engine was added.
+
+python -m unittest -q test_strategy_probe test_symbolic_runner:
+15 tests passed in0.377s. Added all40 saved-tree regressions plus target-zero,
+undefined and unresolved operand checks. Existing low-bit/direct Fraction
+comparisons retained. Production full suite unchanged/not rerun.
+
+python classify_symbolic.py --digits 1234567 --seconds 120
+Fresh full diagnostic:2994531 rejected,zero unresolved,zero witnesses;
+exponent_cap=None;78.314970s,10752KiB peakRSS,120s/768MiB limits.
+Raw symbolic_seven_digit_resolved.json; prior unresolved result preserved.
+This completes implemented uncapped seven-digit target enumeration, NOT the
+nine-digit problem. Production solver/checkpoints unchanged; no nine-digit run.
+Timing is a single observation, not a speedup claim.
+
+Next: instrument bounded subtree-evaluation reuse, then compare memory/time
+and identical classifications before adopting caching. Eight digits have
+51038586 syntax trees, nine892467691: do not blindly scale naive enumeration.
+No paid resources or automation modifications.

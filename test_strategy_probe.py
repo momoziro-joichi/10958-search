@@ -110,5 +110,25 @@ class NestedPowerTargetTests(unittest.TestCase):
         self.assertFalse(matches_target(tree,1024,bits=2,cap=1))
 
 
+class ZeroRejectionTests(unittest.TestCase):
+    def test_zero_does_not_hide_undefined_or_unresolved(self):
+        from strategy_probe import matches_target
+        huge=('+','4',('^','5',('^','6','7')))
+        for op in ('*','/'):
+            self.assertFalse(matches_target((op,'0',huge),10958))
+            self.assertIsNone(matches_target((op,'0',huge),0))
+            self.assertFalse(matches_target((op,'0',('/','1','0')),0))
+        self.assertFalse(matches_target(('*',huge,'0'),10958))
+
+    def test_saved_seven_digit_unknowns(self):
+        import json
+        from pathlib import Path
+        from strategy_probe import matches_target
+        saved=json.loads(Path(__file__).with_name('symbolic_seven_digit_results.json').read_text())
+        self.assertEqual(len(saved['unresolved_tree_samples']),40)
+        for tree in saved['unresolved_tree_samples']:
+            self.assertIs(matches_target(tree,10958),False)
+
+
 if __name__ == '__main__':
     unittest.main()
