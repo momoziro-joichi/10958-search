@@ -1312,3 +1312,19 @@ Evidence rechecked:51 tests,8 completed cap20000 partitions,2.984012s total,
 14336KiB peakRSS. No new test execution or search in this documentation-only run.
 Production and checkpoint files unchanged. Next: review remaining boundary-test
 coverage and keep any further search-limit expansion separately budgeted.
+
+
+## 2026-11-12: explicit expected outcomes for width3
+
+Read latest head4c268ed2a5348195915f83c9bd4cdefdc5e67412. Existing width3 test only compared two
+implementations, which could both miss a solution. Added six independently
+verified known witnesses and required successful search: negative base even/odd
+powers200/201, rational base power200, negative exponent-12, zero exponent,
+and zero base positive exponent. Added all-zero digits ->1 rejection: only0
+is constructible when0^0 and division by0 are disallowed.
+Targeted module:3 tests passed in0.006s,0.091453s with startup, budget120s/768MiB.
+Raw output width3_explicit_tests.json. Production source unchanged; prior full
+51-test pass remains historical, full suite not rerun. No10958 search rerun;
+latest completed domain remains |exponent|<=20000, not_found_bounded.
+Next: broaden independent high-cap coverage without relying only on agreement
+between inverse strategies. No paid resources or checkpoint changes.
