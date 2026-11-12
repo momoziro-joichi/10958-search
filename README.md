@@ -1,6 +1,8 @@
 # 10958-search
 Exact search for 10958 using 123456789
 
+See [REVIEW.md](REVIEW.md) for the current implementation, evidence, and review order.
+
 ## Current status — bounded search completed
 
 On 2026-11-11, all eight top-level partitions of `123456789 -> 10958`
@@ -471,16 +473,15 @@ double-count shared integers; they must not be interpreted as measured RSS.
 
 
 `python experiment_right_width3.py` compares the existing right-inversion
-threshold2 with3 and independently checks small root-partition cases. This is
-an experiment; the production default remains2. See PROGRESS.md and
+threshold2 with3 and independently checks small root-partition cases. This comparison is retained as historical evidence; the production default is3. See PROGRESS.md and
 right_width3_validation.json for scope, timing and remaining validation.
 
 
 `python benchmark_right_width.py` compares thresholds2/3 in separate processes
 for all8 partitions at cap20000 (30s/768MiB each; total maximum480s).
 See right_width_isolated.json and right_width3_validation_expanded.json.
-The expanded independent oracle covers2425 queries; default remains2 pending
-high-cap boundary regressions and a full-suite adoption check.
+The expanded independent oracle covers2425 queries. Threshold3 was subsequently
+adopted after the51-test full-suite pass recorded in width3_full_tests.json.
 
 
 Current production default: right_inversion_digits=3. Earlier experimental

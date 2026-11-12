@@ -1300,3 +1300,15 @@ source fingerprints; do not migrate their completed flags to this version.
 10958 remains bounded-not-found at20000; unrestricted impossibility unproved.
 Next: refresh PR review summary and distinguish adopted code from historical
 experiments before considering further exponent growth. No paid resources.
+
+
+## 2026-11-12: review documentation synchronization
+
+Verified head6a0e5cd and read current README, progress, full-test output and
+width3 checkpoint. Fixed stale README claims that default remains2; added
+REVIEW.md separating adopted production behavior from historical experiments.
+PR description updated from stale cap5000/42-tests/root-cache-next narrative.
+Evidence rechecked:51 tests,8 completed cap20000 partitions,2.984012s total,
+14336KiB peakRSS. No new test execution or search in this documentation-only run.
+Production and checkpoint files unchanged. Next: review remaining boundary-test
+coverage and keep any further search-limit expansion separately budgeted.
