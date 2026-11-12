@@ -149,3 +149,70 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+def lazy_equals(value, target):
+    """Decide equality of a defined LazyPower to an explicit rational."""
+    target = F(target)
+    a, e = value.base, value.exponent
+    if e == 0 or a in (0, 1, -1):
+        return a ** e == target
+    if target in (0, 1, -1):
+        return False  # nonzero nonunit rational to nonzero integer power
+    if e not in rational_power_candidates(target):
+        return False
+    # Feasibility bounds e by the target bit length. Compare roots instead
+    # of constructing a potentially enormous base**e.
+    t = 1 / target if e < 0 else target
+    if t < 0 and e % 2 == 0:
+        return False
+    n = exact_root(abs(t.numerator), abs(e))
+    d = exact_root(t.denominator, abs(e))
+    if n is None or d is None:
+        return False
+    root = F(n, d)
+    return abs(a) == root and ((a < 0 and e % 2 != 0) == (t < 0))
+
+
+def lazy_is_integer(value):
+    a, e = value.base, value.exponent
+    return a.denominator == 1 if e > 0 else abs(a.numerator) == 1
+
+
+def matches_target(tree, target, bits=4096, cap=None):
+    """True/False/None: unresolved is never converted to rejection.
+
+    This compares an enumerated tree, not reachable value tables. It only
+    inverts a root with an explicit rational child; degeneracies remain unknown.
+    """
+    target = F(target)
+    v = evaluate(tree, bits, cap)
+    if v is INVALID:
+        return False
+    if isinstance(v, F):
+        return v == target
+    if isinstance(v, LazyPower):
+        return lazy_equals(v, target)
+    op, left, right = tree
+    a, b = evaluate(left, bits, cap), evaluate(right, bits, cap)
+    if op == '^' and a == F(1) and isinstance(b, LazyPower) and cap is None:
+        return target == 1 if lazy_is_integer(b) else False
+    if isinstance(a, F):
+        if op == '+':
+            return matches_target(right, target-a, bits, cap)
+        if op == '-':
+            return matches_target(right, a-target, bits, cap)
+        if op == '*' and a != 0:
+            return matches_target(right, target/a, bits, cap)
+        if op == '/' and a != 0:
+            return False if target == 0 else matches_target(right, a/target, bits, cap)
+    if isinstance(b, F):
+        if op == '+':
+            return matches_target(left, target-b, bits, cap)
+        if op == '-':
+            return matches_target(left, target+b, bits, cap)
+        if op == '*' and b != 0:
+            return matches_target(left, target/b, bits, cap)
+        if op == '/' and b != 0:
+            return matches_target(left, target*b, bits, cap)
+    return None

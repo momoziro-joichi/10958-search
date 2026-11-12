@@ -1368,3 +1368,34 @@ Decision: keep production hybrid as baseline. Before adopting symbolic search,
 classify the95 unresolved12345 trees and add exact operations that resolve those
 families; cross-check each addition. Benchmark actual search cost before replacing
 production. Do not merely double caps or claim this prototype proves completeness.
+
+## 2026-11-12: resolve deferred five-digit trees against a target
+
+Continued from7f488df7281bd979d8e490f4bd8eda0b1fae894b; latest PR head checked.
+Classified95 unresolved12345 trees:45 direct LazyPower;10 each with outer
++,-,*,/,^. Added lazy_equals using exact target roots, matches_target using
+arithmetic inversion with an explicit rational child, and exact integrality
+checking for a symbolic exponent of base1. Finite-cap symbolic exponents remain
+unknown where the cap has not been checked. Undefined subexpressions are never
+accepted by simplification. Unknown is a distinct third outcome, not False.
+
+python -m unittest -v test_strategy_probe:8 tests passed in0.324s under60s
+parent timeout and768MiB virtual memory. New checks cover signed rational
+powers, low allocation thresholds versus direct Fraction evaluation, base1
+with integer/noninteger symbolic exponents, finite-cap uncertainty, and all
+12345 trees. This is experimental-module coverage, not a new production
+full-suite pass. Relocated unittest.main after all test classes for direct runs.
+
+python classify_symbolic.py: all11571 syntax trees for12345 rejected against
+10958, zero unresolved; exponent_cap=None. Wall0.197648s, RSS9856KiB, single
+sample,60s alarm/768MiB address-space budget. Raw symbolic_target_results.json.
+The95 formerly unresolved trees are resolved for this target; their full values
+are still not materialized or enumerated. This is a completed uncapped
+five-digit target comparison, NOT a nine-digit impossibility result.
+
+Production search/verifier/runners and existing checkpoints unchanged. No
+nine-digit rerun; latest nine-digit result remains bounded-not-found at20000.
+Next: classify unresolved six-digit trees with a fixed time/memory budget,
+validate any additional symbolic rules independently, and assess structural
+enumeration growth before adopting it as a production search path. No paid
+resources, automation changes or indefinite computation.

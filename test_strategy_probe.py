@@ -51,5 +51,43 @@ class StrategyTests(unittest.TestCase):
         self.assertGreater(stats['unresolved'],0)
 
 
+class SymbolicTargetTests(unittest.TestCase):
+    def test_lazy_equality(self):
+        from strategy_probe import lazy_equals
+        for n in range(-4,5):
+            for d in range(1,5):
+                a=F(n,d)
+                for e in range(-5,6):
+                    if a == 0 and e <= 0:
+                        continue
+                    p=LazyPower(a,e)
+                    self.assertTrue(lazy_equals(p,a**e))
+                    self.assertFalse(lazy_equals(p,a**e+F(1,7)))
+
+    def test_low_budget_against_direct_fraction(self):
+        from strategy_probe import all_trees, evaluate, matches_target
+        for digits in ('1234','1203','2301','0000'):
+            for tree in all_trees(digits):
+                value=evaluate(tree,bits=100000,cap=100)
+                if not isinstance(value,F):
+                    continue
+                for target in (value, value+F(1,7)):
+                    result=matches_target(tree,target,bits=8,cap=100)
+                    if result is not None:
+                        self.assertEqual(result,value==target,(tree,target))
+
+    def test_all_95_resolved_for_target(self):
+        from strategy_probe import all_trees, matches_target
+        for tree in all_trees('12345'):
+            self.assertIs(matches_target(tree,F(10958)),False,tree)
+
+    def test_symbolic_exponent_integrality(self):
+        from strategy_probe import matches_target
+        self.assertTrue(matches_target(('^','1',('^','2','9999')),1))
+        self.assertFalse(matches_target(('^','1',('^',('/','1','2'),'9999')),1))
+        # With a finite cap the exponent must also be checked: remain unknown.
+        self.assertIsNone(matches_target(('^','1',('^','2','9999')),1,cap=20000))
+
+
 if __name__ == '__main__':
     unittest.main()

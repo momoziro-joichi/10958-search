@@ -496,3 +496,8 @@ exponent candidates, independent structural enumeration and deferred large power
 Unsupported evaluation remains explicitly unresolved; it cannot justify absence.
 Production search and checkpoints are unchanged. See PROGRESS.md for measured
 scope, limitations and next steps; this is not an unrestricted nine-digit solver.
+
+`python classify_symbolic.py` compares all12345 expression trees with10958
+without an exponent cap. Exact target comparison resolves the95 previously
+deferred trees without constructing huge powers; unresolved cases remain a
+separate outcome. This five-digit experiment is not a nine-digit conclusion.
