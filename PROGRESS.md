@@ -1484,3 +1484,32 @@ Next: instrument bounded subtree-evaluation reuse, then compare memory/time
 and identical classifications before adopting caching. Eight digits have
 51038586 syntax trees, nine892467691: do not blindly scale naive enumeration.
 No paid resources or automation modifications.
+
+## 2026-11-12: bounded symbolic evaluation-cache experiment
+
+Head7f6b4219d3bbf9660c80939c340bc246dfa9f8a7 confirmed via branch ref after
+two transient PR-fetch internal errors. Added benchmark_symbolic_cache.py,
+isolated single-thread experiment wrapping evaluate with4096-entry LRU.
+Keys contain tree,bits,cap; eviction only recomputes. Finally restores original
+evaluate and clears cache. Entry limit is not a byte bound;768MiB RLIMIT_AS
+still enforced. Production and experimental solver defaults unchanged.
+
+Fresh-process123456 baseline/cache/cache/baseline wall samples:
+5.515948/1.320667/11.070610/3.781828s;RSS11648/13428/13424/11648KiB.
+Variance prevents claiming a stable wall speedup. Added process CPU timing:
+baseline CPU2.550028s/wall2.560557s;cache CPU0.966539s/wall0.966855s.
+Cache407948 hits/212510 misses,4096 final entries;RSS13428KiB versus11648.
+All six runs reject181776 trees and identical ordered classification SHA256.
+First four budgets120s each, final two60s each,total600s allocation;
+each768MiB. Current script uses60s alarm. Raw files retain both sets.
+Single CPU pair suggests benefit, not a general speed guarantee.
+
+python -m unittest -q test_symbolic_cache:2 tests passed in0.116s,
+checking target0/1/8/10958 under multiple bit/cap settings across7911234 trees,
+64-entry eviction, parameter separation and restoration on failure.
+Production full suite not rerun. Reproduce benchmark with
+python benchmark_symbolic_cache.py --cache-size 0
+and --cache-size 4096, each in a fresh process. No nine-digit search.
+Next: integrate an optional per-run cache lifecycle into diagnostic runner,
+verify seven-digit classifications and measure before enabling it by default.
+No paid resources, automation/checkpoint changes or impossibility claims.
