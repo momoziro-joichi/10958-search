@@ -1543,3 +1543,16 @@ this diagnostic; production nine-digit status remains bounded-not-found at20000.
 Next: partition the eight-digit structural workload before spending a larger
 budget, so completed work can be recorded and repeated work minimized.
 Production search/checkpoints unchanged; no paid resources or automation edits.
+
+## 2026-11-13: structural partition coverage prerequisite
+
+Verified head afbaa62fc49942ef5906b93f8b76f1a59f508431 and latest progress.
+Added test_structural_partitions.py: token-boundary masks partition syntax
+structures disjointly. For inputs0,12,123,1234,12345, each partition count
+matches Catalan(popcount(mask))*5**popcount(mask), and the multiset union equals
+the existing full enumeration. Two tests passed in0.018s under30s/768MiB.
+No production source or checkpoint change, no8/9-digit search this run.
+This validates partition coverage only, not resumability or negative results.
+Next implement versioned per-mask persistence with input/source identity and
+atomic writes; split the largest all-single-digit mask further if necessary.
+Nine-digit status remains bounded-not-found at20000, unrestricted unknown.
