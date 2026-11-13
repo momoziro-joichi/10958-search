@@ -1,0 +1,22 @@
+{
+  "digits": "1234567",
+  "target": 10958,
+  "exponent_cap": null,
+  "status": "complete",
+  "enumeration_complete": true,
+  "time_budget_seconds": 120,
+  "memory_budget_mib": 768,
+  "counts": {
+    "reject": 2994531,
+    "deferred_power": 38156,
+    "parent_+": 23660,
+    "parent_-": 23660,
+    "parent_*": 23660,
+    "parent_/": 23660,
+    "parent_^": 23660
+  },
+  "witnesses": [],
+  "unresolved_tree_samples": [],
+  "seconds": 78.31496954700015,
+  "peak_rss_kib": 10752
+}

@@ -1,0 +1,29 @@
+{
+  "split": 1,
+  "max_abs_exponent": 5000,
+  "memory_budget_mib": 768,
+  "time_budget_seconds_per_sample": 60,
+  "concurrent_full_test_suite": true,
+  "samples": [
+    {
+      "tuple_keys": false,
+      "seconds": 1.039300570000023,
+      "max_rss_kib": 21280
+    },
+    {
+      "tuple_keys": true,
+      "seconds": 0.6055866929999638,
+      "max_rss_kib": 15232
+    },
+    {
+      "tuple_keys": true,
+      "seconds": 0.6732396940000172,
+      "max_rss_kib": 15232
+    },
+    {
+      "tuple_keys": false,
+      "seconds": 1.0895476139999687,
+      "max_rss_kib": 21268
+    }
+  ]
+}

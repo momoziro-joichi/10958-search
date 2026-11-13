@@ -1,0 +1,29 @@
+{
+  "oracle_queries": 134,
+  "measurements": [
+    {
+      "width": 2,
+      "seconds": 1.0438808550000118,
+      "status": "not_found_bounded",
+      "dp_cache": {
+        "hits": 54,
+        "misses": 27,
+        "maxsize": null,
+        "currsize": 27
+      }
+    },
+    {
+      "width": 3,
+      "seconds": 0.26449068099999806,
+      "status": "not_found_bounded",
+      "dp_cache": {
+        "hits": 7268,
+        "misses": 24,
+        "maxsize": null,
+        "currsize": 24
+      }
+    }
+  ],
+  "time_budget_seconds": 60,
+  "memory_budget_mib": 768
+}

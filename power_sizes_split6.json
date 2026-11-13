@@ -1,0 +1,21 @@
+{
+  "results": [
+    {
+      "cap": 10000,
+      "status": "not_found_bounded",
+      "power_calls": 7846,
+      "cumulative_result_bits": 4058363,
+      "largest_result_bits": 66080
+    },
+    {
+      "cap": 20000,
+      "status": "not_found_bounded",
+      "power_calls": 8477,
+      "cumulative_result_bits": 60666952,
+      "largest_result_bits": 4537220
+    }
+  ],
+  "time_budget_seconds": 60,
+  "memory_budget_mib": 768,
+  "source_sha256": "cefc8cec02e24333749755159c13577e8f4adddea0fd6c02e1f719a21aa0f093"
+}

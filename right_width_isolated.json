@@ -1,0 +1,120 @@
+{
+  "cap": 20000,
+  "child_seconds": 30,
+  "memory_mib": 768,
+  "total_budget_seconds": 480,
+  "rows": [
+    {
+      "width": 2,
+      "split": 1,
+      "seconds": 0.726366181000003,
+      "max_rss_kib": 15168,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 3,
+      "split": 1,
+      "seconds": 0.548890173000018,
+      "max_rss_kib": 12672,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 2,
+      "split": 2,
+      "seconds": 0.3218011269999579,
+      "max_rss_kib": 11264,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 3,
+      "split": 2,
+      "seconds": 0.2569154759999037,
+      "max_rss_kib": 11264,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 2,
+      "split": 3,
+      "seconds": 0.1434595810000019,
+      "max_rss_kib": 10496,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 3,
+      "split": 3,
+      "seconds": 0.14226537000001827,
+      "max_rss_kib": 10496,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 2,
+      "split": 4,
+      "seconds": 0.08964036700001543,
+      "max_rss_kib": 10368,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 3,
+      "split": 4,
+      "seconds": 0.08901828200009732,
+      "max_rss_kib": 10368,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 2,
+      "split": 5,
+      "seconds": 0.0219097450000163,
+      "max_rss_kib": 10496,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 3,
+      "split": 5,
+      "seconds": 0.02151339800002461,
+      "max_rss_kib": 10496,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 2,
+      "split": 6,
+      "seconds": 0.9954716539999708,
+      "max_rss_kib": 35220,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 3,
+      "split": 6,
+      "seconds": 0.2138795849999724,
+      "max_rss_kib": 10752,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 2,
+      "split": 7,
+      "seconds": 0.2956516079999574,
+      "max_rss_kib": 11136,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 3,
+      "split": 7,
+      "seconds": 0.29672328000003745,
+      "max_rss_kib": 11136,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 2,
+      "split": 8,
+      "seconds": 0.5449235280000266,
+      "max_rss_kib": 12928,
+      "status": "not_found_bounded"
+    },
+    {
+      "width": 3,
+      "split": 8,
+      "seconds": 0.5385479679999889,
+      "max_rss_kib": 12396,
+      "status": "not_found_bounded"
+    }
+  ]
+}

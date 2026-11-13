@@ -1,0 +1,475 @@
+{
+  "lower": 10000,
+  "upper": 20000,
+  "max_operand_digits": 4,
+  "scope": "contiguous proper suffix-of-subexpression operands only",
+  "rows": [
+    {
+      "start": 1,
+      "end": 2,
+      "digits": "2",
+      "lower_value_count": 1,
+      "upper_value_count": 1,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 1,
+      "end": 3,
+      "digits": "23",
+      "lower_value_count": 6,
+      "upper_value_count": 6,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 1,
+      "end": 4,
+      "digits": "234",
+      "lower_value_count": 46,
+      "upper_value_count": 46,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 1,
+      "end": 5,
+      "digits": "2345",
+      "lower_value_count": 417,
+      "upper_value_count": 419,
+      "newly_reachable_values": 2,
+      "newly_allowed_exponents": [
+        {
+          "value": -19681,
+          "expression": "(2-(3^(4+5)))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": -16805,
+          "expression": "(2-((3+4)^5))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 16809,
+          "expression": "(2+((3+4)^5))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 19685,
+          "expression": "(2+(3^(4+5)))",
+          "reachable_under_lower_cap": true
+        }
+      ]
+    },
+    {
+      "start": 2,
+      "end": 3,
+      "digits": "3",
+      "lower_value_count": 1,
+      "upper_value_count": 1,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 2,
+      "end": 4,
+      "digits": "34",
+      "lower_value_count": 6,
+      "upper_value_count": 6,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 2,
+      "end": 5,
+      "digits": "345",
+      "lower_value_count": 49,
+      "upper_value_count": 49,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": [
+        {
+          "value": 16807,
+          "expression": "((3+4)^5)",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 19683,
+          "expression": "(3^(4+5))",
+          "reachable_under_lower_cap": true
+        }
+      ]
+    },
+    {
+      "start": 2,
+      "end": 6,
+      "digits": "3456",
+      "lower_value_count": 441,
+      "upper_value_count": 452,
+      "newly_reachable_values": 11,
+      "newly_allowed_exponents": [
+        {
+          "value": -15626,
+          "expression": "(3-(4+(5^6)))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": -15625,
+          "expression": "((3-4)*(5^6))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": -15618,
+          "expression": "(3+(4-(5^6)))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": -15613,
+          "expression": "((3*4)-(5^6))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": -15591,
+          "expression": "(34-(5^6))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": -15544,
+          "expression": "((3^4)-(5^6))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15624,
+          "expression": "(3-(4-(5^6)))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15625,
+          "expression": "(((3-4)*5)^6)",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15632,
+          "expression": "(3+(4+(5^6)))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15637,
+          "expression": "((3*4)+(5^6))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15659,
+          "expression": "(34+(5^6))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15706,
+          "expression": "((3^4)+(5^6))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 16801,
+          "expression": "(((3+4)^5)-6)",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 16813,
+          "expression": "(((3+4)^5)+6)",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 18432,
+          "expression": "(3*((4^5)*6))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 19677,
+          "expression": "((3^(4+5))-6)",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 19689,
+          "expression": "((3^(4+5))+6)",
+          "reachable_under_lower_cap": true
+        }
+      ]
+    },
+    {
+      "start": 3,
+      "end": 4,
+      "digits": "4",
+      "lower_value_count": 1,
+      "upper_value_count": 1,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 3,
+      "end": 5,
+      "digits": "45",
+      "lower_value_count": 6,
+      "upper_value_count": 6,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 3,
+      "end": 6,
+      "digits": "456",
+      "lower_value_count": 49,
+      "upper_value_count": 50,
+      "newly_reachable_values": 1,
+      "newly_allowed_exponents": [
+        {
+          "value": -15621,
+          "expression": "(4-(5^6))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15629,
+          "expression": "(4+(5^6))",
+          "reachable_under_lower_cap": true
+        }
+      ]
+    },
+    {
+      "start": 3,
+      "end": 7,
+      "digits": "4567",
+      "lower_value_count": 459,
+      "upper_value_count": 466,
+      "newly_reachable_values": 7,
+      "newly_allowed_exponents": [
+        {
+          "value": -16384,
+          "expression": "((4*(5-6))^7)",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": -15628,
+          "expression": "(4-((5^6)+7))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": -15614,
+          "expression": "(4-((5^6)-7))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 13312,
+          "expression": "((4^5)*(6+7))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15622,
+          "expression": "(4+((5^6)-7))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15636,
+          "expression": "(4+((5^6)+7))",
+          "reachable_under_lower_cap": true
+        }
+      ]
+    },
+    {
+      "start": 4,
+      "end": 5,
+      "digits": "5",
+      "lower_value_count": 1,
+      "upper_value_count": 1,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 4,
+      "end": 6,
+      "digits": "56",
+      "lower_value_count": 6,
+      "upper_value_count": 6,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": [
+        {
+          "value": 15625,
+          "expression": "(5^6)",
+          "reachable_under_lower_cap": true
+        }
+      ]
+    },
+    {
+      "start": 4,
+      "end": 7,
+      "digits": "567",
+      "lower_value_count": 49,
+      "upper_value_count": 49,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": [
+        {
+          "value": 15618,
+          "expression": "((5^6)-7)",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15632,
+          "expression": "((5^6)+7)",
+          "reachable_under_lower_cap": true
+        }
+      ]
+    },
+    {
+      "start": 4,
+      "end": 8,
+      "digits": "5678",
+      "lower_value_count": 463,
+      "upper_value_count": 463,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": [
+        {
+          "value": -15625,
+          "expression": "((5^6)*(7-8))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15547,
+          "expression": "((5^6)-78)",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15569,
+          "expression": "((5^6)-(7*8))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15610,
+          "expression": "((5^6)-(7+8))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15624,
+          "expression": "((5^6)+(7-8))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15626,
+          "expression": "((5^6)-(7-8))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15640,
+          "expression": "((5^6)+(7+8))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15681,
+          "expression": "((5^6)+(7*8))",
+          "reachable_under_lower_cap": true
+        },
+        {
+          "value": 15703,
+          "expression": "((5^6)+78)",
+          "reachable_under_lower_cap": true
+        }
+      ]
+    },
+    {
+      "start": 5,
+      "end": 6,
+      "digits": "6",
+      "lower_value_count": 1,
+      "upper_value_count": 1,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 5,
+      "end": 7,
+      "digits": "67",
+      "lower_value_count": 6,
+      "upper_value_count": 6,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 5,
+      "end": 8,
+      "digits": "678",
+      "lower_value_count": 49,
+      "upper_value_count": 49,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 5,
+      "end": 9,
+      "digits": "6789",
+      "lower_value_count": 470,
+      "upper_value_count": 470,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 6,
+      "end": 7,
+      "digits": "7",
+      "lower_value_count": 1,
+      "upper_value_count": 1,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 6,
+      "end": 8,
+      "digits": "78",
+      "lower_value_count": 6,
+      "upper_value_count": 6,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 6,
+      "end": 9,
+      "digits": "789",
+      "lower_value_count": 49,
+      "upper_value_count": 49,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 7,
+      "end": 8,
+      "digits": "8",
+      "lower_value_count": 1,
+      "upper_value_count": 1,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 7,
+      "end": 9,
+      "digits": "89",
+      "lower_value_count": 6,
+      "upper_value_count": 6,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    },
+    {
+      "start": 8,
+      "end": 9,
+      "digits": "9",
+      "lower_value_count": 1,
+      "upper_value_count": 1,
+      "newly_reachable_values": 0,
+      "newly_allowed_exponents": []
+    }
+  ],
+  "status": "completed",
+  "seconds": 0.022060577999582165,
+  "cpu_seconds": 0.022060009999999998,
+  "max_rss_kib": 10880,
+  "time_budget_seconds": 60,
+  "memory_budget_mib": 768,
+  "source_sha256": {
+    "search.py": "cefc8cec02e24333749755159c13577e8f4adddea0fd6c02e1f719a21aa0f093",
+    "audit_exponent_operands.py": "d92b43e15380e1d782fedcdf26e716a734dd4ecbda01b2f68f1b4e2a5c4db058"
+  }
+}

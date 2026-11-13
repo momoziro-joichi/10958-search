@@ -1,0 +1,8 @@
+{
+  "returncode": 0,
+  "seconds": 0.0914532559999941,
+  "stdout": "",
+  "stderr": "----------------------------------------------------------------------\nRan 3 tests in 0.006s\n\nOK\n",
+  "budget_seconds": 120,
+  "memory_mib": 768
+}

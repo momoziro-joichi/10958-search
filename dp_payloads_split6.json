@@ -1,0 +1,452 @@
+{
+  "results": [
+    {
+      "cap": 10000,
+      "status": "not_found_bounded",
+      "seconds": 0.6609716220000053,
+      "rows": [
+        {
+          "i": 0,
+          "j": 6,
+          "entries": 24928,
+          "integer_bytes": 1999760,
+          "largest_bits": 66080,
+          "largest_expression": "((12^3)^((4^5)*6))"
+        },
+        {
+          "i": 1,
+          "j": 6,
+          "entries": 3879,
+          "integer_bytes": 280592,
+          "largest_bits": 27794,
+          "largest_expression": "(23^((4^5)*6))"
+        },
+        {
+          "i": 0,
+          "j": 5,
+          "entries": 2535,
+          "integer_bytes": 172196,
+          "largest_bits": 11015,
+          "largest_expression": "(12^(3*(4^5)))"
+        },
+        {
+          "i": 2,
+          "j": 6,
+          "entries": 441,
+          "integer_bytes": 27952,
+          "largest_bits": 9740,
+          "largest_expression": "(3^((4^5)*6))"
+        },
+        {
+          "i": 1,
+          "j": 5,
+          "entries": 417,
+          "integer_bytes": 26916,
+          "largest_bits": 4634,
+          "largest_expression": "(23^(4^5))"
+        },
+        {
+          "i": 0,
+          "j": 4,
+          "entries": 261,
+          "integer_bytes": 14740,
+          "largest_bits": 292,
+          "largest_expression": "(12^(3^4))"
+        },
+        {
+          "i": 2,
+          "j": 5,
+          "entries": 49,
+          "integer_bytes": 2972,
+          "largest_bits": 1625,
+          "largest_expression": "(3^(4^5))"
+        },
+        {
+          "i": 6,
+          "j": 9,
+          "entries": 49,
+          "integer_bytes": 2816,
+          "largest_bits": 251,
+          "largest_expression": "(7^89)"
+        },
+        {
+          "i": 3,
+          "j": 6,
+          "entries": 49,
+          "integer_bytes": 2768,
+          "largest_bits": 114,
+          "largest_expression": "(4^56)"
+        },
+        {
+          "i": 1,
+          "j": 4,
+          "entries": 46,
+          "integer_bytes": 2588,
+          "largest_bits": 83,
+          "largest_expression": "(2^(3^4))"
+        },
+        {
+          "i": 0,
+          "j": 3,
+          "entries": 35,
+          "integer_bytes": 1960,
+          "largest_bits": 12,
+          "largest_expression": "(12^3)"
+        },
+        {
+          "i": 4,
+          "j": 6,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 15,
+          "largest_expression": "(5^6)"
+        },
+        {
+          "i": 3,
+          "j": 5,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 12,
+          "largest_expression": "(4^5)"
+        },
+        {
+          "i": 2,
+          "j": 4,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 8,
+          "largest_expression": "(3^4)"
+        },
+        {
+          "i": 1,
+          "j": 3,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 6,
+          "largest_expression": "23"
+        },
+        {
+          "i": 0,
+          "j": 2,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 5,
+          "largest_expression": "12"
+        },
+        {
+          "i": 7,
+          "j": 9,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 29,
+          "largest_expression": "(8^9)"
+        },
+        {
+          "i": 6,
+          "j": 8,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 24,
+          "largest_expression": "(7^8)"
+        },
+        {
+          "i": 0,
+          "j": 1,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 2,
+          "largest_expression": "1"
+        },
+        {
+          "i": 1,
+          "j": 2,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 3,
+          "largest_expression": "2"
+        },
+        {
+          "i": 2,
+          "j": 3,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 3,
+          "largest_expression": "3"
+        },
+        {
+          "i": 3,
+          "j": 4,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 4,
+          "largest_expression": "4"
+        },
+        {
+          "i": 4,
+          "j": 5,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 4,
+          "largest_expression": "5"
+        },
+        {
+          "i": 5,
+          "j": 6,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 4,
+          "largest_expression": "6"
+        },
+        {
+          "i": 6,
+          "j": 7,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 4,
+          "largest_expression": "7"
+        },
+        {
+          "i": 7,
+          "j": 8,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 5,
+          "largest_expression": "8"
+        },
+        {
+          "i": 8,
+          "j": 9,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 5,
+          "largest_expression": "9"
+        }
+      ]
+    },
+    {
+      "cap": 20000,
+      "status": "not_found_bounded",
+      "seconds": 1.481768379999977,
+      "rows": [
+        {
+          "i": 0,
+          "j": 6,
+          "entries": 25910,
+          "integer_bytes": 13089688,
+          "largest_bits": 4537220,
+          "largest_expression": "((12^(3^4))^(5^6))"
+        },
+        {
+          "i": 1,
+          "j": 6,
+          "entries": 4016,
+          "integer_bytes": 1479000,
+          "largest_bits": 1265627,
+          "largest_expression": "((2^(3^4))^(5^6))"
+        },
+        {
+          "i": 0,
+          "j": 5,
+          "entries": 2547,
+          "integer_bytes": 217468,
+          "largest_bits": 70564,
+          "largest_expression": "(12^(3^(4+5)))"
+        },
+        {
+          "i": 2,
+          "j": 6,
+          "entries": 452,
+          "integer_bytes": 96408,
+          "largest_bits": 99062,
+          "largest_expression": "((3^4)^(5^6))"
+        },
+        {
+          "i": 1,
+          "j": 5,
+          "entries": 419,
+          "integer_bytes": 31892,
+          "largest_bits": 19685,
+          "largest_expression": "(2^(3^(4+5)))"
+        },
+        {
+          "i": 0,
+          "j": 4,
+          "entries": 261,
+          "integer_bytes": 14740,
+          "largest_bits": 292,
+          "largest_expression": "(12^(3^4))"
+        },
+        {
+          "i": 3,
+          "j": 6,
+          "entries": 50,
+          "integer_bytes": 6988,
+          "largest_bits": 31252,
+          "largest_expression": "(4^(5^6))"
+        },
+        {
+          "i": 2,
+          "j": 5,
+          "entries": 49,
+          "integer_bytes": 2972,
+          "largest_bits": 1625,
+          "largest_expression": "(3^(4^5))"
+        },
+        {
+          "i": 6,
+          "j": 9,
+          "entries": 49,
+          "integer_bytes": 2816,
+          "largest_bits": 251,
+          "largest_expression": "(7^89)"
+        },
+        {
+          "i": 1,
+          "j": 4,
+          "entries": 46,
+          "integer_bytes": 2588,
+          "largest_bits": 83,
+          "largest_expression": "(2^(3^4))"
+        },
+        {
+          "i": 0,
+          "j": 3,
+          "entries": 35,
+          "integer_bytes": 1960,
+          "largest_bits": 12,
+          "largest_expression": "(12^3)"
+        },
+        {
+          "i": 4,
+          "j": 6,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 15,
+          "largest_expression": "(5^6)"
+        },
+        {
+          "i": 3,
+          "j": 5,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 12,
+          "largest_expression": "(4^5)"
+        },
+        {
+          "i": 2,
+          "j": 4,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 8,
+          "largest_expression": "(3^4)"
+        },
+        {
+          "i": 1,
+          "j": 3,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 6,
+          "largest_expression": "23"
+        },
+        {
+          "i": 0,
+          "j": 2,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 5,
+          "largest_expression": "12"
+        },
+        {
+          "i": 7,
+          "j": 9,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 29,
+          "largest_expression": "(8^9)"
+        },
+        {
+          "i": 6,
+          "j": 8,
+          "entries": 6,
+          "integer_bytes": 336,
+          "largest_bits": 24,
+          "largest_expression": "(7^8)"
+        },
+        {
+          "i": 0,
+          "j": 1,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 2,
+          "largest_expression": "1"
+        },
+        {
+          "i": 1,
+          "j": 2,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 3,
+          "largest_expression": "2"
+        },
+        {
+          "i": 2,
+          "j": 3,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 3,
+          "largest_expression": "3"
+        },
+        {
+          "i": 3,
+          "j": 4,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 4,
+          "largest_expression": "4"
+        },
+        {
+          "i": 4,
+          "j": 5,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 4,
+          "largest_expression": "5"
+        },
+        {
+          "i": 5,
+          "j": 6,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 4,
+          "largest_expression": "6"
+        },
+        {
+          "i": 6,
+          "j": 7,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 4,
+          "largest_expression": "7"
+        },
+        {
+          "i": 7,
+          "j": 8,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 5,
+          "largest_expression": "8"
+        },
+        {
+          "i": 8,
+          "j": 9,
+          "entries": 1,
+          "integer_bytes": 56,
+          "largest_bits": 5,
+          "largest_expression": "9"
+        }
+      ]
+    }
+  ],
+  "memory_budget_mib": 768,
+  "time_budget_seconds": 60
+}
