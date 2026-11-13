@@ -1556,3 +1556,40 @@ This validates partition coverage only, not resumability or negative results.
 Next implement versioned per-mask persistence with input/source identity and
 atomic writes; split the largest all-single-digit mask further if necessary.
 Nine-digit status remains bounded-not-found at20000, unrestricted unknown.
+
+
+## 2026-11-13: exact cap boundaries and integrated merge review
+
+Starting head: 66c70e7b17651ac1662f385b95947b8b4516bbf1.
+Added test_cap20000_boundaries.py: known positive and negative exponent20000
+witnesses at fixed outer split1 must succeed with cap20000 and fail at19999.
+Independent production verifier checks each returned witness. Separate positive
+and reciprocal power cancellations verify that internal-node caps are enforced
+even when the final result is zero. Two focused tests passed in2.290s under
+60s/768MiB. Production arithmetic, solver, runners and verifier unchanged.
+
+Integrated python -m unittest -q:74 tests passed in150.782s (151.227383s
+including startup), exit0, under240s timeout/768MiB RLIMIT_AS on Linux.
+Raw output/environment: merge_review_full_tests.json. Source/test SHA256
+manifest and checkpoint reuse evidence: merge_review_identity.json.
+The historical51-test log remains unchanged; it does not describe the newer
+experimental additions. Intentional worker_error output comes from error tests.
+
+Current checkpoint identity matches all four unchanged production files.
+Loaded all8 cap20000 records; resumed a temporary copy with subprocess launches
+prohibited:0 launches, not_found_bounded, byte-identical output. No completed
+nine-digit search was repeated and the committed checkpoint was not modified.
+
+REVIEW.md now includes symbolic diagnostics and their tests in PR scope and
+sets explicit merge criteria: integrated tests, exact cap boundaries, trusted
+checkpoint identity, unresolved/undefined arithmetic semantics, cache lifecycle,
+resource limitations and final GitHub review/check status. Keep experiments
+explicitly experimental in this PR; production must not depend on them.
+The optional symbolic cache is single-process/single-thread and disabled by
+default, distinct from rejected production power/root caches. Structural mask
+coverage is tested, but experimental per-mask persistence/resume is not built.
+
+No8/9-digit experiment, new cap expansion or performance guarantee is required
+for this review. Seven-digit uncapped diagnostics and nine-digit bounded absence
+remain separate claims; unrestricted nine-digit impossibility remains unknown.
+No merge or Draft-state change performed.
