@@ -1513,3 +1513,33 @@ and --cache-size 4096, each in a fresh process. No nine-digit search.
 Next: integrate an optional per-run cache lifecycle into diagnostic runner,
 verify seven-digit classifications and measure before enabling it by default.
 No paid resources, automation/checkpoint changes or impossibility claims.
+
+## 2026-11-13: optional diagnostic cache lifecycle and seven-digit validation
+
+Remote branch was still7f6b4219d3bbf9660c80939c340bc246dfa9f8a7.
+Finished publishing the already-created6080700bb2fc0b5b6ee0aecdbb288c11911147ae
+benchmark commit with an expected-head lease; no other changes overwritten.
+
+classify_symbolic.py now accepts --cache-size0..16384 (default0 unchanged).
+One run wraps recursive evaluation, shares it with the classification call,
+reports cache statistics and process CPU time, restores the original function
+and clears retained entries in finally, including timeout/memory paths.
+This module-level wrapping is for single-process/single-thread diagnostics,
+not concurrent embedding; size bounds entries, not bytes.768MiB remains enforced.
+
+python -m unittest -q test_strategy_probe test_symbolic_runner test_symbolic_cache:
+17 tests passed in0.590s; runner tests now exercise enabled-cache completion,
+timeout/memory handling and restoration. Production full suite not rerun.
+python classify_symbolic.py --digits 1234567 --seconds 120 --cache-size 4096:
+all2994531 rejected,zero unknown/witnesses; full diagnostic counters equal the
+previous uncached seven-digit result. Wall29.140590s,CPU29.134217s,
+peakRSS13184KiB,13089304 cache hits/6582233 misses. Raw
+symbolic_seven_digit_cached.json. One120s allocation,768MiB virtual memory.
+Prior uncached wall78.314970s/RSS10752KiB was a different run, not a controlled
+paired benchmark; do not claim a stable speedup ratio. Optional cache retained.
+
+No8/9-digit search this run. Uncapped seven-digit absence remains the scope of
+this diagnostic; production nine-digit status remains bounded-not-found at20000.
+Next: partition the eight-digit structural workload before spending a larger
+budget, so completed work can be recorded and repeated work minimized.
+Production search/checkpoints unchanged; no paid resources or automation edits.

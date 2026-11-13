@@ -516,3 +516,8 @@ Subsequent zero-factor/numerator rejection resolved the40 seven-digit cases.
 A fresh full enumeration rejected all2994531 trees against10958 with no exponent
 cap and zero unknowns; see symbolic_seven_digit_resolved.json. The earlier
 unresolved file is historical. Nine-digit unrestricted status remains unknown.
+
+Optional diagnostic cache: `python classify_symbolic.py --digits 1234567 --seconds 120 --cache-size 4096`.
+Default cache size remains0. The cached seven-digit run matched all prior
+classification counters; see symbolic_seven_digit_cached.json and PROGRESS.md.
+The cache is cleaned up per run and is intended for single-thread diagnostics.

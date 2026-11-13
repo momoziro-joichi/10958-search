@@ -9,14 +9,17 @@ import classify_symbolic as runner
 class RunnerTests(unittest.TestCase):
     def run_case(self, trees):
         out=io.StringIO()
-        with patch('sys.argv',['classify_symbolic.py','--digits','12']), \
+        with patch('sys.argv',['classify_symbolic.py','--digits','12','--cache-size','64']), \
              patch.object(runner.resource,'setrlimit'), \
              patch.object(runner.signal,'signal'), \
              patch.object(runner.signal,'alarm'), \
              patch.object(runner,'all_trees',return_value=trees), \
              contextlib.redirect_stdout(out):
             runner.main()
-        return json.loads(out.getvalue())
+        self.assertIs(runner.probe.evaluate, runner.evaluate)
+        result=json.loads(out.getvalue())
+        self.assertLessEqual(result["cache_info"]["currsize"],64)
+        return result
 
     def test_complete(self):
         r=self.run_case(iter(['12']))
