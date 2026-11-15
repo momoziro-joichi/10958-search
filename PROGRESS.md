@@ -1593,3 +1593,19 @@ No8/9-digit experiment, new cap expansion or performance guarantee is required
 for this review. Seven-digit uncapped diagnostics and nine-digit bounded absence
 remain separate claims; unrestricted nine-digit impossibility remains unknown.
 No merge or Draft-state change performed.
+
+## 2026-11-15: experimental partition storage primitive
+
+Started at4e352be94e6d835f1b4be2028125656c0db04454, preserving newer merge-review work.
+Added structural_checkpoint.py: schema/identity equality, canonical mask bounds,
+exact expected tree counts, rejection-only completed records, duplicate-key
+rejection, temporary-file fsync and atomic replacement. Three focused tests
+passed in0.001s. This is a storage primitive, NOT integrated resumable search.
+Caller must construct a trusted source/input identity and hold exclusive path
+ownership; concurrent locking, parent-directory fsync and runner integration
+remain outstanding. Record counts do not authenticate mathematical correctness.
+Existing production/checkpoints unchanged; historical74-test integrated pass
+not rerun. No8/9-digit exploration this run, no performance claim or paid compute.
+Reproduce: python -m unittest -q test_structural_checkpoint.
+Next wire a bounded per-mask worker with computed source fingerprint and lock;
+validate skipping and interruption before saving real exploration completion.
