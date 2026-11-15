@@ -10,9 +10,10 @@ are part of this PR's review scope, but are not production dependencies.
 | Independent verifier | verify_expression.py | Digit order/count, grammar, exact result, per-node exponent cap |
 | Resource bounds | run_search.py | Child timeout and virtual memory limits |
 | Resume | resume_search.py | Validated identity, atomic checkpoint, completed partition reuse |
-| Regression evidence | test_*.py, width3_full_tests.json | Latest integrated run: 74 passed in 150.782s (merge_review_full_tests.json); historical baseline: 51 passed in 145.731s |
+| Regression evidence | test_*.py, width3_full_tests.json | Integrated run on 2026-11-13: 74 passed in 150.782s (merge_review_full_tests.json); excludes the 2026-11-15 storage addition; historical baseline: 51 passed in 145.731s |
 | Exact cap boundary | test_cap20000_boundaries.py | Positive/negative exponent 20000 accepted at cap 20000, rejected at 19999; internal powers checked before cancellation |
 | Symbolic experiments | strategy_probe.py, classify_symbolic.py, benchmark_symbolic_cache.py | Separate diagnostic path; optional bounded cache, unresolved outcomes retained |
+| Experimental storage primitive | structural_checkpoint.py, test_structural_checkpoint.py | Validated atomic storage only; no integrated resumable search; three focused tests recorded on 2026-11-15 |
 | Experimental regression coverage | test_strategy_probe.py, test_symbolic_runner.py, test_symbolic_cache.py, test_structural_partitions.py | Definedness, unknown outcomes, cache cleanup and structural partition coverage |
 | Current search evidence | checkpoint_10958_cap20000_width3.json | All8 partitions completed; cap20000; not_found_bounded |
 | Historical evidence | Other checkpoint/profile/measurement JSON, experiment_*.py, measure_*.py, benchmark_right_width.py | Not required by production execution; retain for reproducibility |
@@ -30,7 +31,11 @@ so this is not an isolated speed benchmark. No unrestricted impossibility proof.
 Reproduce tests: `python -m unittest -q` under 240s/768MiB on Linux.
 `merge_review_identity.json` records the SHA-256 of every Python source/test
 used for the integrated run and the completed-checkpoint reuse check.
-Documentation-only edits after that run do not change those tested bytes.
+Documentation-only edits do not change tested bytes. However, commit 4535bc3
+added structural_checkpoint.py and test_structural_checkpoint.py after the
+74-test run. Their three focused tests are recorded separately in PROGRESS.md;
+74 plus 3 is not evidence of a 77-test integrated pass. The manifest remains
+historical evidence and must not be relabeled as covering those added files.
 Resume current search:
 ```bash
 python resume_search.py --max-abs-exponent 20000 --seconds 240 --per-split-seconds 30 --memory-mib 768 --checkpoint checkpoint_10958_cap20000_width3.json
@@ -61,7 +66,11 @@ review criteria, not a claim of approval or a request to merge automatically.
 The diagnostic cache wrapper is for a single process/single thread, not
 concurrent embedding. Its entry limit is not a byte limit; the address-space
 limit remains necessary. Structural token-mask tests establish disjoint
-coverage only: no experimental per-mask checkpoint/resume is implemented.
+coverage only. A storage primitive now exists, but no integrated experimental
+per-mask checkpoint/resume runner is implemented. Its caller must supply a
+trusted source/input identity and exclusive path ownership. Locking, parent
+directory fsync, worker integration, and interruption/skip validation are
+follow-up work. Record counts do not authenticate mathematical correctness.
 
 The uncapped seven-digit diagnostic result applies only to 1234567 -> 10958.
 The production nine-digit result remains bounded by 20000 at every power node.
@@ -73,3 +82,28 @@ cache trial or stable speedup claim to merge these correctness changes. Such wor
 experimental persistence, concurrent embedding and repository restructuring are
 follow-up scope. The optional symbolic cache is distinct from the rejected
 production power/root cache experiments.
+
+## 2026-11-16 scope decision and remaining review
+
+Retain the small, isolated experimental storage primitive already present in
+4535bc3, explicitly as a primitive rather than a production feature. Avoid a
+history rewrite or broad experiment extraction during this review. Freeze code
+scope here: any new enumeration engine, fusion experiment, semantic value
+compression, cap-free target-directed engine, or resumable diagnostic runner
+belongs on a follow-up branch. This is a scope recommendation, not approval.
+
+Remaining blockers:
+
+1. With the added primitive retained, obtain one integrated test result for the
+   final code/test bytes, as required by the existing merge criteria. Reuse the
+   74-test evidence for its original bytes; do not rerun the completed cap20000
+   production exploration or checkpoint-resume experiment. Record source
+   hashes, environment, duration, exit code, and actual discovered test count.
+2. Complete final human review and check the final head/base, required checks
+   and branch protections immediately before any Draft-state or merge action.
+   Empty commit-status data is not a successful CI result.
+
+The source-role documentation discrepancy is addressed above. No test run,
+production search, Draft-state transition, approval, or merge is performed by
+this documentation change. Research speed comparisons belong to their measured
+input/domain; they do not establish nine-digit performance or impossibility.
