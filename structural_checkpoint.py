@@ -16,7 +16,9 @@ def expected_count(mask):
 
 
 def validate(data, identity):
-    if data.get('schema') != 1 or data.get('identity') != identity:
+    if not isinstance(data, dict):
+        raise ValueError('checkpoint must be an object')
+    if type(data.get('schema')) is not int or data.get('schema') != 1 or data.get('identity') != identity:
         raise ValueError('checkpoint identity mismatch')
     records=data.get('completed')
     if not isinstance(records,dict):

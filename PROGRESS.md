@@ -1609,3 +1609,15 @@ not rerun. No8/9-digit exploration this run, no performance claim or paid comput
 Reproduce: python -m unittest -q test_structural_checkpoint.
 Next wire a bounded per-mask worker with computed source fingerprint and lock;
 validate skipping and interruption before saving real exploration completion.
+
+## 2026-11-16: reject malformed experimental checkpoint schemas
+
+Verified latest headb06e74f29cdf526a687f4747349863414bfa4f16 and remote storage files.
+Reproduced schema:true accepted as version1 due to Python bool/int equality.
+Require exact int schema type, rejecting true and1.0; reject nonobject JSON
+with ValueError instead of leaking AttributeError. Four focused tests passed
+in0.001s under30s/768MiB. Reproduce: python -m unittest -q test_structural_checkpoint.
+No production solver/checkpoint edits, no exploration or full-suite rerun.
+Storage remains experimental, with runner integration/locking/fingerprint
+construction still pending. Nine-digit status unchanged: bounded-not-found
+at20000, unrestricted unknown. No paid resources or automation changes.

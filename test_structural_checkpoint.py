@@ -8,6 +8,10 @@ class CheckpointTests(unittest.TestCase):
     def setUp(self):
         self.identity={'digits':'123','target':'10958','source_sha256':'test-only','bits':4096}
         self.data={'schema':1,'identity':self.identity,'completed':{'1':{'rejected':5}}}
+    def test_schema_and_top_level_types(self):
+        for data in (None, [], True, 1, 'checkpoint', dict(self.data,schema=True), dict(self.data,schema=1.0)):
+            with self.assertRaises(ValueError):validate(data,self.identity)
+
     def test_roundtrip(self):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/'checkpoint.json';save(p,self.data,self.identity)
