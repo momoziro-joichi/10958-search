@@ -1621,3 +1621,18 @@ No production solver/checkpoint edits, no exploration or full-suite rerun.
 Storage remains experimental, with runner integration/locking/fingerprint
 construction still pending. Nine-digit status unchanged: bounded-not-found
 at20000, unrestricted unknown. No paid resources or automation changes.
+
+## 2026-11-17: explicit experimental source identity builder
+
+Verified head2d8eef058b1a10b34627e4fb65395ac0bf3aabdd and storage implementation.
+Added structural_identity.py: canonical Fraction target, ASCII digits and bit
+budget validation, SHA256 manifest of explicitly supplied source dependencies.
+Missing files fail closed. Regression changes a source file and confirms the
+saved completion is rejected by checkpoint validation. Six storage/identity
+tests passed in0.001s under30s/768MiB. Reproduce python -m unittest -q
+ test_structural_checkpoint test_structural_identity (on one line).
+Caller still must supply ALL semantic dependencies and runner; no automatic
+import-graph discovery or authenticity claim. Locking/worker integration and
+real resumable exploration remain unfinished. No production/checkpoint changes,
+no full-suite rerun or8/9-digit search. Nine-digit remains bounded-not-found
+at20000; unrestricted unknown. Next integrate manifest and lock into worker.
