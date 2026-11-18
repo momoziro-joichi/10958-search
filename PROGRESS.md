@@ -1636,3 +1636,18 @@ import-graph discovery or authenticity claim. Locking/worker integration and
 real resumable exploration remain unfinished. No production/checkpoint changes,
 no full-suite rerun or8/9-digit search. Nine-digit remains bounded-not-found
 at20000; unrestricted unknown. Next integrate manifest and lock into worker.
+
+## 2026-11-18: experimental checkpoint writer exclusion
+
+Verified headc0dafb9780f57ff09bb39940912204b49767e958 and storage/progress sources.
+Added structural_lock.py POSIX nonblocking advisory lock on a persistent sidecar.
+Resolve checkpoint path, retain lock inode, release on normal/exception exits.
+Caller must hold across load/work/save; all cooperating writers must use it.
+Real separate-process test confirms contention fails and acquisition succeeds
+following release. Eight lock/storage/identity tests passed in0.060s under
+30s/768MiB. Reproduce python -m unittest -q test_structural_lock
+ test_structural_checkpoint test_structural_identity (one line).
+This is a tested primitive, not yet a resumable exploration runner. No Windows
+support promised. No production/checkpoint changes or full-suite rerun; no8/9
+search and no new absence claim. Next integrate per-mask worker and skip logic
+with all three primitives, then test interruption and resume end-to-end.
