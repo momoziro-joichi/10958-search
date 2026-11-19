@@ -1,0 +1,28 @@
+{
+  "identity": {
+    "digits": "123456789",
+    "target": "10958",
+    "bits": 4096,
+    "exponent_cap": null,
+    "sources_sha256": {
+      "strategy_probe.py": "d0edf07fb69709464d5944be12e6af54d1f7515aa31854f1b224768ef65eeb16",
+      "structural_checkpoint.py": "989a45a881236f0e7f68928ac901ad2c5d0d3dbe78af107ed6e51889c7d9d13b",
+      "structural_identity.py": "cb60cfd9ef107c418497915cdc585f90fd0a95528b2cdb37238fc30cdf464a3b",
+      "structural_lock.py": "483e98826f7264c8b8b4a70abb7590f16292288c4b9e611cea484e9201d215f8",
+      "structural_resume.py": "5e7bdf7943cd490cd633445033973fa23c9478a7b52794f0721340429108d092"
+    }
+  },
+  "status": "incomplete",
+  "completed_masks": 148,
+  "skipped_masks": 148,
+  "attempts": [
+    {
+      "mask": 63,
+      "status": "timeout"
+    }
+  ],
+  "seconds": 0.002570315000014034,
+  "time_budget_seconds": 0.001,
+  "per_mask_seconds": 0.001,
+  "memory_budget_mib": 768
+}

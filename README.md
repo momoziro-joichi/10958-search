@@ -521,3 +521,23 @@ Optional diagnostic cache: `python classify_symbolic.py --digits 1234567 --secon
 Default cache size remains0. The cached seven-digit run matched all prior
 classification counters; see symbolic_seven_digit_cached.json and PROGRESS.md.
 The cache is cleaned up per run and is intended for single-thread diagnostics.
+
+### Experimental resumable structural enumeration
+
+`python structural_resume.py --seconds 60 --per-mask-seconds 2 --checkpoint structural_checkpoint_10958.json`
+
+This separate experiment enumerates token-boundary masks without an exponent
+cap. It uses exact Fraction arithmetic and symbolic comparison; the 4096-bit
+power allocation guard can leave expressions unresolved, never silently prune
+them. Only fully enumerated, entirely rejected masks are saved and skipped.
+Unresolved masks and interrupted masks restart on the next invocation.
+Candidates stop the run as `candidate_unverified`; independent witness
+verification is still required before claiming a solution.
+
+The parent kills and waits for timed-out subprocesses. Each child has a 768MiB
+virtual-memory limit and a 4096-entry evaluation cache. Total worker allocation
+is limited to at most 600 seconds; startup/cleanup can add overhead. A persistent
+POSIX lock protects the whole read/work/save sequence. Checkpoints bind input,
+exact target, and SHA256 of all five experimental source dependencies. Source
+changes require a fresh checkpoint; never edit fingerprints to reuse results.
+The production bounded solver and its checkpoints are separate and unchanged.

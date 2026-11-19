@@ -1651,3 +1651,40 @@ This is a tested primitive, not yet a resumable exploration runner. No Windows
 support promised. No production/checkpoint changes or full-suite rerun; no8/9
 search and no new absence claim. Next integrate per-mask worker and skip logic
 with all three primitives, then test interruption and resume end-to-end.
+
+## 2026-11-19: integrated experimental structural resume and nine-digit run
+
+Started at669e1c8aee53dcf2e3c139477ef52dd87491b22f; PR1 remains open.
+Connected partition enumeration, source identity, exclusive lock, atomic save,
+and subprocess budgets in structural_resume.py. Full rejected masks alone are
+reusable; candidates are explicitly unverified and stop the run. Partial or
+unresolved masks are retried. Production solver/checkpoints unchanged.
+Coverage tests now exercise the actual runner's partition function.
+
+31 focused tests passed in0.674s (0.818119s including startup), Linux Python
+3.12.14, 30s timeout and768MiB RLIMIT_AS. Includes real completion/resume with
+subprocess launches forbidden, input mismatch, candidate/unresolved exclusion,
+and timeout preserving prior completion. Raw command/environment/output:
+structural_tests_20261119.json. Full production suite was not rerun.
+
+Actual uncapped 123456789->10958 run:60.002490s elapsed, total budget60s,
+per-mask2s, child virtual memory768MiB, evaluation LRU4096 entries.
+148 of256 masks completed rejected;9 timed out;3 unresolved;96 not attempted.
+No candidate returned. Largest reported successful-worker RSS15568KiB;
+timed-out workers provide no RSS report, so this is NOT overall peak memory.
+Status is INCOMPLETE, not impossibility or complete unrestricted absence.
+The4096-bit allocation guard defers huge powers; unresolved results stay unknown.
+Saved structural_run_20261119.json and structural_checkpoint_10958.json.
+A0.001s resume check skipped all148 saved masks; no completed masks recomputed.
+The60.001s combined allocated exploration budget stays below600s.
+
+Reproduce/resume: python structural_resume.py --seconds 60 --per-mask-seconds 2
+ --checkpoint structural_checkpoint_10958.json (one line).
+Tests: python -m unittest -q test_structural_resume test_structural_checkpoint
+ test_structural_identity test_structural_lock test_structural_partitions
+ test_strategy_probe test_symbolic_cache test_symbolic_runner (one line).
+Do not change source fingerprints to reuse a checkpoint after source changes.
+Next: subdivide slow masks, retain unresolved examples and add independent
+budgeted candidate verification. Partial progress inside masks is not saved;
+unsupported symbolic cases remain unresolved. No speedup claim from this one
+run. Existing production cap20000 absence remains a separate bounded result.

@@ -5,21 +5,8 @@ from math import comb
 from strategy_probe import all_trees, trees
 
 
-def partition(digits, mask):
-    if not 0 <= mask < 1 << (len(digits)-1):
-        raise ValueError('invalid mask')
-    tokens=[]
-    start=0
-    for k in range(1,len(digits)):
-        if mask & (1 << (k-1)):
-            tokens.append(digits[start:k]);start=k
-    tokens.append(digits[start:])
-    yield from trees(tokens)
-
-
-def expected_count(mask):
-    k=mask.bit_count()
-    return comb(2*k,k)//(k+1)*5**k
+from structural_resume import partition
+from structural_checkpoint import expected_count
 
 
 class PartitionTests(unittest.TestCase):
