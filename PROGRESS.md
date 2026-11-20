@@ -1688,3 +1688,19 @@ Next: subdivide slow masks, retain unresolved examples and add independent
 budgeted candidate verification. Partial progress inside masks is not saved;
 unsupported symbolic cases remain unresolved. No speedup claim from this one
 run. Existing production cap20000 absence remains a separate bounded result.
+
+
+## 2026-11-20: resume existing nine-digit structural search
+
+Verified PR1 open at81700fa11df128c3055b36f2501c1a5fab7a2edc.
+No source changes: retained trusted checkpoint identity and skipped prior148 masks.
+Reproduce: python structural_resume.py --seconds 45 --per-mask-seconds 1 --checkpoint structural_checkpoint_10958.json
+
+Measured result: {"status": "incomplete", "completed_masks": 183, "skipped_masks": 148, "seconds": 45.002474554, "time_budget_seconds": 45.0, "per_mask_seconds": 1.0, "memory_budget_mib": 768, "outcomes": {"timeout": 39, "complete_rejected": 35}}
+
+Children capped at768MiB virtual memory; no exponent cap,4096-bit lazy allocation guard.
+No candidate; unrestricted search remains incomplete. Completed records saved atomically.
+12 focused resume/storage/identity/lock tests passed in0.266s; full suite not rerun.
+Raw evidence: structural_run_20261120.json and structural_tests_20261120.txt.
+Next prioritize subdivision and unresolved-case diagnostics over repeatedly retrying large masks.
+Production cap20000 result unchanged; no impossibility claim or performance improvement claim.
