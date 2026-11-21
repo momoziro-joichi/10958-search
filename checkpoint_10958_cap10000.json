@@ -1,0 +1,116 @@
+{
+  "identity": {
+    "digits": "123456789",
+    "max_abs_exponent": 10000,
+    "schema": 3,
+    "solver_sha256": "6ed8da235ac83bbe35bea054b127c13f8a650f0548244c280c54d146ba7077bd",
+    "target": "10958"
+  },
+  "partitions": {
+    "1": {
+      "attempts": 1,
+      "digits": "123456789",
+      "elapsed_seconds": 1.314431,
+      "expression": null,
+      "max_abs_exponent": 10000,
+      "max_rss_kib": 15232,
+      "memory_budget_mib": 768,
+      "root_split": 1,
+      "status": "not_found_bounded",
+      "target": "10958",
+      "time_budget_seconds": 30.0
+    },
+    "2": {
+      "attempts": 1,
+      "digits": "123456789",
+      "elapsed_seconds": 0.419543,
+      "expression": null,
+      "max_abs_exponent": 10000,
+      "max_rss_kib": 12800,
+      "memory_budget_mib": 768,
+      "root_split": 2,
+      "status": "not_found_bounded",
+      "target": "10958",
+      "time_budget_seconds": 30.0
+    },
+    "3": {
+      "attempts": 1,
+      "digits": "123456789",
+      "elapsed_seconds": 0.250436,
+      "expression": null,
+      "max_abs_exponent": 10000,
+      "max_rss_kib": 12032,
+      "memory_budget_mib": 768,
+      "root_split": 3,
+      "status": "not_found_bounded",
+      "target": "10958",
+      "time_budget_seconds": 30.0
+    },
+    "4": {
+      "attempts": 1,
+      "digits": "123456789",
+      "elapsed_seconds": 0.295126,
+      "expression": null,
+      "max_abs_exponent": 10000,
+      "max_rss_kib": 11904,
+      "memory_budget_mib": 768,
+      "root_split": 4,
+      "status": "not_found_bounded",
+      "target": "10958",
+      "time_budget_seconds": 30.0
+    },
+    "5": {
+      "attempts": 1,
+      "digits": "123456789",
+      "elapsed_seconds": 0.079627,
+      "expression": null,
+      "max_abs_exponent": 10000,
+      "max_rss_kib": 12032,
+      "memory_budget_mib": 768,
+      "root_split": 5,
+      "status": "not_found_bounded",
+      "target": "10958",
+      "time_budget_seconds": 30.0
+    },
+    "6": {
+      "attempts": 1,
+      "digits": "123456789",
+      "elapsed_seconds": 0.37092,
+      "expression": null,
+      "max_abs_exponent": 10000,
+      "max_rss_kib": 21732,
+      "memory_budget_mib": 768,
+      "root_split": 6,
+      "status": "not_found_bounded",
+      "target": "10958",
+      "time_budget_seconds": 30.0
+    },
+    "7": {
+      "attempts": 1,
+      "digits": "123456789",
+      "elapsed_seconds": 0.651402,
+      "expression": null,
+      "max_abs_exponent": 10000,
+      "max_rss_kib": 12544,
+      "memory_budget_mib": 768,
+      "root_split": 7,
+      "status": "not_found_bounded",
+      "target": "10958",
+      "time_budget_seconds": 30.0
+    },
+    "8": {
+      "attempts": 1,
+      "digits": "123456789",
+      "elapsed_seconds": 1.005,
+      "expression": null,
+      "max_abs_exponent": 10000,
+      "max_rss_kib": 14336,
+      "memory_budget_mib": 768,
+      "root_split": 8,
+      "status": "not_found_bounded",
+      "target": "10958",
+      "time_budget_seconds": 30.0
+    }
+  },
+  "status": "not_found_bounded"
+}

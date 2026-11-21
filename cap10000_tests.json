@@ -1,0 +1,8 @@
+{
+  "returncode": 0,
+  "seconds": 58.335340993,
+  "stdout": "High-cap oracle: 10645 syntax trees, 6398 reverse queries\n",
+  "stderr": "----------------------------------------------------------------------\nRan 3 tests in 58.209s\n\nOK\n",
+  "memory_budget_mib": 768,
+  "time_budget_seconds": 180
+}
