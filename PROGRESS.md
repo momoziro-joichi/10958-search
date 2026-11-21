@@ -1704,3 +1704,21 @@ No candidate; unrestricted search remains incomplete. Completed records saved at
 Raw evidence: structural_run_20261120.json and structural_tests_20261120.txt.
 Next prioritize subdivision and unresolved-case diagnostics over repeatedly retrying large masks.
 Production cap20000 result unchanged; no impossibility claim or performance improvement claim.
+
+## 2026-11-21: isolate unresolved symbolic combinations
+
+Verified PR1 open at32c29e5ae50aca2c5f7ca9536a8f20a4cbe8fb72.
+Added diagnose_structural.py and three passing focused tests (0.001s).
+Reproduce: python -m unittest -q test_diagnose_structural;
+python diagnose_structural.py --mask 118 --seconds 10.
+Diagnostic scanned65500 trees in0.997682s, peakRSS12928KiB, with10s alarm and
+768MiB virtual-memory limit. Five samples combine A=12^(3^45) and B=6^(7^89)
+using +,-,*,/,^. Both children are symbolic large powers; current comparison
+leaves these combinations unresolved. Raw samples in diagnostic_118_20261121.json.
+This identifies a concrete next correctness target: exact symbolic comparison
+of two huge defined powers (including product/quotient and magnitude bounds).
+No floating-point approximation or absence assumption was introduced.
+Diagnostic does not write checkpoints; existing183 completed masks unchanged.
+No new full nine-digit exploration or production tests this run.10958 remains
+unfound with unrestricted search incomplete; cap20000 result remains separate.
+Sampler discards partial samples on timeout; this limitation is documented.

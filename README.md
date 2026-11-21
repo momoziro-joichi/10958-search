@@ -541,3 +541,9 @@ POSIX lock protects the whole read/work/save sequence. Checkpoints bind input,
 exact target, and SHA256 of all five experimental source dependencies. Source
 changes require a fresh checkpoint; never edit fingerprints to reuse results.
 The production bounded solver and its checkpoints are separate and unchanged.
+
+To inspect unresolved experimental trees without changing checkpoints, run
+`python diagnose_structural.py --mask 118 --seconds 10`. It retains up to five
+unresolved trees, with a maximum60s alarm and768MiB address-space ceiling.
+`sample_limit` is partial diagnostic output, never a completed negative search.
+On timeout/memory failure the current sampler discards partial samples.
