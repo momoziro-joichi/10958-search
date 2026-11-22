@@ -1722,3 +1722,24 @@ Diagnostic does not write checkpoints; existing183 completed masks unchanged.
 No new full nine-digit exploration or production tests this run.10958 remains
 unfound with unrestricted search incomplete; cap20000 result remains separate.
 Sampler discards partial samples on timeout; this limitation is documented.
+
+## 2026-11-22: exact modular rejection prototype
+
+Verified PR1 open at6077749e1a1ab27b25915064aaa77dc880938ac4.
+Added standalone symbolic_residue.py: necessary modular equality conditions
+for sums, differences, products and quotients of rational integer powers.
+Modular exponentiation avoids constructing huge powers; negative exponents
+swap numerator/denominator, noninvertible denominators skip that modulus.
+Quotient comparison uses cross multiplication. False proves inequality;
+None never proves equality. Not yet integrated into the search evaluator.
+
+All four observed A op B cases, A=12^(3^45), B=6^(7^89), op=+,-,*,/,
+are now rejected against10958 by this prototype. Nested exponentiation remains
+unsupported. Three tests passed0.164s under30s/768MiB, including exhaustive
+small Fraction comparisons across25 base pairs,49 exponent pairs,4 operators,
+exact matching targets and three other targets. Raw log: residue_tests_20261122.json.
+Reproduce: python -m unittest -q test_symbolic_residue.
+No production or experimental search source/checkpoint change;183 completed
+masks preserved. No full search this run; unrestricted10958 remains unknown.
+Next integrate the tested rejection with source identity updates and fresh
+checkpoint validation, then measure unresolved counts. No speedup claimed.
