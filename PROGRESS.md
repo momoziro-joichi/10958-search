@@ -1743,3 +1743,29 @@ No production or experimental search source/checkpoint change;183 completed
 masks preserved. No full search this run; unrestricted10958 remains unknown.
 Next integrate the tested rejection with source identity updates and fresh
 checkpoint validation, then measure unresolved counts. No speedup claimed.
+
+## 2026-11-23: connect exact residue rejection to symbolic search
+
+Started at5e0ca4b5dc43ba32a310e84a5047bebb342e57ea; PR1 open.
+Integrated reject_pair only for two defined LazyPower children. Congruence
+agreement never becomes success; existing exact comparison continues otherwise.
+Added symbolic_residue.py to the experimental source identity. Old183-mask
+checkpoint remains untouched and is correctly rejected by the new identity.
+No forced migration or reuse of stale completions.
+
+24 focused tests passed0.726s (0.865597s including startup),30s/768MiB budget.
+Includes observed huge pairs, exact matching targets not falsely rejected,
+old-checkpoint rejection, symbolic/cache/resume regressions and Fraction oracle.
+Reproduce: python -m unittest -q test_residue_integration test_symbolic_residue
+ test_strategy_probe test_structural_resume test_symbolic_cache (one line).
+Raw output: residue_integration_tests.json.
+
+python diagnose_structural.py --mask 118 --seconds 10
+completed all131250 trees in1.907416s, peakRSS12928KiB,768MiB ceiling.
+One unresolved tree remains, the nested power case; previous first-five samples
+included four arithmetic combinations now rejected. Earlier sample-limited run
+is not a full baseline, so no whole-partition speedup claimed.
+Raw: diagnostic_118_20261123.json. Diagnostic does not create completion records.
+Full nine-digit search not run; unrestricted10958 remains incomplete/unknown.
+Next resolve nested symbolic exponent cases or subdivide slow masks, then use
+fresh checkpoint paths. Production bounded solver/cap20000 evidence unchanged.

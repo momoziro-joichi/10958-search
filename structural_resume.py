@@ -28,7 +28,7 @@ def partition(digits, mask):
 
 
 def identity(digits, target):
-    names = ('structural_resume.py', 'strategy_probe.py', 'structural_checkpoint.py',
+    names = ('symbolic_residue.py', 'structural_resume.py', 'strategy_probe.py', 'structural_checkpoint.py',
              'structural_identity.py', 'structural_lock.py')
     return build_identity(digits, target, {n: Path(__file__).with_name(n) for n in names})
 

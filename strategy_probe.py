@@ -5,6 +5,7 @@ special target with infinitely many possible exponents, NOT no candidates.
 Structural enumeration is finite; unresolved evaluation prevents an absence
 claim. LazyPower stores only already-defined rational-base integer powers.
 """
+from symbolic_residue import reject_pair
 from dataclasses import dataclass
 from fractions import Fraction as F
 from itertools import product
@@ -195,6 +196,9 @@ def matches_target(tree, target, bits=4096, cap=None):
         return lazy_equals(v, target)
     op, left, right = tree
     a, b = evaluate(left, bits, cap), evaluate(right, bits, cap)
+    if isinstance(a, LazyPower) and isinstance(b, LazyPower):
+        if reject_pair(op, a.base, a.exponent, b.base, b.exponent, target) is False:
+            return False
     # Even if the other operand is unresolved or undefined, zero times
     # it (or zero divided by it) cannot equal a NONZERO target. This is
     # rejection only: never infer a defined zero-valued witness here.

@@ -547,3 +547,9 @@ To inspect unresolved experimental trees without changing checkpoints, run
 unresolved trees, with a maximum60s alarm and768MiB address-space ceiling.
 `sample_limit` is partial diagnostic output, never a completed negative search.
 On timeout/memory failure the current sampler discards partial samples.
+
+Experimental symbolic comparison now rejects unequal pairs of defined rational
+powers using exact modular arithmetic for +,-,*,/. Passing these necessary
+checks does not prove equality. Nested powers can remain unresolved.
+The source identity now includes symbolic_residue.py: previous structural
+checkpoints are historical evidence and require a fresh path for new runs.
