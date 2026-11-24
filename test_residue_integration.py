@@ -10,7 +10,7 @@ class IntegrationTests(unittest.TestCase):
         b=('^','6',('^','7','89'))
         for op in '+-*/':
             self.assertIs(matches_target((op,a,b),10958),False)
-        self.assertIsNone(matches_target(('^',a,b),10958))
+        self.assertIs(matches_target(('^',a,b),10958),False)
     def test_equal_targets_not_rejected(self):
         a=('^','2','20');b=('^','3','20')
         x,y=Fraction(2)**20,Fraction(3)**20

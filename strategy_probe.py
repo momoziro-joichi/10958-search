@@ -214,6 +214,13 @@ def matches_target(tree, target, bits=4096, cap=None):
         # A nondegenerate target admits finitely many exponents even when
         # the exponent subtree cannot be expanded. Query that subtree exactly.
         feasible = rational_power_candidates(target)
+        if isinstance(b, LazyPower):
+            # Every valid rational base requires one of these exact exponents.
+            # Reject only: a remaining candidate still needs a base check.
+            if not lazy_is_integer(b) or not any(
+                    (cap is None or abs(e) <= cap) and lazy_equals(b, F(e))
+                    for e in feasible):
+                return False
         if isinstance(a, F):
             outcomes = []
             for e in feasible:

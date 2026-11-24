@@ -1769,3 +1769,26 @@ Raw: diagnostic_118_20261123.json. Diagnostic does not create completion records
 Full nine-digit search not run; unrestricted10958 remains incomplete/unknown.
 Next resolve nested symbolic exponent cases or subdivide slow masks, then use
 fresh checkpoint paths. Production bounded solver/cap20000 evidence unchanged.
+
+## 2026-11-24: reject infeasible symbolic exponents
+
+Verified PR1 open at22d9ea91c8be20a58768c79f2102497f8a33ee97.
+For target other than0,+/-1, a valid rational base requires an integer exponent
+in rational_power_candidates(target). A defined LazyPower exponent is now
+compared exactly with those candidates; no match proves rejection. Matching
+candidates do not assert a solution. Special targets retain existing handling.
+27 focused tests passed0.712s under30s/768MiB, including matching small nested
+powers forced lazy, noninteger exponents, special targets and existing tests.
+Raw log lazy_exponent_tests.json. Reproduce python -m unittest -q
+ test_lazy_exponent test_residue_integration test_symbolic_residue
+ test_strategy_probe test_symbolic_cache test_structural_resume (one line).
+
+python diagnose_structural.py --mask 118 --seconds 10
+enumerated131250 trees in1.930037s, RSS12928KiB, with no unresolved samples.
+Previous version had one unresolved nested-power tree; regression now rejects
+that exact tree. Diagnostic records unresolved cases only, not witness counts,
+so this report alone is not a completed negative-search checkpoint.
+Raw diagnostic_118_20261124.json. No full nine-digit search this run.
+Old183-mask checkpoint preserved, not reused after changed source fingerprint.
+Next run budgeted workers with a fresh checkpoint and retain completed results;
+large-mask subdivision remains outstanding. Unrestricted10958 still unknown.
