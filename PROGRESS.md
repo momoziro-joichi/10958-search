@@ -1792,3 +1792,23 @@ Raw diagnostic_118_20261124.json. No full nine-digit search this run.
 Old183-mask checkpoint preserved, not reused after changed source fingerprint.
 Next run budgeted workers with a fresh checkpoint and retain completed results;
 large-mask subdivision remains outstanding. Unrestricted10958 still unknown.
+
+
+## 2026-11-25: fresh post-improvement checkpoint
+
+Verified PR1 open at25d22b436cb098858b4fffa130432a4ca041fd24.
+Sources unchanged today. New structural_checkpoint_residue.json binds current
+source hashes; old183-mask checkpoint preserved without migration.
+Command: python structural_resume.py --seconds 30 --per-mask-seconds 2
+ --checkpoint structural_checkpoint_residue.json (one line).
+Result: {"status": "incomplete", "completed_masks": 109, "skipped_masks": 0, "seconds": 30.00195159399999, "time_budget_seconds": 30.0, "per_mask_seconds": 2.0, "memory_budget_mib": 768, "outcomes": {"complete_rejected": 109, "timeout": 3}, "saved_masks_after_targeted_worker": 110}
+
+Separately ran --worker-mask 118 with external subprocess timeout10s and
+worker768MiB ceiling:131250 rejected,0 unresolved,no candidate,1.212984s,
+RSS15248KiB. Validated exact count and saved mask118 under lock atomically.
+Total allocated search budget40s. This targeted result resolves the previously
+unresolved mask; full nine-digit exploration remains incomplete.
+8 storage/identity/lock tests passed0.047s; full suite not rerun.
+Raw evidence structural_run_20261125.json, structural_mask118_20261125.json,
+structural_storage_tests_20261125.txt. No performance speedup claim.
+Next resume this new checkpoint, skip completed masks, subdivide slow masks.

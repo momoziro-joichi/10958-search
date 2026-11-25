@@ -1,0 +1,9 @@
+{
+  "counts": {
+    "rejected": 131250,
+    "unresolved": 0
+  },
+  "candidate": null,
+  "seconds": 1.2129835169999978,
+  "peak_rss_kib": 15248
+}

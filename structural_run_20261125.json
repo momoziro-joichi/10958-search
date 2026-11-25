@@ -1,0 +1,1236 @@
+{
+  "identity": {
+    "digits": "123456789",
+    "target": "10958",
+    "bits": 4096,
+    "exponent_cap": null,
+    "sources_sha256": {
+      "strategy_probe.py": "f16f9a63d00416afe2987d0d2fda1e23e877fff396509274c7b72d57c0da3ef5",
+      "structural_checkpoint.py": "989a45a881236f0e7f68928ac901ad2c5d0d3dbe78af107ed6e51889c7d9d13b",
+      "structural_identity.py": "cb60cfd9ef107c418497915cdc585f90fd0a95528b2cdb37238fc30cdf464a3b",
+      "structural_lock.py": "483e98826f7264c8b8b4a70abb7590f16292288c4b9e611cea484e9201d215f8",
+      "structural_resume.py": "fd853fd3ba03d20caf0975743bdc4db85dfad38db35ba451f14f23ac6144232e",
+      "symbolic_residue.py": "dd30bd4f7c7351414e20c69fa136090359bf32f8d152827cbd778c4a0d41c58b"
+    }
+  },
+  "status": "incomplete",
+  "completed_masks": 109,
+  "skipped_masks": 0,
+  "attempts": [
+    {
+      "mask": 0,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 1,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 3.264900000488069e-05,
+      "peak_rss_kib": 13188
+    },
+    {
+      "mask": 1,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 5,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 7.779700000298817e-05,
+      "peak_rss_kib": 13316
+    },
+    {
+      "mask": 2,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 5,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.00013921800000105122,
+      "peak_rss_kib": 13316
+    },
+    {
+      "mask": 3,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0005320770000025732,
+      "peak_rss_kib": 13316
+    },
+    {
+      "mask": 4,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 5,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.00011269800000945907,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 5,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.00048589700000434277,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 6,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0005606889999967279,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 7,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.005776107999992064,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 8,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 5,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.00025042500000438395,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 9,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0005253870000103689,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 10,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.000780018000000382,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 11,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.00570174599999973,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 12,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0006326169999937292,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 13,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.005811590999996952,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 14,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.006410438000003182,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 15,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.07425217299999076,
+      "peak_rss_kib": 14720
+    },
+    {
+      "mask": 16,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 5,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0001096339999975271,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 17,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0004894919999998137,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 18,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0006197579999991376,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 19,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.006349546999999234,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 20,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0006071990000009464,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 21,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.00591167099999268,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 22,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0061845500000003995,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 23,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.08054505500000175,
+      "peak_rss_kib": 14720
+    },
+    {
+      "mask": 24,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0005950900000044612,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 25,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.006196477000003142,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 26,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0076651159999983065,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 27,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.09032023099999265,
+      "peak_rss_kib": 14720
+    },
+    {
+      "mask": 28,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.006486752000000706,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 29,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.09053973899999335,
+      "peak_rss_kib": 14720
+    },
+    {
+      "mask": 30,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.09772872300000301,
+      "peak_rss_kib": 14720
+    },
+    {
+      "mask": 31,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 1.2564877239999959,
+      "peak_rss_kib": 14840
+    },
+    {
+      "mask": 32,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 5,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.00015536200000099143,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 33,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0007163820000073429,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 34,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.001064443999993614,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 35,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.007207170999990353,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 36,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0005605789999947319,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 37,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.006577518000000282,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 38,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.006479190999996831,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 39,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.08967117900000687,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 40,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0006314459999998689,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 41,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0063922709999957306,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 42,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0075956719999936695,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 43,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0846241369999916,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 44,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.008041710000000535,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 45,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.07934073100000205,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 46,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.08282972500001051,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 47,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 1.1677680300000048,
+      "peak_rss_kib": 15284
+    },
+    {
+      "mask": 48,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0004948609999928522,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 49,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.005829027999993741,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 50,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.005919812999991336,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 51,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.07841078900000298,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 52,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0055323329999907855,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 53,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.07304891100000077,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 54,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.13022440600001062,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 55,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 1.6872578669999996,
+      "peak_rss_kib": 15492
+    },
+    {
+      "mask": 56,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.008489910999998074,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 57,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.06947120400000983,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 58,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.1285001039999969,
+      "peak_rss_kib": 14976
+    },
+    {
+      "mask": 59,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 1.733228932000003,
+      "peak_rss_kib": 15340
+    },
+    {
+      "mask": 60,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.1361333999999914,
+      "peak_rss_kib": 14976
+    },
+    {
+      "mask": 61,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 1.7335403740000004,
+      "peak_rss_kib": 15320
+    },
+    {
+      "mask": 62,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 1.7361239269999942,
+      "peak_rss_kib": 15584
+    },
+    {
+      "mask": 63,
+      "status": "timeout"
+    },
+    {
+      "mask": 64,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 5,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.000103214999995771,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 65,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0005016610000012633,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 66,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0005770340000026408,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 67,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.005116830999995159,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 68,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.000713809000004062,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 69,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.005911169999990307,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 70,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.006599761999993348,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 71,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.08659197900000493,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 72,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0006773839999993925,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 73,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.00603537700000345,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 74,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0057044710000013765,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 75,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.07128376800000069,
+      "peak_rss_kib": 14976
+    },
+    {
+      "mask": 76,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.004989429999994854,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 77,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.06405892200000096,
+      "peak_rss_kib": 14976
+    },
+    {
+      "mask": 78,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.06990288599999417,
+      "peak_rss_kib": 14976
+    },
+    {
+      "mask": 79,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.9292541650000032,
+      "peak_rss_kib": 15560
+    },
+    {
+      "mask": 80,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.00039325899999198555,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 81,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.004557192999996573,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 82,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.005554477000003999,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 83,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.06174555800001258,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 84,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.004688981000001036,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 85,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.06191913499999657,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 86,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.07046911600001238,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 87,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.9735010149999965,
+      "peak_rss_kib": 15312
+    },
+    {
+      "mask": 88,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.004816942000005042,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 89,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.054873456000009924,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 90,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.06969841299999757,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 91,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.9404483599999907,
+      "peak_rss_kib": 15264
+    },
+    {
+      "mask": 92,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.07788603100000557,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 93,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.9133313720000018,
+      "peak_rss_kib": 15412
+    },
+    {
+      "mask": 94,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.9680056480000019,
+      "peak_rss_kib": 15464
+    },
+    {
+      "mask": 95,
+      "status": "timeout"
+    },
+    {
+      "mask": 96,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0004013810000031981,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 97,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0045105340000048955,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 98,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.00710640999999157,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 99,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.09703826899999513,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 100,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0062686760000048025,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 101,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.06444330700000478,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 102,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.07237107599999604,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 103,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.9383623949999986,
+      "peak_rss_kib": 15444
+    },
+    {
+      "mask": 104,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.004707918999997673,
+      "peak_rss_kib": 13444
+    },
+    {
+      "mask": 105,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.05340956599999913,
+      "peak_rss_kib": 14720
+    },
+    {
+      "mask": 106,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.06853643399999498,
+      "peak_rss_kib": 14976
+    },
+    {
+      "mask": 107,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.9824085999999994,
+      "peak_rss_kib": 15288
+    },
+    {
+      "mask": 108,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0758180070000094,
+      "peak_rss_kib": 14976
+    },
+    {
+      "mask": 109,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.8971583900000013,
+      "peak_rss_kib": 15496
+    },
+    {
+      "mask": 110,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 1.048659862000008,
+      "peak_rss_kib": 15404
+    },
+    {
+      "mask": 111,
+      "status": "timeout"
+    }
+  ],
+  "seconds": 30.00195159399999,
+  "time_budget_seconds": 30.0,
+  "per_mask_seconds": 2.0,
+  "memory_budget_mib": 768
+}
