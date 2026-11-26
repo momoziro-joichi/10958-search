@@ -1812,3 +1812,23 @@ unresolved mask; full nine-digit exploration remains incomplete.
 Raw evidence structural_run_20261125.json, structural_mask118_20261125.json,
 structural_storage_tests_20261125.txt. No performance speedup claim.
 Next resume this new checkpoint, skip completed masks, subdivide slow masks.
+
+
+## 2026-11-26: resume and subdivision coverage
+
+Verified PR1 open atc7ddf5aa0480e86d9b7a574faa2c9beef5ff0c2a.
+Resumed current-source checkpoint, skipping110 completed masks.
+Command: python structural_resume.py --seconds 30 --per-mask-seconds 1
+ --checkpoint structural_checkpoint_residue.json (one line).
+Measured: {"status": "incomplete", "completed_masks": 164, "skipped_masks": 110, "seconds": 30.002710401, "time_budget_seconds": 30.0, "per_mask_seconds": 1.0, "memory_budget_mib": 768, "outcomes": {"timeout": 19, "complete_rejected": 54}}
+Children limited to768MiB virtual memory. No candidate; exploration incomplete.
+No exponent cap; unresolved symbolic results are never absence.
+Added standalone structural_subpartition.py: fixed tokenization splits by root
+split and operator, avoiding enumeration of unrelated root partitions.
+Two tests passed0.011s: disjoint multiset union equals original trees for2,3,5
+tokens, plus invalid input rejection. Persistence/worker integration pending;
+existing solver identity and checkpoint semantics unchanged.
+Reproduce python -m unittest -q test_structural_subpartition.
+Raw evidence structural_run_20261126.json and subpartition_tests_20261126.txt.
+Full suite not rerun, no performance improvement claim. Next connect subpartition
+records with strict identity/count checks and explicit source-version handling.
