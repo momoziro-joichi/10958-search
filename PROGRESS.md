@@ -1832,3 +1832,24 @@ Reproduce python -m unittest -q test_structural_subpartition.
 Raw evidence structural_run_20261126.json and subpartition_tests_20261126.txt.
 Full suite not rerun, no performance improvement claim. Next connect subpartition
 records with strict identity/count checks and explicit source-version handling.
+
+
+## 2026-11-27: subdivision counts and resumed exploration
+
+Verified PR1 open atafd2c1e3e9a46da5d91b0efaa892f7194f74f36a.
+Added exact expected_subtree_count for one fixed root operator: product of
+left/right Catalan tree counts times their operator assignments. Tests compare
+actual enumeration for2..6 tokens and sum all splits/operators back to mask
+count. Reject bool/float and invalid split inputs. Four tests passed0.015s.
+Reproduce python -m unittest -q test_structural_subpartition.
+This is a completion-count prerequisite; subdivision persistence remains pending.
+
+Resumed unchanged solver identity, skipping164 completed masks:
+python structural_resume.py --seconds 25 --per-mask-seconds 1
+ --checkpoint structural_checkpoint_residue.json (one line).
+Result: {"status": "incomplete", "completed_masks": 179, "skipped_masks": 164, "seconds": 25.001629116999993, "time_budget_seconds": 25.0, "per_mask_seconds": 1.0, "memory_budget_mib": 768, "outcomes": {"timeout": 16, "complete_rejected": 15}}
+Budget25s total,768MiB per child. No candidate; unrestricted exploration
+remains incomplete. Counts do not prove impossibility. Raw evidence:
+structural_run_20261127.json and subpartition_tests_20261127.txt.
+Full suite not rerun. Next integrate subpartition checkpoint records and
+workers; repeated short retries of large masks should be replaced by subdivision.
