@@ -1,0 +1,3 @@
+{"cache_size": 0, "status": "not_found_bounded", "expression": null, "seconds": 21.890749956999997, "max_rss_kib": 201456, "cache": {"hits": 0, "misses": 104101, "maxsize": 0, "currsize": 0}}
+{"cache_size": 128, "status": "not_found_bounded", "expression": null, "seconds": 21.457451761000016, "max_rss_kib": 201096, "cache": {"hits": 11, "misses": 104090, "maxsize": 128, "currsize": 128}}
+{"cache_size": 1024, "status": "not_found_bounded", "expression": null, "seconds": 20.698750649999994, "max_rss_kib": 201180, "cache": {"hits": 104, "misses": 103997, "maxsize": 1024, "currsize": 1024}}

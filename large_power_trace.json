@@ -1,0 +1,298 @@
+{
+  "status": "not_found_bounded",
+  "expression": null,
+  "seconds": 21.8261114070001,
+  "max_rss_kib": 200568,
+  "large_powers": [
+    {
+      "interval": [
+        2,
+        9
+      ],
+      "split": 6,
+      "base_expression": "((3^(4^5))^6)",
+      "exponent_expression": "789",
+      "exponent": 789,
+      "base_numerator_bits": 9739,
+      "base_denominator_bits": 1,
+      "result_bits": 7683291,
+      "seconds": 0.8269213920000311
+    },
+    {
+      "interval": [
+        2,
+        9
+      ],
+      "split": 6,
+      "base_expression": "((3^(4^5))^6)",
+      "exponent_expression": "(7*89)",
+      "exponent": 623,
+      "base_numerator_bits": 9739,
+      "base_denominator_bits": 1,
+      "result_bits": 6066781,
+      "seconds": 0.6245208230000117
+    },
+    {
+      "interval": [
+        2,
+        9
+      ],
+      "split": 6,
+      "base_expression": "((3^(4^5))^6)",
+      "exponent_expression": "(7*(8*9))",
+      "exponent": 504,
+      "base_numerator_bits": 9739,
+      "base_denominator_bits": 1,
+      "result_bits": 4907958,
+      "seconds": 0.3669852539999283
+    },
+    {
+      "interval": [
+        2,
+        9
+      ],
+      "split": 6,
+      "base_expression": "((3^(4^5))^6)",
+      "exponent_expression": "(78*9)",
+      "exponent": 702,
+      "base_numerator_bits": 9739,
+      "base_denominator_bits": 1,
+      "result_bits": 6836084,
+      "seconds": 0.7021476939999047
+    },
+    {
+      "interval": [
+        2,
+        9
+      ],
+      "split": 7,
+      "base_expression": "((3^(4^5))^67)",
+      "exponent_expression": "89",
+      "exponent": 89,
+      "base_numerator_bits": 108742,
+      "base_denominator_bits": 1,
+      "result_bits": 9677960,
+      "seconds": 1.2719243830001687
+    },
+    {
+      "interval": [
+        2,
+        9
+      ],
+      "split": 7,
+      "base_expression": "((3^(4^5))^67)",
+      "exponent_expression": "(8*9)",
+      "exponent": 72,
+      "base_numerator_bits": 108742,
+      "base_denominator_bits": 1,
+      "result_bits": 7829361,
+      "seconds": 0.8281009320000976
+    },
+    {
+      "interval": [
+        2,
+        9
+      ],
+      "split": 7,
+      "base_expression": "((3^(4^5))^(6*7))",
+      "exponent_expression": "89",
+      "exponent": 89,
+      "base_numerator_bits": 68167,
+      "base_denominator_bits": 1,
+      "result_bits": 6066781,
+      "seconds": 0.5751413250000041
+    },
+    {
+      "interval": [
+        2,
+        9
+      ],
+      "split": 7,
+      "base_expression": "((3^(4^5))^(6*7))",
+      "exponent_expression": "(8*9)",
+      "exponent": 72,
+      "base_numerator_bits": 68167,
+      "base_denominator_bits": 1,
+      "result_bits": 4907958,
+      "seconds": 0.3463755929999479
+    },
+    {
+      "interval": [
+        2,
+        9
+      ],
+      "split": 8,
+      "base_expression": "((3^(4^5))^678)",
+      "exponent_expression": "9",
+      "exponent": 9,
+      "base_numerator_bits": 1100396,
+      "base_denominator_bits": 1,
+      "result_bits": 9903557,
+      "seconds": 1.3764599700000417
+    },
+    {
+      "interval": [
+        2,
+        9
+      ],
+      "split": 8,
+      "base_expression": "((3^(4^5))^(6*78))",
+      "exponent_expression": "9",
+      "exponent": 9,
+      "base_numerator_bits": 759565,
+      "base_denominator_bits": 1,
+      "result_bits": 6836084,
+      "seconds": 0.8147507310000037
+    },
+    {
+      "interval": [
+        2,
+        9
+      ],
+      "split": 8,
+      "base_expression": "((3^(4^5))^(6*(7*8)))",
+      "exponent_expression": "9",
+      "exponent": 9,
+      "base_numerator_bits": 545329,
+      "base_denominator_bits": 1,
+      "result_bits": 4907958,
+      "seconds": 0.47354824200010626
+    },
+    {
+      "interval": [
+        2,
+        9
+      ],
+      "split": 8,
+      "base_expression": "((3^(4^5))^(67*8))",
+      "exponent_expression": "9",
+      "exponent": 9,
+      "base_numerator_bits": 869929,
+      "base_denominator_bits": 1,
+      "result_bits": 7829361,
+      "seconds": 1.0074763640000128
+    }
+  ],
+  "buckets": {
+    "1": {
+      "calls": 30,
+      "seconds": 1.9117000192636624e-05,
+      "max_bits": 1
+    },
+    "2": {
+      "calls": 1130,
+      "seconds": 0.0008810690030713886,
+      "max_bits": 2
+    },
+    "4": {
+      "calls": 165,
+      "seconds": 0.00011788699816861481,
+      "max_bits": 4
+    },
+    "8": {
+      "calls": 1100,
+      "seconds": 0.0008033839976633317,
+      "max_bits": 8
+    },
+    "16": {
+      "calls": 2511,
+      "seconds": 0.0019604710007570247,
+      "max_bits": 16
+    },
+    "32": {
+      "calls": 2085,
+      "seconds": 0.0021736870046424883,
+      "max_bits": 32
+    },
+    "64": {
+      "calls": 4656,
+      "seconds": 0.0038331189946347877,
+      "max_bits": 64
+    },
+    "128": {
+      "calls": 18004,
+      "seconds": 0.019445047987346697,
+      "max_bits": 128
+    },
+    "256": {
+      "calls": 17146,
+      "seconds": 0.01893817200379999,
+      "max_bits": 256
+    },
+    "512": {
+      "calls": 15949,
+      "seconds": 0.018504090011902008,
+      "max_bits": 512
+    },
+    "1024": {
+      "calls": 14770,
+      "seconds": 0.024696069005358368,
+      "max_bits": 1024
+    },
+    "2048": {
+      "calls": 10364,
+      "seconds": 0.021921570011727454,
+      "max_bits": 2047
+    },
+    "4096": {
+      "calls": 7446,
+      "seconds": 0.14309636400389536,
+      "max_bits": 4096
+    },
+    "8192": {
+      "calls": 4050,
+      "seconds": 0.03653290199486037,
+      "max_bits": 8189
+    },
+    "16384": {
+      "calls": 2543,
+      "seconds": 0.0737158579959214,
+      "max_bits": 16332
+    },
+    "32768": {
+      "calls": 996,
+      "seconds": 0.07522309599880828,
+      "max_bits": 32749
+    },
+    "65536": {
+      "calls": 430,
+      "seconds": 0.09010946000125841,
+      "max_bits": 65313
+    },
+    "131072": {
+      "calls": 383,
+      "seconds": 0.2996998049998183,
+      "max_bits": 128970
+    },
+    "262144": {
+      "calls": 171,
+      "seconds": 0.3400432060004732,
+      "max_bits": 258820
+    },
+    "524288": {
+      "calls": 26,
+      "seconds": 0.19015673000058086,
+      "max_bits": 507367
+    },
+    "1048576": {
+      "calls": 90,
+      "seconds": 2.1363800490025824,
+      "max_bits": 1020870
+    },
+    "2097152": {
+      "calls": 44,
+      "seconds": 2.1834965769987775,
+      "max_bits": 1877814
+    },
+    "8388608": {
+      "calls": 10,
+      "seconds": 6.565968350000048,
+      "max_bits": 7829361
+    },
+    "16777216": {
+      "calls": 2,
+      "seconds": 2.6483843530002105,
+      "max_bits": 9903557
+    }
+  }
+}

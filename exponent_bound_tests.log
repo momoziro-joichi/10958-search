@@ -1,0 +1,16 @@
+{"split": 1, "digits": "23", "elapsed_seconds": 0.108158, "expression": null, "max_abs_exponent": 100, "max_rss_kib": 10752, "memory_budget_mib": 128, "root_split": 1, "status": "not_found_bounded", "target": "7", "time_budget_seconds": 1.0, "attempts": 1}
+{"split": 1, "status": "worker_error", "error": "Worker result is not an object", "expression": null, "attempts": 1, "digits": "23", "target": "7", "max_abs_exponent": 100, "root_split": 1, "elapsed_seconds": 5.1e-05, "time_budget_seconds": 0.9999943720000033, "memory_budget_mib": 128}
+{"split": 1, "status": "worker_error", "error": "Expecting value: line 1 column 1 (char 0)", "expression": null, "attempts": 1, "digits": "23", "target": "7", "max_abs_exponent": 100, "root_split": 1, "elapsed_seconds": 5.5e-05, "time_budget_seconds": 0.9999953520000133, "memory_budget_mib": 128}
+{"split": 1, "status": "worker_error", "error": "Partition input mismatch: digits", "expression": null, "attempts": 1, "digits": "23", "target": "7", "max_abs_exponent": 100, "root_split": 1, "elapsed_seconds": 3.8e-05, "time_budget_seconds": 0.9999959180000246, "memory_budget_mib": 128}
+{"split": 1, "status": "worker_error", "error": "Worker status/exit-code mismatch", "expression": null, "attempts": 1, "digits": "23", "target": "7", "max_abs_exponent": 100, "root_split": 1, "elapsed_seconds": 0.000149, "time_budget_seconds": 0.9999959200000035, "memory_budget_mib": 128}
+High-cap oracle: 8513 syntax trees, 5118 reverse queries
+Oracle: 256 inputs, 168288 syntax trees, 21359 per-input distinct values, 24147 queries
+{"split": 1, "status": "timeout", "digits": "23", "target": "7", "root_split": 1, "max_abs_exponent": 100, "expression": null, "elapsed_seconds": 1, "time_budget_seconds": 1, "memory_budget_mib": 128, "attempts": 1}
+{"split": 1, "status": "not_found_bounded", "digits": "23", "target": "7", "root_split": 1, "max_abs_exponent": 100, "expression": null, "elapsed_seconds": 1, "time_budget_seconds": 1, "memory_budget_mib": 128, "attempts": 2}
+{"split": 1, "digits": "23", "elapsed_seconds": 0.046696, "expression": null, "max_abs_exponent": 100, "max_rss_kib": 10624, "memory_budget_mib": 128, "root_split": 1, "status": "not_found_bounded", "target": "7", "time_budget_seconds": 1.0, "attempts": 1}
+Short-right oracle queries: 6830
+{"split": 1, "digits": "23", "elapsed_seconds": 0.058468, "expression": "(2^3)", "max_abs_exponent": 100, "max_rss_kib": 10624, "memory_budget_mib": 128, "root_split": 1, "status": "found", "target": "8", "time_budget_seconds": 1.0, "attempts": 1}
+----------------------------------------------------------------------
+Ran 47 tests in 132.517s
+
+OK

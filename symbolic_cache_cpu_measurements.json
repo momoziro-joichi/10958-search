@@ -1,0 +1,31 @@
+[
+  {
+    "digits": "123456",
+    "cache_size": 0,
+    "counts": {
+      "reject": 181776
+    },
+    "ordered_result_sha256": "3e42f9d66ea74055f73be807e222cb592e0257067b74c9da2e73bef0d95a1729",
+    "seconds": 2.5605568430000005,
+    "cpu_seconds": 2.550027648,
+    "cache_info": null,
+    "peak_rss_kib": 11648
+  },
+  {
+    "digits": "123456",
+    "cache_size": 4096,
+    "counts": {
+      "reject": 181776
+    },
+    "ordered_result_sha256": "3e42f9d66ea74055f73be807e222cb592e0257067b74c9da2e73bef0d95a1729",
+    "seconds": 0.9668548359999818,
+    "cpu_seconds": 0.9665385900000001,
+    "cache_info": {
+      "hits": 407948,
+      "misses": 212510,
+      "maxsize": 4096,
+      "currsize": 4096
+    },
+    "peak_rss_kib": 13428
+  }
+]

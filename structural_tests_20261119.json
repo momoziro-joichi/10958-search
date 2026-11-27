@@ -1,0 +1,24 @@
+{
+  "command": [
+    "python",
+    "-m",
+    "unittest",
+    "-q",
+    "test_structural_resume",
+    "test_structural_checkpoint",
+    "test_structural_identity",
+    "test_structural_lock",
+    "test_structural_partitions",
+    "test_strategy_probe",
+    "test_symbolic_cache",
+    "test_symbolic_runner"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "----------------------------------------------------------------------\nRan 31 tests in 0.674s\n\nOK\n",
+  "seconds": 0.8181192239999859,
+  "timeout_seconds": 30,
+  "memory_mib": 768,
+  "python": "3.12.14",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41"
+}

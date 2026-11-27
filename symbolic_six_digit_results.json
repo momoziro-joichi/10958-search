@@ -1,0 +1,18 @@
+{
+  "digits": "123456",
+  "target": 10958,
+  "exponent_cap": null,
+  "counts": {
+    "reject": 181776,
+    "deferred_power": 1920,
+    "parent_+": 752,
+    "parent_-": 752,
+    "parent_*": 752,
+    "parent_/": 752,
+    "parent_^": 752
+  },
+  "witnesses": [],
+  "unresolved_trees": [],
+  "seconds": 3.8175219759999663,
+  "peak_rss_kib": 10752
+}

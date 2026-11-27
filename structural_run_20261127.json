@@ -1,0 +1,254 @@
+{
+  "identity": {
+    "digits": "123456789",
+    "target": "10958",
+    "bits": 4096,
+    "exponent_cap": null,
+    "sources_sha256": {
+      "strategy_probe.py": "f16f9a63d00416afe2987d0d2fda1e23e877fff396509274c7b72d57c0da3ef5",
+      "structural_checkpoint.py": "989a45a881236f0e7f68928ac901ad2c5d0d3dbe78af107ed6e51889c7d9d13b",
+      "structural_identity.py": "cb60cfd9ef107c418497915cdc585f90fd0a95528b2cdb37238fc30cdf464a3b",
+      "structural_lock.py": "483e98826f7264c8b8b4a70abb7590f16292288c4b9e611cea484e9201d215f8",
+      "structural_resume.py": "fd853fd3ba03d20caf0975743bdc4db85dfad38db35ba451f14f23ac6144232e",
+      "symbolic_residue.py": "dd30bd4f7c7351414e20c69fa136090359bf32f8d152827cbd778c4a0d41c58b"
+    }
+  },
+  "status": "incomplete",
+  "completed_masks": 179,
+  "skipped_masks": 164,
+  "attempts": [
+    {
+      "mask": 63,
+      "status": "timeout"
+    },
+    {
+      "mask": 95,
+      "status": "timeout"
+    },
+    {
+      "mask": 111,
+      "status": "timeout"
+    },
+    {
+      "mask": 119,
+      "status": "timeout"
+    },
+    {
+      "mask": 122,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.7627966299999969,
+      "peak_rss_kib": 15472
+    },
+    {
+      "mask": 123,
+      "status": "timeout"
+    },
+    {
+      "mask": 124,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.8422479780000174,
+      "peak_rss_kib": 15504
+    },
+    {
+      "mask": 125,
+      "status": "timeout"
+    },
+    {
+      "mask": 126,
+      "status": "timeout"
+    },
+    {
+      "mask": 127,
+      "status": "timeout"
+    },
+    {
+      "mask": 143,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.838809432000005,
+      "peak_rss_kib": 14852
+    },
+    {
+      "mask": 151,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.7839888069999859,
+      "peak_rss_kib": 15684
+    },
+    {
+      "mask": 155,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.7428091640000218,
+      "peak_rss_kib": 15540
+    },
+    {
+      "mask": 158,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.7973414789999822,
+      "peak_rss_kib": 15580
+    },
+    {
+      "mask": 159,
+      "status": "timeout"
+    },
+    {
+      "mask": 174,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.7906186250000076,
+      "peak_rss_kib": 15240
+    },
+    {
+      "mask": 175,
+      "status": "timeout"
+    },
+    {
+      "mask": 181,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.664792809000005,
+      "peak_rss_kib": 15488
+    },
+    {
+      "mask": 182,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.8879557419999742,
+      "peak_rss_kib": 15252
+    },
+    {
+      "mask": 183,
+      "status": "timeout"
+    },
+    {
+      "mask": 184,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 8750,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.04832748100000117,
+      "peak_rss_kib": 14848
+    },
+    {
+      "mask": 185,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.6017016849999948,
+      "peak_rss_kib": 15424
+    },
+    {
+      "mask": 186,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.7488903389999848,
+      "peak_rss_kib": 15464
+    },
+    {
+      "mask": 187,
+      "status": "timeout"
+    },
+    {
+      "mask": 188,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 131250,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.7427659159999962,
+      "peak_rss_kib": 15460
+    },
+    {
+      "mask": 189,
+      "status": "timeout"
+    },
+    {
+      "mask": 190,
+      "status": "timeout"
+    },
+    {
+      "mask": 191,
+      "status": "timeout"
+    },
+    {
+      "mask": 192,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 50,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0002637590000063028,
+      "peak_rss_kib": 13440
+    },
+    {
+      "mask": 193,
+      "status": "complete_rejected",
+      "counts": {
+        "rejected": 625,
+        "unresolved": 0
+      },
+      "candidate": null,
+      "seconds": 0.0023622869999826435,
+      "peak_rss_kib": 13440
+    },
+    {
+      "mask": 194,
+      "status": "timeout"
+    }
+  ],
+  "seconds": 25.001629116999993,
+  "time_budget_seconds": 25.0,
+  "per_mask_seconds": 1.0,
+  "memory_budget_mib": 768
+}

@@ -1,0 +1,46 @@
+{
+  "visited": 131250,
+  "samples": [
+    [
+      "^",
+      [
+        "^",
+        "12",
+        [
+          "^",
+          "3",
+          "45"
+        ]
+      ],
+      [
+        "^",
+        "6",
+        [
+          "^",
+          "7",
+          "89"
+        ]
+      ]
+    ]
+  ],
+  "status": "enumerated",
+  "identity": {
+    "digits": "123456789",
+    "target": "10958",
+    "bits": 4096,
+    "exponent_cap": null,
+    "sources_sha256": {
+      "strategy_probe.py": "2425c70a84c4968f4354f5c12f7201807f6aac0d5fe466e7285a776eb3eceacf",
+      "structural_checkpoint.py": "989a45a881236f0e7f68928ac901ad2c5d0d3dbe78af107ed6e51889c7d9d13b",
+      "structural_identity.py": "cb60cfd9ef107c418497915cdc585f90fd0a95528b2cdb37238fc30cdf464a3b",
+      "structural_lock.py": "483e98826f7264c8b8b4a70abb7590f16292288c4b9e611cea484e9201d215f8",
+      "structural_resume.py": "fd853fd3ba03d20caf0975743bdc4db85dfad38db35ba451f14f23ac6144232e",
+      "symbolic_residue.py": "dd30bd4f7c7351414e20c69fa136090359bf32f8d152827cbd778c4a0d41c58b"
+    }
+  },
+  "mask": 118,
+  "seconds": 1.9074159400000212,
+  "memory_mib": 768,
+  "budget_seconds": 10,
+  "peak_rss_kib": 12928
+}
