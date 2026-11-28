@@ -1853,3 +1853,25 @@ remains incomplete. Counts do not prove impossibility. Raw evidence:
 structural_run_20261127.json and subpartition_tests_20261127.txt.
 Full suite not rerun. Next integrate subpartition checkpoint records and
 workers; repeated short retries of large masks should be replaced by subdivision.
+
+## 2026-11-28: bounded subpartition execution
+
+Verified PR1 open at28756fb6a027f4f51107a49f907ce9bf13307ca9.
+Added run_subpartition.py for isolated POSIX execution of one token/root/operator
+partition. Exact Fraction target, ASCII token validation, expected-count check,
+4096-entry cache,1..60s alarm and768MiB virtual-memory limit. Candidates remain
+unverified; unresolved/timeout/memory statuses cannot become completed absence.
+This command is intended as a dedicated process (resource limits are permanent).
+No checkpoint writes or automatic skip integration yet. Existing179-mask file
+unchanged; this new result is raw evidence, not automatically reusable completion.
+Six focused tests passed0.210s including actual child-process negative/candidate
+cases and disjoint coverage/count tests. Full suite not rerun.
+Reproduce python -m unittest -q test_run_subpartition test_structural_subpartition.
+
+python run_subpartition.py --tokens 1 2 3 4 5 6 789 --split 3 --op + --seconds 5
+completed31250 trees rejected,0 unresolved,no candidate in0.192916s,
+RSS13184KiB. This is mask63, root split3, addition only, not a whole mask.
+Raw evidence subpartition_worker_20261128.json and subpartition_worker_tests.txt.
+No speedup claim. Unrestricted10958 exploration remains incomplete.
+Next add strict source-bound subpartition persistence and parent-enforced timeout;
+current worker uses POSIX alarm and can lose output if externally killed.
